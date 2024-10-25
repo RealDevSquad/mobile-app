@@ -3,9 +3,10 @@ import { screen, render, fireEvent } from '@testing-library/react-native';
 import AuthScreen from '../src/screens/AuthScreen/AuthScreen';
 import Strings from '../src/i18n/en';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import { customRenderWithProvider } from '../src/utils/tests';
 
-it.skip('AuthScreen is rendered', () => {
-  render(<AuthScreen />);
+it('AuthScreen is rendered', () => {
+  customRenderWithProvider(AuthScreen);
   screen.getByText(/welcome to/i);
   screen.getByText(/real dev squad/i);
 });
