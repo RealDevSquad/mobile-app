@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  // useCallback,
-  useContext,
-} from 'react';
+import React, { useState, useContext } from 'react';
 import { View, TouchableWithoutFeedback, StyleSheet, Text } from 'react-native';
 import { profileScreenStyles } from './styles';
 import Avatar from '../../components/Avatar';
@@ -57,18 +53,10 @@ const ProfileScreen = () => {
         >
           <EllipseComponent
             handleLogout={handleLogout}
-            isDropdownVisible={isDropdownVisible}
             handleDropDown={handleDropdown}
           />
         </Modal>
       )}
-      {/* <UploadImageModalView
-        closeModal={closeModal}
-        modalVisible={modalVisible}
-        removePicture={removePicture}
-        response={response}
-        setResponse={setResponse}
-      /> */}
       <TouchableWithoutFeedback
         style={profileScreenStyles.mainview}
         onPress={handleDropdown}
@@ -90,12 +78,12 @@ const ProfileScreen = () => {
   );
 };
 
-const ProfileScreen2: React.FC = ({ navigation }) => {
+const ProfileScreen2: React.FC = () => {
   return (
     <Tabs.Container renderHeader={ProfileScreen}>
       <Tabs.Tab name="Active" key="2">
         <Tabs.ScrollView>
-          <ActiveScreen navigation={navigation} />
+          <ActiveScreen />
         </Tabs.ScrollView>
       </Tabs.Tab>
       <Tabs.Tab name="All" key="1">

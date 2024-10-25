@@ -3,25 +3,18 @@ import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ProgressModal from '../../../components/Modal/ProgressModal';
-// import { getDateAndTimeFromUnix } from '../../AuthScreen/Util';
+import { taskType } from '../../../components/UserContibution/Type';
 
 const ActiveTaskDetail = () => {
   const route = useRoute();
-  const { task } = route.params;
+  const { task } = route.params as { task: taskType[0] };
   const navigation = useNavigation();
 
-  console.log(task, 'percentCompleted');
-
-  const formatStatusText = (status) => {
-    // Split the status string by underscore
+  const formatStatusText = (status: string) => {
     const words = status.split('_');
-
-    // Capitalize the first letter of each word
     const formattedText = words.map(
       (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
     );
-
-    // Join the words with a space
     return formattedText.join(' ');
   };
 
@@ -29,30 +22,15 @@ const ActiveTaskDetail = () => {
     <ScrollView style={styles.container}>
       <View>
         <Text style={styles.mainTitle}>Active Task Details</Text>
-
         <ProgressModal />
         <Text style={styles.titles}>Task Detail</Text>
         <Text style={styles.buttonTextStyle}>{task.title}</Text>
-        <Text style={styles.buttonTextStyle}>{`Status: ${formatStatusText(
-          task.status,
-        )}`}</Text>
-
-        {/* <Text style={styles.buttonTextStyle}>
-          {`Started On: ${getDateAndTimeFromUnix(task.startedOn)}`}
+        <Text style={styles.buttonTextStyle}>
+          {`Status: ${formatStatusText(task.status)}`}
         </Text>
-        <Text
-          style={styles.buttonTextStyle}
-        >{`Ends On: ${getDateAndTimeFromUnix(task.endsOn)}`}</Text>
- */}
         <Text style={styles.titles} />
 
-        <TouchableOpacity
-          style={styles.buttonStyle}
-          onPress={() =>
-            // navigation.navigate('ExtensionRequest', { endsOn: task.endsOn })
-            console.log('here')
-          }
-        >
+        <TouchableOpacity style={styles.buttonStyle}>
           <Text style={styles.buttonTextStyle}>Create Extension</Text>
         </TouchableOpacity>
         <View style={styles.buttoncontainer}>
@@ -60,7 +38,7 @@ const ActiveTaskDetail = () => {
             style={styles.button}
             onPress={() => navigation.goBack()}
           >
-            <Text style={{ color: 'white' }}>Go Back</Text>
+            <Text style={styles.backButton}>Go Back</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -118,6 +96,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
+  },
+  backButton: {
+    color: 'white',
   },
 });
 
