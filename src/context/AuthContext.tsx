@@ -4,17 +4,23 @@ import { loggedInUserType } from './type';
 
 type authContextProviderType = {
   loggedInUserData: loggedInUserType | null;
+  goalsData: loggedInUserType | null;
   isLoading: boolean;
   setIsLoading: () => void;
   setLoggedInUserData: (userData: loggedInUserType | null) => void;
+  setGoalsData: (userData: loggedInUserType | null) => void;
 };
 export const AuthContext = React.createContext<authContextProviderType>({
   isLoading: false,
   loggedInUserData: null,
+  goalsData: null,
   setIsLoading: () => {
     return;
   },
   setLoggedInUserData: () => {
+    return;
+  },
+  setGoalsData: () => {
     return;
   },
 });
