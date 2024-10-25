@@ -5,6 +5,7 @@ import Strings from '../src/i18n/en';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import { customRenderWithProvider } from '../src/utils/tests';
 
 jest.mock('react-redux', () => {
   return {
@@ -13,8 +14,8 @@ jest.mock('react-redux', () => {
   };
 });
 
-it.skip('AuthScreen is rendered', () => {
-  render(<AuthScreen />);
+it('AuthScreen is rendered', () => {
+  customRenderWithProvider(AuthScreen);
   screen.getByText(/welcome to/i);
   screen.getByText(/real dev squad/i);
 });
