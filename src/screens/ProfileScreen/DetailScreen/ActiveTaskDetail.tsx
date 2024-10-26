@@ -6,7 +6,7 @@ import ProgressModal from '../../../components/Modal/ProgressModal';
 
 const ActiveTaskDetail = () => {
   const route = useRoute();
-  const { task } = route.params as any;
+  const { task } = route.params as any; // TODO fix types when used via route navigation
   const navigation = useNavigation();
 
   const formatStatusText = (status: string) => {
