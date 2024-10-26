@@ -3,11 +3,10 @@ import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ProgressModal from '../../../components/Modal/ProgressModal';
-import { taskType } from '../../../components/UserContibution/Type';
 
 const ActiveTaskDetail = () => {
   const route = useRoute();
-  const { task } = route.params as { task: taskType[0] };
+  const { task } = route.params as any;
   const navigation = useNavigation();
 
   const formatStatusText = (status: string) => {
