@@ -3,19 +3,12 @@ import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ProgressModal from '../../../components/Modal/ProgressModal';
+import { formatStatusText } from '../../../utils/utils';
 
 const ActiveTaskDetail = () => {
   const route = useRoute();
   const { task } = route.params as any; // TODO fix types when used via route navigation
   const navigation = useNavigation();
-
-  const formatStatusText = (status: string) => {
-    const words = status.split('_');
-    const formattedText = words.map(
-      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-    );
-    return formattedText.join(' ');
-  };
 
   return (
     <ScrollView style={styles.container}>

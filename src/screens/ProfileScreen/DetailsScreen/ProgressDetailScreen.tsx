@@ -15,10 +15,6 @@ const ProgressDetailScreen = () => {
   const [taskPlanned, setTaskPlanned] = useState('');
   const [taskBlockers, setTaskBlockers] = useState('');
 
-  const isVisible = () => {};
-
-  function submitProgress(): void {}
-
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.titleContainer}>
@@ -43,7 +39,6 @@ const ProgressDetailScreen = () => {
         multiline={true}
         onChangeText={(newText) => {
           setTaskCompleted(newText.trim());
-          isVisible();
         }}
         defaultValue={taskCompleted}
       />
@@ -56,7 +51,6 @@ const ProgressDetailScreen = () => {
         multiline={true}
         onChangeText={(newText) => {
           setTaskPlanned(newText.trim());
-          isVisible();
         }}
         defaultValue={taskPlanned}
       />
@@ -69,15 +63,11 @@ const ProgressDetailScreen = () => {
         multiline={true}
         onChangeText={(newText) => {
           setTaskBlockers(newText.trim());
-          isVisible();
         }}
         defaultValue={taskBlockers}
       />
 
-      <TouchableOpacity
-        style={styles.submitProgressContainer}
-        onPress={submitProgress}
-      >
+      <TouchableOpacity style={styles.submitProgressContainer}>
         <Text style={styles.updatebutton}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
