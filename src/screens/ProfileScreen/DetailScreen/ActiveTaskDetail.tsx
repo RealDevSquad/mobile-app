@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ProgressModal from '../../../components/Modal/ProgressModal';
@@ -22,9 +22,9 @@ const ActiveTaskDetail = () => {
         </Text>
         <Text style={styles.titles} />
 
-        <TouchableOpacity style={styles.buttonStyle}>
+        <Pressable style={styles.buttonStyle}>
           <Text style={styles.buttonTextStyle}>Create Extension</Text>
-        </TouchableOpacity>
+        </Pressable>
         <View style={styles.buttoncontainer}>
           <TouchableOpacity
             style={styles.button}
