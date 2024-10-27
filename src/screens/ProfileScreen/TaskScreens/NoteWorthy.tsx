@@ -16,8 +16,19 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../../context/AuthContext';
 
+type userContributionData = {
+  task: {
+    featureUrl: string;
+    purpose: string;
+    startedOn: string;
+    endsOn: string;
+    title: string;
+  };
+}[];
+
 const Note = () => {
-  const [userContributionData, setUserContributionData] = useState([]);
+  const [userContributionData, setUserContributionData] =
+    useState<userContributionData>([]);
   const { loggedInUserData } = useContext(AuthContext);
 
   useFocusEffect(
@@ -36,7 +47,7 @@ const Note = () => {
     <ScrollView style={styles.container}>
       {userContributionData ? (
         <View style={profileScreenStyles.container}>
-          {userContributionData.map((item: any, index) => (
+          {userContributionData.map((item, index) => (
             <View style={profileScreenStyles.DropDownElement} key={index}>
               <TouchableOpacity
                 style={profileScreenStyles.DropDownbackground}
