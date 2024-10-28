@@ -1,8 +1,11 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import MembersPage from '../../../src/screens/MemberScreen/MembersPage';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CreateGoals from '../../../src/components/ToDoComponent/SettingGoals/CreateGoals';
+import { Alert } from 'react-native';
+import { mockGoalData, mockUsersData } from '../../../__mocks__/mockData/Goals/mockData';
 
+const axios = require('axios');
+jest.mock('axios');
 jest.mock('react-native-gesture-handler', () => {});
 
 describe('MainScreen', () => {
@@ -24,6 +27,9 @@ describe('MainScreen', () => {
 
   test('navigates to MemberScreen when "Assigned To" is pressed', async () => {
     const navigateMock = jest.fn();
+    axios.get.mockResolvedValue({
+      data: { users: mockUsersData, message: 'Users returned successfully!' },
+    });
     const { getByTestId, findByTestId } = render(
       <CreateGoals navigation={{ navigate: navigateMock }} />,
     );
@@ -59,13 +65,57 @@ describe('MainScreen', () => {
     expect(userContainer).toBeNull();
   });
 
-  test.skip('navigates to FormScreen when "Create" button is pressed', () => {
-    const navigateMock = jest.fn();
-    const { getByText } = render(
-      <MembersPage navigation={{ push: navigateMock }} />,
+  test('navigates to Goal Screen when "Create Goal" button is pressed', async () => {
+    const spyAlert = jest.spyOn(Alert, 'alert');
+    axios.get.mockResolvedValue({
+      data: { users: mockUsersData, message: 'Users returned successfully!' },
+    });
+    axios.post.mockResolvedValue(mockGoalData);
+
+    const {
+      getByTestId,
+      getByPlaceholderText,
+      getByText,
+      findByTestId,
+      getAllByText,
+    } = render(<CreateGoals navigation={navigationProp} />);
+
+    const createGoalButton = getByText(/create goal/i);
+    const titleInput = getByPlaceholderText(
+      'Enter title max of 50 characters.',
     );
-    const createButton = getByText('Create');
-    fireEvent.press(createButton);
-    expect(navigateMock).toHaveBeenCalledWith('Form screen');
+    const descriptionInput = getByPlaceholderText('Enter max 200 characters.');
+    const selectUserButton = getByTestId('dropdown');
+
+    fireEvent.press(selectUserButton);
+    const userContainer = await findByTestId('user-container');
+    expect(userContainer).toBeTruthy();
+
+    const userInput = getByPlaceholderText('Search User');
+    await waitFor(() => {
+      fireEvent.changeText(userInput, 'test user');
+    });
+    const userItems = getAllByText(/test user/i);
+    expect(userItems).toBeTruthy();
+
+    await waitFor(() => {
+      fireEvent.press(userItems[0]);
+      fireEvent.changeText(titleInput, 'Test Goal');
+      fireEvent.changeText(descriptionInput, 'Test Description');
+    });
+
+    fireEvent.press(createGoalButton);
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Success',
+        `Task has been created and assigned to test user`,
+        [{ text: 'OK', onPress: expect.any(Function) }],
+      );
+    });
+
+    // @ts-ignore
+    spyAlert.mock.calls[0][2][0].onPress();
+    expect(navigationProp.navigate).toHaveBeenCalledWith('GoalsScreen');
   });
 });
