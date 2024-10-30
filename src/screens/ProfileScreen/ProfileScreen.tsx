@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  // useCallback,
-  useContext,
-} from 'react';
+import React, { useState, useContext } from 'react';
 import { View, TouchableWithoutFeedback, StyleSheet, Text } from 'react-native';
 import { profileScreenStyles } from './styles';
 import Avatar from '../../components/Avatar';
@@ -17,7 +13,7 @@ import Modal from 'react-native-modal';
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProfileScreen = () => {
+const ProfileHeader = () => {
   const [response] = useState<ImagePickerResponse>({});
   const { loggedInUserData, setLoggedInUserData } = useContext(AuthContext);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -57,18 +53,10 @@ const ProfileScreen = () => {
         >
           <EllipseComponent
             handleLogout={handleLogout}
-            isDropdownVisible={isDropdownVisible}
             handleDropDown={handleDropdown}
           />
         </Modal>
       )}
-      {/* <UploadImageModalView
-        closeModal={closeModal}
-        modalVisible={modalVisible}
-        removePicture={removePicture}
-        response={response}
-        setResponse={setResponse}
-      /> */}
       <TouchableWithoutFeedback
         style={profileScreenStyles.mainview}
         onPress={handleDropdown}
@@ -90,12 +78,12 @@ const ProfileScreen = () => {
   );
 };
 
-const ProfileScreen2: React.FC = ({ navigation }) => {
+const ProfileScreen: React.FC = () => {
   return (
-    <Tabs.Container renderHeader={ProfileScreen}>
+    <Tabs.Container renderHeader={ProfileHeader}>
       <Tabs.Tab name="Active" key="2">
         <Tabs.ScrollView>
-          <ActiveScreen navigation={navigation} />
+          <ActiveScreen />
         </Tabs.ScrollView>
       </Tabs.Tab>
       <Tabs.Tab name="All" key="1">
@@ -107,7 +95,7 @@ const ProfileScreen2: React.FC = ({ navigation }) => {
   );
 };
 
-export default ProfileScreen2;
+export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

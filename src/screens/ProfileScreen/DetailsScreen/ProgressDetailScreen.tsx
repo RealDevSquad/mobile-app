@@ -10,22 +10,10 @@ import React, { useState } from 'react';
 
 const ProgressDetailScreen = () => {
   // TODO: progress detail api call
-  // const route = useRoute();
 
-  // const { taskId } = route.params;
   const [taskCompleted, setTaskCompleted] = useState('');
   const [taskPlanned, setTaskPlanned] = useState('');
   const [taskBlockers, setTaskBlockers] = useState('');
-  // const [shouldDisable, setShoulDisable] = useState(false);
-
-  const isVisible = () => {
-    // setShoulDisable('');
-    // validateTaskProgress(taskCompleted, taskPlanned, taskBlockers),
-  };
-
-  function submitProgress(): void {
-    // throw new Error('Function not implemented.');
-  }
 
   return (
     <ScrollView style={styles.mainContainer}>
@@ -42,7 +30,6 @@ const ProgressDetailScreen = () => {
         </Text>
       </View>
       <Text style={styles.taskUpdateTitle}>Task Updates</Text>
-      {/* <Text style={styles.taskUpdateDateTitle}>On {new Date()}</Text> */}
 
       <Text style={styles.taskUpdateQuestion}>
         Task Progress after the previous update
@@ -52,7 +39,6 @@ const ProgressDetailScreen = () => {
         multiline={true}
         onChangeText={(newText) => {
           setTaskCompleted(newText.trim());
-          isVisible();
         }}
         defaultValue={taskCompleted}
       />
@@ -65,7 +51,6 @@ const ProgressDetailScreen = () => {
         multiline={true}
         onChangeText={(newText) => {
           setTaskPlanned(newText.trim());
-          isVisible();
         }}
         defaultValue={taskPlanned}
       />
@@ -78,16 +63,11 @@ const ProgressDetailScreen = () => {
         multiline={true}
         onChangeText={(newText) => {
           setTaskBlockers(newText.trim());
-          isVisible();
         }}
         defaultValue={taskBlockers}
       />
 
-      <TouchableOpacity
-        style={styles.submitProgressContainer}
-        // disabled={shouldDisable}
-        onPress={submitProgress}
-      >
+      <TouchableOpacity style={styles.submitProgressContainer}>
         <Text style={styles.updatebutton}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -103,18 +83,13 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  // titleText: {
-  //   fontSize: 24,
-  //   padding: 5,
-  //   color: 'black',
-  // },
   titleContainer: {
     padding: 10,
     alignItems: 'center',
     marginBottom: 12,
   },
   titleText: {
-    color: '#041187', // You can customize the text color
+    color: '#041187',
     fontSize: 26,
     fontWeight: 'bold',
   },
@@ -274,16 +249,6 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   logoutButton: {
-    // backgroundColor: '#E20062',
-    // borderRadius: 20,
-    // padding: 10,
-    // elevation: 2,
-    // width: '40%',
-    // alignItems: 'center',
-    // position: 'absolute',
-    // bottom: 10,
-    // color: 'white',
-
     paddingHorizontal: 5,
     paddingVertical: 6,
     borderRadius: 20,
@@ -300,16 +265,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  //UI enhance
   container: {
     flex: 1,
     padding: 10,
     backgroundColor: '#fff',
     borderRadius: 10,
-    // elevation: 1,
   },
   DropDownElement: {
-    // padding: 2,
     color: 'black',
     width: '100%',
     alignSelf: 'center',
@@ -317,14 +279,10 @@ const styles = StyleSheet.create({
   },
   DropDownbackground: {
     padding: 5,
-    // elevation: 1,
     height: 'auto',
     alignSelf: 'center',
     width: '100%',
-    // backgroundColor: '#fff',
-    // borderRadius: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'grey',
-    // elevation: 1,
   },
 });

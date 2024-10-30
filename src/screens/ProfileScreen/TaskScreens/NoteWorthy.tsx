@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useCallback, useContext, useState } from 'react';
 import {
   View,
@@ -6,6 +5,7 @@ import {
   TouchableOpacity,
   Linking,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 import { profileScreenStyles } from '../styles';
 import {
@@ -16,23 +16,35 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../../context/AuthContext';
 
+type userContributionData = {
+  task: {
+    featureUrl: string;
+    purpose: string;
+    startedOn: string;
+    endsOn: string;
+    title: string;
+  };
+}[];
+
 const Note = () => {
-  const [userContributionData, setUserContributionData] = useState([]);
+  const [userContributionData, setUserContributionData] =
+    useState<userContributionData>([]);
   const { loggedInUserData } = useContext(AuthContext);
 
   useFocusEffect(
     useCallback(() => {
       (async () => {
         const userName = loggedInUserData?.username;
-        const contributionResponse = await fetchContribution(userName);
+        const contributionResponse = await fetchContribution(
+          userName as string,
+        );
         setUserContributionData(contributionResponse.noteworthy);
       })();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [loggedInUserData?.username]),
   );
 
   return (
-    <ScrollView style={{ padding: 10, elevation: 10 }}>
+    <ScrollView style={styles.container}>
       {userContributionData ? (
         <View style={profileScreenStyles.container}>
           {userContributionData.map((item, index) => (
@@ -42,43 +54,20 @@ const Note = () => {
                 onPress={
                   item.task.featureUrl
                     ? () => Linking.openURL(item.task.featureUrl)
-                    : null
+                    : () => {}
                 }
               >
-                <Text
-                  style={{ color: 'blue', fontSize: 18, fontWeight: 'bold' }}
-                >
-                  {item.task.title}
-                </Text>
+                <Text style={styles.taskTitle}>{item.task.title}</Text>
                 <>
                   {item.task.purpose ? (
-                    <Text
-                      style={{
-                        paddingLeft: 15,
-                        paddingRight: 15,
-                        paddingTop: 10,
-                        paddingBottom: 10,
-                        color: 'grey',
-                        fontSize: 15,
-                      }}
-                    >
-                      {item.task.purpose}
-                    </Text>
+                    <Text style={styles.taskPurpose}>{item.task.purpose}</Text>
                   ) : (
-                    <View style={{ padding: 10 }} />
+                    <View style={styles.emptySpace} />
                   )}
                 </>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontSize: 15,
-                    paddingLeft: 15,
-                    paddingRight: 15,
-                    paddingBottom: 10,
-                  }}
-                >
+                <Text style={styles.completionText}>
                   Estimated completion:{''}
-                  <Text style={{ fontWeight: 'bold' }}>
+                  <Text style={styles.completionBoldText}>
                     {calculateTimeDifference(
                       convertTimestampToReadableDate(item.task.startedOn),
                       convertTimestampToReadableDate(item.task.endsOn),
@@ -87,13 +76,7 @@ const Note = () => {
                 </Text>
                 <>
                   {item.task.featureUrl ? (
-                    <Text
-                      style={{
-                        color: 'grey',
-                        fontSize: 13,
-                        textAlign: 'center',
-                      }}
-                    >
+                    <Text style={styles.featureText}>
                       Checkout this feature in action
                     </Text>
                   ) : null}
@@ -103,15 +86,8 @@ const Note = () => {
           ))}
         </View>
       ) : (
-        <View
-          style={{
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 13, color: 'black' }}>
-            No noteworthy task yet!
-          </Text>
+        <View style={styles.noTaskContainer}>
+          <Text style={styles.noTaskText}>No noteworthy task yet!</Text>
         </View>
       )}
     </ScrollView>
@@ -119,3 +95,60 @@ const Note = () => {
 };
 
 export default Note;
+
+const styles = StyleSheet.create({
+  scrollView: {
+    padding: 10,
+    elevation: 10,
+  },
+  container: {
+    padding: 10,
+  },
+  taskContainer: {
+    marginBottom: 15,
+  },
+  taskBackground: {
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    borderRadius: 8,
+    elevation: 2,
+  },
+  taskTitle: {
+    color: 'blue',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  taskPurpose: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    color: 'grey',
+    fontSize: 15,
+  },
+  completionText: {
+    color: 'black',
+    fontSize: 15,
+    paddingHorizontal: 15,
+    paddingBottom: 10,
+  },
+  completionBoldText: {
+    fontWeight: 'bold',
+  },
+  featureText: {
+    color: 'grey',
+    fontSize: 13,
+    textAlign: 'center',
+    marginTop: 5,
+  },
+  emptySpace: {
+    padding: 10,
+  },
+  noTaskContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: 20,
+  },
+  noTaskText: {
+    fontSize: 13,
+    color: 'black',
+  },
+});

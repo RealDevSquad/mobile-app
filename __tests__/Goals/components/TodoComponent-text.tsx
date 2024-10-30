@@ -3,7 +3,18 @@ import { render, fireEvent } from '@testing-library/react-native';
 import TodoComponent from '../../../src/components/ToDoComponent/TodoComponent';
 import { NavigationContainer } from '@react-navigation/native';
 
+jest.mock('@react-navigation/native', () => {
+  return {
+    ...jest.requireActual('@react-navigation/native'),
+    useNavigation: jest.fn(),
+  };
+});
+
 describe('TodoComponent', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   test('renders title correctly', () => {
     const { getByText } = render(
       <NavigationContainer>
@@ -24,15 +35,19 @@ describe('TodoComponent', () => {
     expect(addButton).toBeTruthy();
   });
 
-  test.skip('calls navigationProp.navigate when "Add" button is pressed', async () => {
-    const navigationProp = { navigate: jest.fn() };
-    const { getByTestId } = render(
+  test('calls navigationProp.navigate when "Add" button is pressed', async () => {
+    const navigate = jest.fn();
+    require('@react-navigation/native').useNavigation.mockReturnValue({
+      navigate,
+    });
+
+    const { getByText } = render(
       <NavigationContainer>
-        <TodoComponent navigation={navigationProp} />
+        <TodoComponent />
       </NavigationContainer>,
     );
-    const addButton = await getByTestId('addButton');
+    const addButton = getByText('Add');
     fireEvent.press(addButton);
-    expect(navigationProp.navigate).toHaveBeenCalledWith('CreatingGoals');
+    expect(navigate).toHaveBeenCalledWith('CreatingGoals');
   });
 });

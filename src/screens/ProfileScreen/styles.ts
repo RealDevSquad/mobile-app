@@ -18,7 +18,7 @@ export const profileScreenStyles = StyleSheet.create({
     paddingBottom: 30,
   },
   titleText: {
-    color: '#041187', // You can customize the text color
+    color: '#041187',
     fontSize: 26,
     fontWeight: 'bold',
     padding: 5,
@@ -32,7 +32,7 @@ export const profileScreenStyles = StyleSheet.create({
     fontSize: 20,
     paddingBottom: 10,
     color: 'black',
-    fontWeight: 'bold', // You can add this if you want to make it bold
+    fontWeight: 'bold',
   },
   subTitleTypeText: {
     fontSize: 16,
@@ -52,7 +52,6 @@ export const profileScreenStyles = StyleSheet.create({
   smallTitle: {
     color: 'black',
     fontWeight: '600',
-    // paddingVertical: 8,
     textAlign: 'left',
     flex: 1,
   },
@@ -61,11 +60,11 @@ export const profileScreenStyles = StyleSheet.create({
   },
   stickyButtonContainer: {
     position: 'absolute',
-    bottom: 16, // Adjust the value based on your preference
-    left: '20%', // Center the button horizontally
-    transform: [{ translateX: -50 }], // Center the button horizontally
-    width: '80%', // Adjust the width based on your preference
-    zIndex: 2, // Ensure the button is above other elements
+    bottom: 16,
+    left: '20%',
+    transform: [{ translateX: -50 }],
+    width: '80%',
+    zIndex: 2,
   },
   taskUpdateTitle: {
     marginTop: 20,
@@ -145,8 +144,6 @@ export const profileScreenStyles = StyleSheet.create({
     alignItems: 'center',
   },
   mainContainer: {
-    // marginHorizontal: 24,
-    // marginVertical: 8,
     flex: 1,
     padding: 16,
     backgroundColor: '#fff',
@@ -175,8 +172,6 @@ export const profileScreenStyles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     padding: 30,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -231,16 +226,6 @@ export const profileScreenStyles = StyleSheet.create({
     bottom: 0,
   },
   logoutButton: {
-    // backgroundColor: '#E20062',
-    // borderRadius: 20,
-    // padding: 10,
-    // elevation: 2,
-    // width: '40%',
-    // alignItems: 'center',
-    // position: 'absolute',
-    // bottom: 10,
-    // color: 'white',
-
     paddingHorizontal: 5,
     paddingVertical: 6,
     borderRadius: 20,
@@ -257,16 +242,13 @@ export const profileScreenStyles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  //UI enhance
   container: {
     flex: 1,
     padding: 10,
     backgroundColor: '#fff',
     borderRadius: 10,
-    // elevation: 1,
   },
   DropDownElement: {
-    // padding: 2,
     color: 'black',
     width: '100%',
     alignSelf: 'center',
@@ -274,14 +256,10 @@ export const profileScreenStyles = StyleSheet.create({
   },
   DropDownbackground: {
     padding: 5,
-    // elevation: 1,
     height: 'auto',
     alignSelf: 'center',
     width: '100%',
-    // backgroundColor: '#fff',
-    // borderRadius: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'grey',
-    // elevation: 1,
   },
 });

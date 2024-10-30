@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import ProfileScreen2 from '../ProfileScreen/ProfileScreen2';
+import ProfileScreen from '../ProfileScreen/ProfileScreen';
 import ActiveTaskDetail from '../ProfileScreen/DetailScreen/ActiveTaskDetail';
 import ExtensionRequest from '../../components/ProfileExtensionForm/ExtensionRequest';
 
@@ -12,7 +12,7 @@ function ActiveTaskScreenStack() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Profile" component={ProfileScreen2} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="ActiveTaskDetail" component={ActiveTaskDetail} />
       <Stack.Screen name="ExtensionRequest" component={ExtensionRequest} />
     </Stack.Navigator>

@@ -17,6 +17,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('getUserData util', () => {
   const token = '12345421ac1aca';
+  const invalidToken = 'a1b9c2d8x3y7z4';
 
   const mockUserData = {
     id: '123abc',
@@ -29,12 +30,31 @@ describe('getUserData util', () => {
     username: 'anish-pawaskar',
   };
 
-  test.skip('when url passed !== redirect url return null', async () => {
-    const res = await getUserData('https://www.example.net/');
-    expect(res).toEqual(null);
+  test('when token passed is invalid, axios call returns with 401', async () => {
+    const errorResponse = {
+      response: {
+        status: 401,
+        data: {
+          message: 'Unauthenticated User',
+        },
+      },
+    };
+    mockedAxios.get.mockRejectedValue(errorResponse);
+    try {
+      await getUserData(invalidToken);
+    } catch (err) {
+      expect(err).toEqual({
+        response: {
+          status: 401,
+          data: {
+            message: 'Unauthenticated User',
+          },
+        },
+      });
+    }
   });
 
-  test('when redirect url is passed to getUserData && axios call is ok return user name & profileUrl', async () => {
+  test('when token is passed to getUserData && axios call is ok return user name & profileUrl', async () => {
     mockedAxios.get.mockResolvedValue({ data: mockUserData });
     const res = await getUserData(token);
     expect(mockedAxios.get).toHaveBeenCalledWith(`${urls.GET_USERS_DATA}`, {
@@ -55,17 +75,17 @@ describe('getUserData util', () => {
     });
   });
 
-  test('when redirect url is passed to getUserData && axios call fails return null', async () => {
+  test('when token is passed to getUserData && axios call fails return null', async () => {
     mockedAxios.get.mockRejectedValue('500: server error');
     try {
-      await getUserData(urls.REDIRECT_URL);
+      await getUserData(token);
     } catch (err) {
       expect(err).toEqual('500: server error');
     }
   });
 });
 
-describe.skip('updateStatus util', () => {
+describe('updateStatus util', () => {
   test('pass arg undefined receive throw error', async () => {
     mockedAxios.patch.mockRejectedValue(
       // eslint-disable-next-line quotes
@@ -104,7 +124,7 @@ describe.skip('updateStatus util', () => {
   });
 });
 
-describe.skip('updateMarkYourSelfAs_ util', () => {
+describe('updateMarkYourSelfAs_ util', () => {
   test('pass arg undefined receive throw error', async () => {
     mockedAxios.patch.mockRejectedValue(
       // eslint-disable-next-line quotes
