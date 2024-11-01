@@ -86,7 +86,7 @@ const DATA = {
   assigned_by: 'admin',
 };
 
-test.skip('setTimeout called which calls other two functions remove and changecard', () => {
+test('setTimeout called which calls other two functions remove and changecard', () => {
   const { getByTestId } = render(
     <Card
       item={DATA}
