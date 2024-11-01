@@ -2,7 +2,6 @@ import React from 'react';
 import { screen, render, fireEvent } from '@testing-library/react-native';
 import AuthScreen from '../src/screens/AuthScreen/AuthScreen';
 import Strings from '../src/i18n/en';
-import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { customRenderWithProvider } from '../src/utils/tests';
