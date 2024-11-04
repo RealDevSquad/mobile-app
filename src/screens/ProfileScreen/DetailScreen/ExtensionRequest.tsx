@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { TextInput } from 'react-native-gesture-handler';
-// import axios from 'axios';
 
 export default function ExtensionRequest() {
   const navigation = useNavigation();
@@ -30,8 +29,7 @@ export default function ExtensionRequest() {
       .then((responseData) => {
         console.log(JSON.stringify(responseData));
         console.log(JSON.stringify(responseData), 'PostApiCAlled');
-      })
-      .done();
+      });
   };
 
   return (
@@ -73,8 +71,7 @@ export default function ExtensionRequest() {
 
       <View style={styles.buttoncontainer}>
         <TouchableOpacity style={styles.button} onPress={postApi}>
-          {/* onPress={saveData} */}
-          <Text style={{ color: 'white' }}>Create Extension</Text>
+          <Text style={styles.whiteText}>Create Extension</Text>
         </TouchableOpacity>
       </View>
 
@@ -83,7 +80,7 @@ export default function ExtensionRequest() {
           style={styles.button}
           onPress={() => navigation.goBack()}
         >
-          <Text style={{ color: 'white' }}>Go Back</Text>
+          <Text style={styles.whiteText}>Go Back</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -94,7 +91,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    border: '2px solid black',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderColor: 'black',
     padding: 30,
   },
 
@@ -144,8 +143,11 @@ const styles = StyleSheet.create({
   },
   input: {
     borderColor: 'skyBlue',
-    borderwidth: 2,
+    borderWidth: 2,
     fontSize: 15,
     backgroundColor: 'lightgrey',
+  },
+  whiteText: {
+    color: 'white',
   },
 });

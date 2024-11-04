@@ -9,17 +9,18 @@ import {
 import GithubSvg from '../../../../assets/svgs/github_logo';
 import LinkedInSvg from '../../../../assets/svgs/linkedIn';
 import TwitterSvg from '../../../../assets/svgs/twitter';
+import { loggedInUserType } from '../../../context/type';
 
-const UserData = ({ userData }) => {
+const UserData = ({ userData }: { userData: loggedInUserType | null }) => {
   const {
-    twitter_id,
-    linkedin_id,
-    github_id,
-    designation,
-    company,
-    name,
-    username,
-  } = userData;
+    twitter_id = '',
+    linkedin_id = '',
+    github_id = '',
+    designation = '',
+    company = '',
+    name = '',
+    username = '',
+  } = userData || {};
   return (
     <View>
       <Text style={styles.Name}>{name}</Text>

@@ -10,8 +10,6 @@ const All = () => {
   const { loggedInUserData } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  // const { isProdEnvironment } = useSelector((store) => store.localFeatureFlag);
-
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
@@ -19,22 +17,15 @@ const All = () => {
       (async () => {
         const token = loggedInUserData?.token;
 
-        const allTasks = await fetchAllTasks(token);
+        const allTasks = await fetchAllTasks(token as string);
         setAllTask(allTasks);
         setLoading(false);
       })();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [loggedInUserData?.token]),
   );
 
   return (
-    <>
-      {loading ? (
-        <Loader />
-      ) : (
-        <DisplayContribution tasks={allTask} isActive={false} />
-      )}
-    </>
+    <>{loading ? <Loader /> : <DisplayContribution tasks={allTask} />}</>
     //TODO: to call AllTaskDetailScreen
     // <ScrollView style={{ padding: 10, elevation: 10 }}>
     //   {isProdEnvironment ? (

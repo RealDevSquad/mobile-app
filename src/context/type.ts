@@ -8,7 +8,9 @@ export interface loggedInUserType {
   github_id: string;
   username: string;
   token: string;
-};
+  designation: string;
+  company: string;
+}
 
 export interface User {
   name: string;

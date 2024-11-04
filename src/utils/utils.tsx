@@ -7,3 +7,11 @@ export const scale = (uiElementPx: number): number => {
   const rate = 1;
   return ((uiElementPx * deviceWidthDp) / uiWidthPx) * rate;
 };
+
+export const formatStatusText = (status: string) => {
+  const words = status.split('_');
+  const formattedText = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+  );
+  return formattedText.join(' ');
+};
