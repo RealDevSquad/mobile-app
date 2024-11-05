@@ -2,7 +2,10 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CreateGoals from '../../../src/components/ToDoComponent/SettingGoals/CreateGoals';
 import { Alert } from 'react-native';
-import { mockGoalData, mockUsersData } from '../../../__mocks__/mockData/Goals/mockData';
+import {
+  mockGoalData,
+  mockUsersData,
+} from '../../../__mocks__/mockData/Goals/mockData';
 
 const axios = require('axios');
 jest.mock('axios');
@@ -114,8 +117,7 @@ describe('MainScreen', () => {
       );
     });
 
-    // @ts-ignore
-    spyAlert.mock.calls[0][2][0].onPress();
+    spyAlert.mock.calls?.[0]?.[2]?.[0].onPress!();
     expect(navigationProp.navigate).toHaveBeenCalledWith('GoalsScreen');
   });
 });
