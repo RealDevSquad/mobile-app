@@ -117,7 +117,9 @@ describe('MainScreen', () => {
       );
     });
 
-    spyAlert.mock.calls?.[0]?.[2]?.[0].onPress!();
+    const alertMockCall = spyAlert.mock.calls?.[0]?.[2]?.[0];
+    alertMockCall?.onPress!();
+    
     expect(navigationProp.navigate).toHaveBeenCalledWith('GoalsScreen');
   });
 });
