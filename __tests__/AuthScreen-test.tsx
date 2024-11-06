@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { customRenderWithProvider } from '../src/utils/tests';
 import { Linking } from 'react-native';
+import AuthApis from '../src/constants/apiConstant/AuthApi';
 
 jest.mock('react-redux', () => {
   return {
@@ -27,11 +28,26 @@ it('AuthScreen is rendered', () => {
 });
 
 it('Clicking on Sign in with Github opens browser', async () => {
+  const mockBuildUrl = (url: string, params: { [key: string]: string }) => {
+    const queryString = Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&');
+
+    return `${url}?${queryString}`;
+  };
+  const queryParams = {
+    sourceUtm: 'rds-mobile-app',
+    redirectURL: 'https://realdevsquad.com/',
+  };
+  const baseUrl = AuthApis.GITHUB_AUTH_API;
+  const githubUrl = mockBuildUrl(baseUrl, queryParams);
+
   customRenderWithProvider(AuthScreen);
 
   const githubSignInBtn = screen.getByText(Strings.SIGN_IN_BUTTON_TEXT);
   fireEvent.press(githubSignInBtn);
   expect(Linking.openURL).toHaveBeenCalledTimes(1);
+  expect(Linking.openURL).toHaveBeenCalledWith(githubUrl);
 });
 
 describe('AuthScreen', () => {
