@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Provider as StoreProvider } from 'react-redux';
-import { AuthProvider } from '../src/context/AuthContext';
-import { store } from '../App';
+import { AuthProvider } from '../../context/AuthContext';
+import { store } from '../../../App';
 
 interface ProviderWrapperProps {
   children: ReactNode;
