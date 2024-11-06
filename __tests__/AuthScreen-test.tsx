@@ -4,9 +4,9 @@ import AuthScreen from '../src/screens/AuthScreen/AuthScreen';
 import Strings from '../src/i18n/en';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { customRenderWithProvider } from '../src/utils/tests';
 import { Linking } from 'react-native';
 import AuthApis from '../src/constants/apiConstant/AuthApi';
+import ProviderWrapper from './ProviderWrapper';
 
 jest.mock('react-redux', () => {
   return {
@@ -22,7 +22,11 @@ jest.mock('react-native/Libraries/Linking/Linking', () => ({
 }));
 
 it('AuthScreen is rendered', () => {
-  customRenderWithProvider(AuthScreen);
+  render(
+    <ProviderWrapper>
+      <AuthScreen />
+    </ProviderWrapper>
+  );
   screen.getByText(/welcome to/i);
   screen.getByText(/real dev squad/i);
 });
@@ -42,7 +46,11 @@ it('Clicking on Sign in with Github opens browser', async () => {
   const baseUrl = AuthApis.GITHUB_AUTH_API;
   const githubUrl = mockBuildUrl(baseUrl, queryParams);
 
-  customRenderWithProvider(AuthScreen);
+  render(
+    <ProviderWrapper>
+      <AuthScreen />
+    </ProviderWrapper>
+  );
 
   const githubSignInBtn = screen.getByText(Strings.SIGN_IN_BUTTON_TEXT);
   fireEvent.press(githubSignInBtn);
