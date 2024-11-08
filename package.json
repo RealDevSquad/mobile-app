@@ -27,6 +27,7 @@
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/native-stack": "^6.9.12",
     "@react-navigation/stack": "^6.2.0",
+    "@reduxjs/toolkit": "^2.3.0",
     "axios": "^0.26.1",
     "eslint-plugin-prettier": "^4.2.1",
     "moment": "^2.29.4",
