@@ -1,17 +1,15 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { Provider as StoreProvider } from 'react-redux';
 import { AuthProvider } from '../../context/AuthContext';
 import { store } from '../../../App';
 
 interface ProviderWrapperProps {
-  children: ReactNode;
+  children: JSX.Element;
 }
 
 const ProviderWrapper: React.FC<ProviderWrapperProps> = ({ children }) => (
   <StoreProvider store={store}>
-    <AuthProvider>
-      <>{children}</>
-    </AuthProvider>
+    <AuthProvider>{children}</AuthProvider>
   </StoreProvider>
 );
 
