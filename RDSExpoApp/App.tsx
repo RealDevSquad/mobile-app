@@ -2,10 +2,10 @@ import createSagaMiddleware from '@redux-saga/core';
 import Toast from 'react-native-toast-message';
 import { Provider } from 'react-redux';
 import { applyMiddleware, compose, createStore } from 'redux';
-import Index from './app/index';
 import { AuthProvider } from './components/context/AuthContext';
 import reducers from './components/reducers';
 import rootSaga from './components/sagas/rootSaga';
+import Index from './index';
 
 
 const sagaMiddleware = createSagaMiddleware();

@@ -1,11 +1,11 @@
 import NetInfo from '@react-native-community/netinfo';
 import { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import TabNavigation from '../components/navigations/TabNavigation/TabNavigation';
-import LoadingScreen from '../components/src/LoadingScreen';
-import AuthContext from './../components/context/AuthContext';
-import AuthScreen from './screens/AuthScreen/AuthScreen';
-import ConnectionScreen from './screens/ConnectionScreen/ConnectionScreen';
+import AuthScreen from './app/screens/AuthScreen/AuthScreen';
+import ConnectionScreen from './app/screens/ConnectionScreen/ConnectionScreen';
+import AuthContext from './components/context/AuthContext';
+import TabNavigation from './components/navigations/TabNavigation/TabNavigation';
+import LoadingScreen from './components/src/LoadingScreen';
 
 
 const Index = () => {
