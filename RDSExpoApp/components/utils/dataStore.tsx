@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import EncryptedStorage from 'expo-secure-store';
 import Toast from 'react-native-toast-message/lib/src/Toast';
 
 export const storeData = async (name: string, value: string) => {

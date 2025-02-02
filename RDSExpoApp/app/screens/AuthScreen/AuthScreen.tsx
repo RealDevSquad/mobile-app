@@ -1,4 +1,5 @@
 import { Camera } from 'expo-camera';
+import DeviceInfo from 'expo-device';
 import React, { useContext, useEffect, useState } from 'react';
 import {
   Alert,
@@ -12,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import Toast from 'react-native-toast-message/lib/src/Toast';
 import Tooltip from 'react-native-walkthrough-tooltip';
 import { useSelector } from 'react-redux';
