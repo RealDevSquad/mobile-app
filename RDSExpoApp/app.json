@@ -1,0 +1,7 @@
+{
+  "expo": {
+    "scheme": "realdevsquad",
+    "platforms": ["ios", "android"],
+    "newArchEnabled": true
+  }
+}
