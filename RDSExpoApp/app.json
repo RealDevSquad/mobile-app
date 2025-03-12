@@ -1,7 +1,42 @@
 {
   "expo": {
-    "scheme": "realdevsquad",
-    "platforms": ["ios", "android"],
-    "newArchEnabled": true
+    "name": "RDSExpoApp",
+    "slug": "RDSExpoApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "rdsapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.abstrctdatyp.RDSExpoApp"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "GITHUB_CLIENT_ID": "Ov23lidvROsX75m5UoNm",
+      "GITHUB_AUTHORIZATION_CALLBACK_URL": "http://localhost:3000/auth/github/callback"
+    }
   }
 }
