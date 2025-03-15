@@ -6,9 +6,15 @@ Welcome to the repository of our mobile app, which mirrors all the features of o
    * React Native
    * TypeScript
    * StyleSheet
+
 ## About the Project
 
-This project serves as the Real Dev Squad cross-platform mobile app, built using React Native.
+This repository contains the Real Dev Squad cross-platform mobile app, built using React Native.
+As we are currently migrating the app from React Native CLI to Expo, the repository includes two projects:
+
+1. **CLI app**
+2. **Expo app**
+
 ## First Phase
 
 - Github Authentication ✅ (we did it via webview, requirement has changed to browser login from github)
@@ -38,8 +44,8 @@ To contribute, make sure you have the following:
 
 - React Native setup
 - Android Studio
-- JDK ( openjdk 11.0.20.1 2023-08-24 )
-- Node setup ( use version v16.*, tested on v16.20.2)
+- JDK ( openjdk  17.0.13 2025-03-15 )
+- Node setup ( use version v18.*, tested on v18.18.0)
 - [Volta](https://docs.volta.sh/guide/getting-started) | [Why Volta?](https://docs.volta.sh/guide/#why-volta)
 - React Native development environment set up
 - Android Studio installed
@@ -50,10 +56,21 @@ To contribute, make sure you have the following:
 
 For detailed setup instructions,  refer to [React Native environment setup guide](https://reactnative.dev/docs/environment-setup).
 
-### Local App setup
+### Local App setup for CLI
 
-- Set up your local environment for React Native following the environment setup guide.
-- Clone the mobile app repository: git clone https://github.com/Real-Dev-Squad/mobile-app.git
+- Set up your local environment for React Native CLI following the environment setup guide.
+- Clone the mobile app repository from develop branch: git clone https://github.com/Real-Dev-Squad/mobile-app.git
+- Run the command: `yarn`
+- Start contributing!
+
+### Local App setup for Expo
+
+- Set up your local environment for React Native Expo following the environment setup guide.
+- Clone the mobile app repository from develop branch: git clone https://github.com/Real-Dev-Squad/mobile-app.git
+- Switch to the expo-migration branch
+- Make sure you don't have metro.config.js and yarn.lock files from CLI project in expo-migration branch
+- Change the directory to RDSExpoApp
+- Create Yarn.lock file in RDSExpoApp folder
 - Run the command: `yarn`
 - Start contributing!
 
@@ -70,7 +87,7 @@ To contribute to our project:
 - If you need assistance, reach out on the mobile-app-react-native channel on Discord.
 
 
-## Git commands for local setup
+## Git commands for local CLI setup
 
 ```
 git clone https://github.com/Real-Dev-Squad/mobile-app.git
@@ -78,6 +95,17 @@ git clone https://github.com/Real-Dev-Squad/mobile-app.git
 cd mobile-app
 
 yarn
+```
+
+## Git commands for local Expo setup
+```
+git clone https://github.com/Real-Dev-Squad/mobile-app.git
+
+cd RDSExpoApp
+
+yarn
+
+
 ```
 
 
@@ -98,10 +126,16 @@ git push origin your-PR-name
 
 All PRs should have 100% test coverage. Before submitting PRs, run yarn test to ensure all tests pass.
 
-**Running/Development**
+**Running/Development for CLI**
 
 - Start Metro (JavaScript bundler): `yarn react-native start`
 - For Android: `yarn react-native run-android`
 - For iOS: yarn `react-native run-ios`
+
+**Running/Development for Expo**
+
+- Start Metro bundler: `npx expo start`
+- For Android: `npx expo run:android`
+- For iOS: yarn `npx expo run:ios`
 
 If the above commands fail, try building the Android app from Android Studio and the iOS app from Xcode.
