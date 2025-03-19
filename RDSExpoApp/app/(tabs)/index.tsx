@@ -1,3 +1,4 @@
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
@@ -26,10 +27,15 @@ const AuthScreen = () => {
     redirectURL: 'rdsapp://auth',
   };
 
-  const githubAuthUrl = buildUrl(
-    AuthApi.GITHUB_AUTH_API,
-    queryParams,
-  );
+  const githubAuthUrl = buildUrl(AuthApi.GITHUB_AUTH_API, queryParams);
+
+  const checkUserSession = async () => {
+    const token = await AsyncStorage.getItem('github_token');
+    if (token) {
+      console.log('User already logged in, redirecting to HomeScreen');
+      router.replace('/HomeScreen');
+    }
+  };
 
   const handleTokenFromUrl = async (url: string) => {
     try {
@@ -38,7 +44,7 @@ const AuthScreen = () => {
       if (token) {
         await AsyncStorage.setItem('github_token', token);
         console.log('Token stored:', token);
-        router.push('/ProfileScreen');
+        router.replace('/HomeScreen');
       }
     } catch (error) {
       console.error('Error processing deep link', error);
@@ -46,16 +52,18 @@ const AuthScreen = () => {
   };
 
   useEffect(() => {
+    checkUserSession();
+
     (async () => {
       const initialUrl = await Linking.getInitialURL();
-      console.log("Initial URL received:", initialUrl);
+      console.log('Initial URL received:', initialUrl);
       if (initialUrl) {
         handleTokenFromUrl(initialUrl);
       }
     })();
 
     const subscription = Linking.addEventListener('url', (event) => {
-      console.log("Deep link event received:", event.url);
+      console.log('Deep link event received:', event.url);
       handleTokenFromUrl(event.url);
     });
 
@@ -79,8 +87,15 @@ const AuthScreen = () => {
       />
       <Text style={styles.title}>Welcome to</Text>
       <Text style={styles.title1}>REAL DEV SQUAD</Text>
-      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-        <Text style={styles.buttonText}>Sign in with GitHub</Text>
+
+      <TouchableOpacity style={[styles.button, { borderRadius: 12 }]} onPress={handleSignIn}>
+        <FontAwesome name="github" size={24} color="#000" style={styles.icon} />
+        <Text style={styles.buttonText}>GitHub SignIn</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.button, { borderRadius: 12, marginTop: 20 }]} onPress={handleSignIn}>
+        <FontAwesome name="globe" size={24} color="#000" style={styles.icon} />
+        <Text style={styles.buttonText}>Web SignIn</Text>
       </TouchableOpacity>
     </View>
   );
@@ -98,19 +113,18 @@ const styles = StyleSheet.create({
   logo: {
     width: 280,
     height: 220,
-    marginTop:-150,
+    marginTop: -90,
   },
   title: {
     fontSize: 29,
     marginBottom: 6,
-    marginTop: 50 ,
+    marginTop: 50,
     color: '#fff',
-    
   },
   title1: {
     fontSize: 34,
-    marginBottom: 50,
-    fontWeight: 'bold' ,
+    marginBottom: 100,
+    fontWeight: 'bold',
     color: '#fff',
   },
   button: {
@@ -119,13 +133,15 @@ const styles = StyleSheet.create({
     padding: 7,
     backgroundColor: '#fff',
     borderRadius: 5,
-    paddingVertical:12,
-    paddingHorizontal: 18
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+  },
+  icon: {
+    marginRight: 10,
   },
   buttonText: {
     color: '#000',
-    marginLeft: 10,
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 });
