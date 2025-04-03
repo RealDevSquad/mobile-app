@@ -1,4 +1,4 @@
-package com.abstrctdatyp.RDSExpoApp
+package com.rdsapp
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

@@ -1,4 +1,4 @@
-package com.abstrctdatyp.RDSExpoApp
+package com.rdsapp
 
 import android.app.Application
 import android.content.res.Configuration

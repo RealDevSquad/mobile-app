@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.abstrctdatyp.RDSExpoApp"
+      "package": "com.rdsapp"
     },
     "web": {
       "bundler": "metro",
