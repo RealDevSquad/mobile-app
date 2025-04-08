@@ -7,8 +7,8 @@ export default function useCheckUserSession() {
   useEffect(() => {
     const getToken = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('rds-session');
-        setToken(storedToken);
+        const storedToken = await AsyncStorage.getItem('github_token');
+        setToken(storedToken); // Set the token once retrieved
       } catch (error) {
         console.error('Error getting token:', error);
       }
@@ -16,6 +16,5 @@ export default function useCheckUserSession() {
 
     getToken();
   }, []);
-
-  return { token };
-} 
+  return { token }; // Only return the token
+}

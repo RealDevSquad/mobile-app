@@ -19,8 +19,8 @@ interface UserStore {
   tasks: TaskDTO[]; // Updated to use TaskDTO
   loading: boolean;
   error: string | null;
-  fetchUsers: () => Promise<void>;
-  fetchActiveTask: () => Promise<void>;
+  fetchUsers: (cookie: string) => Promise<void>;
+  fetchActiveTask: (cookie: string) => Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -28,14 +28,14 @@ export const useUserStore = create<UserStore>((set) => ({
   tasks: [], // Updated to use TaskDTO[]
   loading: false,
   error: null,
-  fetchUsers: async () => {
+  fetchUsers: async (cookie: string) => {
     set({ loading: true });
     try {
       const response = await fetch(USER_API.USER_DETAIL, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'rds-session=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ4ekZNVWhwVUJlVUVZaEpTRExkaiIsImlhdCI6MTc0MzkyODEyNCwiZXhwIjoxNzQ2NTIwMTI0fQ.gvYegdQkt7-ZsTNM22oskm_8z5JiduxrxCzu7aWXG6lH7kkpaYJRCSvc8BHagQWdb9MmmTY1_hPBnfpwyyg505IH_Se66H8rolQ_qtbKQmyK5lDl78ciMKOg1yP98COhoE4KpQeSSm3nUYxXPqP4-zo_RX-xEXwXrjXKgri9n4hQT-KBI9rVdk9Nd0vUesTt_NlwrLydfkGVFXn8FkkYvc3u4WugrvQiMSVafOuKEklYjHLwXCEn2guGoC4YP7qJEEhmak-w31L_WhEvrRPsGXjglcC8JTOOZXGl0-nK9c9t2prPn7Rj5Q1bO-sUBgqgWi9EDGkaaDYYx-J9X6LWYg',
+        Cookie: `rds-session=${cookie}`,
         },
       });
 
@@ -49,7 +49,7 @@ export const useUserStore = create<UserStore>((set) => ({
       set({ error: (error instanceof Error ? error.message : 'Failed to fetch users'), loading: false });
     }
   },
-  fetchActiveTask: async () => {
+  fetchActiveTask:  async (cookie: string) =>  {
     set({ loading: true });
     try {
       const response = await fetch(USER_API.GET_ACTIVE_TASK, {
@@ -61,7 +61,7 @@ export const useUserStore = create<UserStore>((set) => ({
           origin: 'https://my.realdevsquad.com',
           referer: 'https://my.realdevsquad.com/',
           'user-agent': 'Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 CrKey/1.54.250320',
-          Cookie: 'rds-session=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ4ekZNVWhwVUJlVUVZaEpTRExkaiIsImlhdCI6MTc0MzkyODEyNCwiZXhwIjoxNzQ2NTIwMTI0fQ.gvYegdQkt7-ZsTNM22oskm_8z5JiduxrxCzu7aWXG6lH7kkpaYJRCSvc8BHagQWdb9MmmTY1_hPBnfpwyyg505IH_Se66H8rolQ_qtbKQmyK5lDl78ciMKOg1yP98COhoE4KpQeSSm3nUYxXPqP4-zo_RX-xEXwXrjXKgri9n4hQT-KBI9rVdk9Nd0vUesTt_NlwrLydfkGVFXn8FkkYvc3u4WugrvQiMSVafOuKEklYjHLwXCEn2guGoC4YP7qJEEhmak-w31L_WhEvrRPsGXjglcC8JTOOZXGl0-nK9c9t2prPn7Rj5Q1bO-sUBgqgWi9EDGkaaDYYx-J9X6LWYg',
+          Cookie: `rds-session=${cookie}`,
         },
       });
 

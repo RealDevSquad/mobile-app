@@ -4,22 +4,25 @@ import { useUserStore } from "@/store/store";
 import { Tabs } from "react-native-collapsible-tab-view";
 import ActiveScreen from "@/components/ActiveTask";
 import Header from "@/components/ProfileHeader";
+import useCheckUserSession from "@/hooks/getUserToken";
 
 export default function ProfileScreen() {
-  const { userData, loading, tasks, fetchUsers, fetchActiveTask } =
-    useUserStore();
+  const { userData, loading, tasks, fetchUsers, fetchActiveTask } = useUserStore();
   const HEADER_HEIGHT = 250;
+  const { token } = useCheckUserSession(); // Get token
 
   useEffect(() => {
-    fetchUsers();
-    fetchActiveTask();
-  }, [fetchUsers, fetchActiveTask]);
+    if (token) { // Only call fetchUsers and fetchActiveTask when token is available
+      fetchUsers(token);
+      fetchActiveTask(token);
+    }
+  }, [token, fetchUsers, fetchActiveTask]);
 
-  if (loading) {
+  if (!token || loading) { // Show loading indicator while token or store is loading
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading users...</Text>
+        <Text>Loading...</Text>
       </View>
     );
   }
@@ -51,5 +54,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
 });
