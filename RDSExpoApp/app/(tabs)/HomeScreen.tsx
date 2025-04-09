@@ -1,7 +1,17 @@
-import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function ProfileScreen() {
+export default function HomeScreen() {
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem('github_token');
+      console.log('Token in AsyncStorage:', token); // Verify token in AsyncStorage
+    };
+
+    checkToken();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home Screen</Text>

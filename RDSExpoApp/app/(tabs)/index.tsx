@@ -11,16 +11,18 @@ import {
   View,
 } from 'react-native';
 import AuthApi from '../../constants/apiConstant/AuthApi';
+import useUserStore from '../../constants/stores/UserStore'; // Import Zustand store
 
 function buildUrl(url: string, params: { [key: string]: string }) {
   const queryString = Object.keys(params)
-    .map(key => `${key}=${encodeURIComponent(params[key])}`)
+    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
     .join('&');
   return `${url}?${queryString}`;
 }
 
 const AuthScreen = () => {
   const router = useRouter();
+  const setToken = useUserStore((state) => state.setToken); // Zustand setToken
 
   const queryParams = {
     sourceUtm: 'rds-mobile-app',
@@ -33,6 +35,7 @@ const AuthScreen = () => {
     const token = await AsyncStorage.getItem('github_token');
     if (token) {
       console.log('User already logged in, redirecting to HomeScreen');
+      setToken(token); // Set token in Zustand
       router.replace('/HomeScreen');
     }
   };
@@ -42,8 +45,9 @@ const AuthScreen = () => {
       const urlObj = new URL(url);
       const token = urlObj.searchParams.get('token');
       if (token) {
-        await AsyncStorage.setItem('github_token', token);
-        console.log('Token stored:', token);
+        await AsyncStorage.setItem('github_token', token); // Store token in AsyncStorage
+        setToken(token); // Store token in Zustand
+        console.log('Token stored in AsyncStorage and Zustand:', token);
         router.replace('/HomeScreen');
       }
     } catch (error) {
@@ -73,27 +77,33 @@ const AuthScreen = () => {
   }, []);
 
   const handleSignIn = () => {
-    Linking.openURL(githubAuthUrl).catch(err =>
-      console.error('Failed to open GitHub auth URL', err),
+    Linking.openURL(githubAuthUrl).catch((err) =>
+      console.error('Failed to open GitHub auth URL', err)
     );
   };
 
   return (
     <View style={styles.container}>
-      <Image 
-        source={require('../../assets/images/rdsLogo.png')} 
-        style={styles.logo} 
-        resizeMode="contain" 
+      <Image
+        source={require('../../assets/images/rdsLogo.png')}
+        style={styles.logo}
+        resizeMode="contain"
       />
       <Text style={styles.title}>Welcome to</Text>
       <Text style={styles.title1}>REAL DEV SQUAD</Text>
 
-      <TouchableOpacity style={[styles.button, { borderRadius: 12 }]} onPress={handleSignIn}>
+      <TouchableOpacity
+        style={[styles.button, { borderRadius: 12 }]}
+        onPress={handleSignIn}
+      >
         <FontAwesome name="github" size={24} color="#000" style={styles.icon} />
         <Text style={styles.buttonText}>GitHub SignIn</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, { borderRadius: 12, marginTop: 20 }]} onPress={handleSignIn}>
+      <TouchableOpacity
+        style={[styles.button, { borderRadius: 12, marginTop: 20 }]}
+        onPress={handleSignIn}
+      >
         <FontAwesome name="globe" size={24} color="#000" style={styles.icon} />
         <Text style={styles.buttonText}>Web SignIn</Text>
       </TouchableOpacity>
@@ -104,7 +114,7 @@ const AuthScreen = () => {
 export default AuthScreen;
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
