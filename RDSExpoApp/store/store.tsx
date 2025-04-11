@@ -17,6 +17,7 @@ interface User {
 interface UserStore {
   userData: User[];
   tasks: TaskDTO[]; // Updated to use TaskDTO
+  userStatus:any
   loading: boolean;
   error: string | null;
   fetchUsers: (cookie: string) => Promise<void>;
@@ -26,6 +27,7 @@ interface UserStore {
 export const useUserStore = create<UserStore>((set) => ({
   userData: [],
   tasks: [], // Updated to use TaskDTO[]
+  userStatus: [],
   loading: false,
   error: null,
   fetchUsers: async (cookie: string) => {
@@ -73,6 +75,27 @@ export const useUserStore = create<UserStore>((set) => ({
       set({ tasks: data, loading: false, error: null });
     } catch (error) {
       set({ error: (error instanceof Error ? error.message : 'Failed to fetch active tasks'), loading: false });
+    }
+  },
+  fetchUserStatus: async (cookie: string) => {
+    set({ loading: true });
+    try {
+      const response = await fetch(USER_API.GET_USER_STATUS, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: `rds-session=${cookie}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch user status: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      set({ userStatus: data, loading: false, error: null });
+    } catch (error) {
+      set({ error: (error instanceof Error ? error.message : 'Failed to fetch user status'), loading: false });
     }
   },
 }));

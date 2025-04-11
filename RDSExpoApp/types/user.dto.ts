@@ -39,3 +39,23 @@ export interface Picture {
     created_at: number;
     updated_at: number;
   }
+
+  export interface MonthlyHours {
+    committed: number;
+  }
+  
+  export interface CurrentStatus {
+    state: string;
+    message: string;
+    from: number;
+    until: string;
+    updatedAt: number;
+  }
+  
+  export interface UserStatusDTO {
+    id: string;
+    userId: string;
+    monthlyHours: MonthlyHours;
+    currentStatus: CurrentStatus;
+    message: string;
+  }
