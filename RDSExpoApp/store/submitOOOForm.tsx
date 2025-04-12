@@ -9,17 +9,28 @@ export const useOOOStore = create<OOOFormState>((set, get) => ({
   submitOOOForm: async (data, token) => {
     console.log('Submitting OOO Form Data:', data);
 
+    // Convert frontend fields to backend-compatible fields
+    const payload = {
+      from: new Date(data.fromDate).toISOString(), 
+      until: new Date(data.toDate).toISOString(), 
+      message: data.description, // Map description to message
+      state: 'PENDING', // Set state to PENDING
+      type: 'OOO', // Set type to OOO
+    };
+
+    console.log('Transformed Payload:', payload);
+
     const options = {
-      method: 'PATCH',
+      method: 'POST', // Use POST as per backend requirements
       headers: {
         'Content-Type': 'application/json',
         cookie: `rds-session=${token}`, // Include the session token for authentication
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     };
 
     try {
-      // Make a PATCH request to update the user's status using HomeApi.UPDATE_STATUS
+      // Make a POST request to create the OOO status request
       const response = await fetch(HomeApi.UPDATE_STATUS, options);
 
       if (response.ok) {

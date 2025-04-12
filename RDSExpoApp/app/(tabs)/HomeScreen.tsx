@@ -24,13 +24,13 @@ export default function ProfileScreen() {
     console.log('From Date:', fromDate);
     console.log('To Date:', toDate);
     console.log('Description:', description);
-
+  
     const formData = {
       fromDate,
       toDate,
       description,
     };
-
+  
     try {
       // Call the submitOOOForm function from Zustand store
       const response = await submitOOOForm(formData, token);
