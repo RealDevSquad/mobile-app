@@ -4,7 +4,7 @@ import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'reac
 import DatePicker from 'react-native-date-picker';
 
 interface StatusUpdateFormProps {
-  onSubmit: (fromDate: string, toDate: string, description: string) => void;
+  onSubmit: (fromDate: Date, toDate: Date, description: string) => void;
   onClose: () => void; // Callback to handle closing the form
 }
 
@@ -40,8 +40,8 @@ const StatusUpdateForm: React.FC<StatusUpdateFormProps> = ({ onSubmit, onClose }
 
   const handleSubmit = () => {
     if (isFormValid()) {
-      const formattedFromDate = fromDate ? formatDate(fromDate) : '';
-      const formattedToDate = toDate ? formatDate(toDate) : '';
+      const formattedFromDate = fromDate ? fromDate: new Date();
+      const formattedToDate = toDate ? toDate : new Date();
       onSubmit(formattedFromDate, formattedToDate, description);
       setFromDate(null);
       setToDate(null);
