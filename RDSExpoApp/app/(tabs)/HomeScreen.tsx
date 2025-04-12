@@ -8,31 +8,36 @@ import { useOOOStore } from '../../store/submitOOOForm';
 export default function ProfileScreen() {
   const { loading, fetchUserStatus, userStatus } = useUserStore();
   const { token } = useCheckUserSession(); // Get token
-  const { submitOOOForm } = useOOOStore(); // Access the Zustand store function
+  const { submitOOOForm, cancelOOO } = useOOOStore(); // Access Zustand store functions
   const [showForm, setShowForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Track loading state for cancel OOO
 
   console.log(userStatus, 'user status');
 
   useEffect(() => {
     if (token) {
-      // Only call fetchUsers and fetchActiveTask when token is available
-      fetchUserStatus(token);
+      fetchUserStatus(token); // Fetch user status when token is available
     }
   }, [token, fetchUserStatus]);
 
-  const handleFormSubmit = async (fromDate: string, toDate: string, description: string) => {
-    console.log('From Date:', fromDate);
-    console.log('To Date:', toDate);
-    console.log('Description:', description);
-  
-    const formData = {
-      fromDate,
-      toDate,
-      description,
-    };
-  
+  const handleCancelOOO = async () => {
+    setIsLoading(true); // Set loading state
     try {
-      // Call the submitOOOForm function from Zustand store
+      await cancelOOO(token); // Call cancelOOO function from Zustand store
+      Alert.alert('Success', 'Your status has been updated to ACTIVE.');
+      fetchUserStatus(token); // Refresh the user status
+    } catch (error) {
+      Alert.alert('Error', 'Failed to cancel your OOO status. Please try again.');
+      console.error('Error cancelling OOO status:', error);
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
+  };
+
+  const handleFormSubmit = async (fromDate: string, toDate: string, description: string) => {
+    const formData = { fromDate, toDate, description };
+
+    try {
       const response = await submitOOOForm(formData, token);
       if (response) {
         Alert.alert('Success', 'Your status has been updated to OOO.');
@@ -46,7 +51,6 @@ export default function ProfileScreen() {
   };
 
   if (!token || loading) {
-    // Show loading indicator while token or store is loading
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#2819b2" />
@@ -60,11 +64,23 @@ export default function ProfileScreen() {
       {!showForm && (
         <>
           <Text style={[styles.title, styles.highlight]}>
-            You are {userStatus?.data?.currentStatus?.state}
+            You are currently {userStatus?.data?.currentStatus?.state}
           </Text>
-          <TouchableOpacity style={styles.button} onPress={() => setShowForm(true)}>
-            <Text style={styles.buttonText}>Update your status</Text>
-          </TouchableOpacity>
+          {userStatus?.data?.currentStatus?.state === 'OOO' ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleCancelOOO}
+              disabled={isLoading} // Disable button while loading
+            >
+              <Text style={styles.buttonText}>
+                {isLoading ? 'Cancelling...' : 'Cancel OOO'}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={() => setShowForm(true)}>
+              <Text style={styles.buttonText}>Submit OOO</Text>
+            </TouchableOpacity>
+          )}
         </>
       )}
 
