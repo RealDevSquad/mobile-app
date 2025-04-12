@@ -1,19 +1,16 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useEffect,useState } from 'react';
+import React, { useEffect } from 'react';
 import {
-  Dimensions,
   Image,
+  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import AuthApi from '../../constants/apiConstant/AuthApi';
-import WebView from 'react-native-webview'
-import useCheckUserSession from '@/hooks/getUserToken';
-
 
 function buildUrl(url: string, params: { [key: string]: string }) {
   const queryString = Object.keys(params)
@@ -24,13 +21,6 @@ function buildUrl(url: string, params: { [key: string]: string }) {
 
 const AuthScreen = () => {
   const router = useRouter();
-  const { width, height } = Dimensions.get('window');
-
-  const {token:storedToken}= useCheckUserSession()
-
-  console.log(storedToken,"stored token")
-
-  
 
   const queryParams = {
     sourceUtm: 'rds-mobile-app',
@@ -38,85 +28,75 @@ const AuthScreen = () => {
   };
 
   const githubAuthUrl = buildUrl(AuthApi.GITHUB_AUTH_API, queryParams);
-  
-  const ssoRedirectURL = githubAuthUrl
 
-  const handleNavigationStateChange = (navState: any) => {
-
-    if (navState.url.includes('token=')) {
-      try {
-        const urlObj = new URL(navState.url);
-        const token = urlObj.searchParams.get('token');
-        if (token) {
-          AsyncStorage.setItem('github_token', token);
-          setGithubLogin(false)
-          router.replace("/(tabs)/(home)");
-
-        }
-      } catch (error) {
-        console.error('Error parsing URL:', error);
-      }
-    }
-  };
-
-  const handleSignIn = () => {
-    setGithubLogin(true)
-  };
-
-
-  console.log(handleNavigationStateChange,"handleNavigationStateChange")
-
-  const [githubLogin,setGithubLogin]=useState(false)
-  useEffect(() => {
-    if (storedToken) {
-      console.log('Token exists, redirecting to HomeScreen');
+  const checkUserSession = async () => {
+    const token = await AsyncStorage.getItem('github_token');
+    if (token) {
+      console.log('User already logged in, redirecting to HomeScreen');
       router.replace("/(tabs)/(home)");
     }
-  }, [storedToken]);
+  };
+
+  const handleTokenFromUrl = async (url: string) => {
+    try {
+      const urlObj = new URL(url);
+      const token = urlObj.searchParams.get('token');
+      if (token) {
+        await AsyncStorage.setItem('github_token', token);
+        console.log('Token stored:', token);
+        router.replace("/(tabs)/(home)");
+      }
+    } catch (error) {
+      console.error('Error processing deep link', error);
+    }
+  };
+
+  useEffect(() => {
+    checkUserSession();
+
+    (async () => {
+      const initialUrl = await Linking.getInitialURL();
+      console.log('Initial URL received:', initialUrl);
+      if (initialUrl) {
+        handleTokenFromUrl(initialUrl);
+      }
+    })();
+
+    const subscription = Linking.addEventListener('url', (event) => {
+      console.log('Deep link event received:', event.url);
+      handleTokenFromUrl(event.url);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const handleSignIn = () => {
+    Linking.openURL(githubAuthUrl).catch(err =>
+      console.error('Failed to open GitHub auth URL', err),
+    );
+  };
 
   return (
     <View style={styles.container}>
-      {
-        githubLogin?(
-          <View style={{ width: width * 0.9, height: height * 0.8, borderRadius: 10, overflow: 'hidden', backgroundColor: '#fff', position: 'relative' }}>
-          {/* Close Button */}
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setGithubLogin(false)}
-          >
-            <FontAwesome name="times" size={24} color="#000" />
-          </TouchableOpacity>
-          <WebView
-            onNavigationStateChange={handleNavigationStateChange}
-            source={{
-              uri: ssoRedirectURL,
-            }}
-            incognito
-            style={{ flex: 1 }}
-          />
-        </View>
-        ):      
-    <View>
-    <Image 
-      source={require('../../assets/images/rdsLogo.png')} 
-      style={styles.logo} 
-      resizeMode="contain" 
+      <Image 
+        source={require('../../assets/images/rdsLogo.png')} 
+        style={styles.logo} 
+        resizeMode="contain" 
       />
-    <Text style={styles.title}>Welcome to</Text>
-    <Text style={styles.title1}>REAL DEV SQUAD</Text>
+      <Text style={styles.title}>Welcome to</Text>
+      <Text style={styles.title1}>REAL DEV SQUAD</Text>
 
-    <TouchableOpacity style={[styles.button, { borderRadius: 12 }]} onPress={handleSignIn}>
-      <FontAwesome name="github" size={24} color="#000" style={styles.icon} />
-      <Text style={styles.buttonText}>GitHub SignIn</Text>
-    </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { borderRadius: 12 }]} onPress={handleSignIn}>
+        <FontAwesome name="github" size={24} color="#000" style={styles.icon} />
+        <Text style={styles.buttonText}>GitHub SignIn</Text>
+      </TouchableOpacity>
 
-    <TouchableOpacity style={[styles.button, { borderRadius: 12, marginTop: 20 }]} onPress={handleSignIn}>
-      <FontAwesome name="globe" size={24} color="#000" style={styles.icon} />
-      <Text style={styles.buttonText}>Web SignIn</Text>
-    </TouchableOpacity>
-      </View>
-      }
-
+      <TouchableOpacity style={[styles.button, { borderRadius: 12, marginTop: 20 }]} onPress={handleSignIn}>
+        <FontAwesome name="globe" size={24} color="#000" style={styles.icon} />
+        <Text style={styles.buttonText}>Web SignIn</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -163,19 +143,5 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    zIndex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 5,
-    elevation: 5, // For Android shadow
-    shadowColor: '#000', // For iOS shadow
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
   },
 });
