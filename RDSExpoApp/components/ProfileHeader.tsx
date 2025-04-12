@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Platform,
 } from "react-native";
 import Avatar from "@/components/Avatar";
 import UserDetails from "@/components/UserDetails";
@@ -35,7 +36,12 @@ const Header: React.FC<any> = (props) => {
 
   return (
     <TouchableWithoutFeedback onPress={closeMenu}>
-      <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        Platform.OS === "ios" && { marginTop: 80 }, // Add marginTop for iOS
+      ]}
+    >
         <TouchableOpacity style={styles.menuButton} onPress={toggleMenu}>
           <FontAwesome name="ellipsis-v" size={24} color="#000" />
         </TouchableOpacity>
