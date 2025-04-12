@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useRouter } from 'expo-router';
 
 
-const ActiveScreen = ({ tasks }: { tasks: any[] }) => {
+const Task = ({ tasks }: { tasks: any[] }) => {
   const formatTimeAgo = (timestamp: number) => {
     const currentDate = moment();
     const endDate = moment.unix(timestamp);
@@ -14,7 +14,15 @@ const ActiveScreen = ({ tasks }: { tasks: any[] }) => {
 
   const renderItem = ({ item }: { item: any }) => {
     return (
-      <TouchableOpacity style={styles.card} onPress={() => router.navigate("/TaskDetails/TaskDetails")}>
+      <TouchableOpacity style={styles.card}   
+      onPress={() =>
+        router.navigate({
+          pathname: "/(tabs)/(profile)/details",
+          params: {
+            ...item, // Pass the entire item object
+          },
+        })
+      }>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.text}>
           Created By: <Text style={styles.createdBy}>{item.createdBy}</Text>
@@ -89,4 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActiveScreen;
+export default Task;

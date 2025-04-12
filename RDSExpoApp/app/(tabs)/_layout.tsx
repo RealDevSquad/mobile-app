@@ -25,7 +25,7 @@ export default function TabLayout() {
 
       {/* Home tab */}
       <Tabs.Screen
-        name="HomeScreen"
+        name="(home)"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }: { color: string }) => (
@@ -36,7 +36,7 @@ export default function TabLayout() {
 
       {/* Notify tab */}
       <Tabs.Screen
-        name="NotifyScreen"
+        name="(notify)"
         options={{
           title: 'Notify',
           tabBarIcon: ({ color }: { color: string }) => (
@@ -47,7 +47,7 @@ export default function TabLayout() {
 
       {/* Profile tab */}
       <Tabs.Screen
-        name="ProfileScreen"
+        name="(profile)"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }: { color: string }) => (

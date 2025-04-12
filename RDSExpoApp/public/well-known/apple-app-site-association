@@ -1,0 +1,21 @@
+{
+    "applinks": {
+      "apps": [],
+      "details": [
+        {
+          "appID": "25JQ655X97.com.appflipkart.flipkart",
+          "paths": [ "" ]
+        },
+        {
+          "appID": "QJD7W9832N.com.appflipkart.fk",
+          "paths": [ "" ]
+        }
+      ]
+    },
+    "webcredentials": {
+      "apps": [
+        "25JQ655X97.com.appflipkart.flipkart",
+        "QJD7W9832N.com.appflipkart.fk"
+      ]
+    }
+  }

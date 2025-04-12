@@ -2,14 +2,17 @@ import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useUserStore } from "@/store/store";
 import { Tabs } from "react-native-collapsible-tab-view";
-import ActiveScreen from "@/components/ActiveTask";
 import Header from "@/components/ProfileHeader";
 import useCheckUserSession from "@/hooks/getUserToken";
+import Task from "@/components/Task";
+import { useNetInfo } from "@react-native-community/netinfo";
+
 
 export default function ProfileScreen() {
   const { userData, loading, tasks, fetchUsers, fetchActiveTask } = useUserStore();
   const HEADER_HEIGHT = 250;
   const { token } = useCheckUserSession(); // Get token
+  const { type, isConnected } = useNetInfo();
 
   useEffect(() => {
     if (token) { // Only call fetchUsers and fetchActiveTask when token is available
@@ -34,16 +37,16 @@ export default function ProfileScreen() {
     >
       <Tabs.Tab name="Active Tasks">
         <Tabs.FlatList
-          data={tasks.filter((task) => task.status !== "COMPLETED")}
+          data={tasks.filter((task) => task.percentCompleted !== 100)}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ActiveScreen tasks={[item]} />}
+          renderItem={({ item }) => <Task tasks={[item]} />}
         />
       </Tabs.Tab>
       <Tabs.Tab name="Completed Tasks">
         <Tabs.FlatList
-          data={tasks.filter((task) => task.status === "COMPLETED")}
+          data={tasks.filter((task) => task.percentCompleted === 100)}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ActiveScreen tasks={[item]} />}
+          renderItem={({ item }) => <Task tasks={[item]} />}
         />
       </Tabs.Tab>
     </Tabs.Container>

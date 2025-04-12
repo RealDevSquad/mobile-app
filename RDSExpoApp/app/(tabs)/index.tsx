@@ -33,7 +33,7 @@ const AuthScreen = () => {
     const token = await AsyncStorage.getItem('github_token');
     if (token) {
       console.log('User already logged in, redirecting to HomeScreen');
-      router.replace('/HomeScreen');
+      router.replace("/(tabs)/(home)");
     }
   };
 
@@ -44,7 +44,7 @@ const AuthScreen = () => {
       if (token) {
         await AsyncStorage.setItem('github_token', token);
         console.log('Token stored:', token);
-        router.replace('/HomeScreen');
+        router.replace("/(tabs)/(home)");
       }
     } catch (error) {
       console.error('Error processing deep link', error);
