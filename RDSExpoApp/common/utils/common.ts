@@ -1,3 +1,5 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export const formatDateTime = (timestamp: string | number): string => {
     if (!timestamp) return "Invalid date";
   
@@ -20,3 +22,34 @@ export const formatDateTime = (timestamp: string | number): string => {
   
     return formattedDate;
   };
+
+
+
+
+// Function to get a value from local storage
+export const getLocalStorageItem = async (key: string): Promise<string | null> => {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    return value; // Return the value
+  } catch (error) {
+    console.error(`Error getting item with key "${key}":`, error);
+    return null;
+  }
+};
+
+// Function to set a value in local storage
+export const setLocalStorageItem = async (key: string, value: string): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (error) {
+    console.error(`Error setting item with key "${key}":`, error);
+  }
+};
+
+export const removeLocalStorageItem = async (key: string): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    console.error(`Error removing item with key "${key}":`, error);
+  }
+};

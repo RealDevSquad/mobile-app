@@ -20,7 +20,7 @@
     "@react-navigation/native": "^7.0.14",
     "expo": "^52.0.39",
     "expo-auth-session": "^6.0.3",
-    "expo-camera": "^16.0.18",
+    "expo-camera": "~16.0.18",
     "expo-device": "~7.0.3",
     "expo-font": "~13.0.4",
     "expo-image": "~2.0.7",

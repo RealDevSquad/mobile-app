@@ -10,17 +10,20 @@ import {
 import Avatar from "@/components/Avatar";
 import UserDetails from "@/components/UserDetails";
 import SocialLinks from "@/components/SocialLinks";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { removeLocalStorageItem } from '@/common/utils/common';
+import { reloadAppAsync } from "expo";
+import { TOKEN_KEY } from "@/constants/constants";
 
 const Header: React.FC<any> = (props) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("github_token");
-      router.replace("/");
+      await removeLocalStorageItem(TOKEN_KEY)
+      router.navigate("/")
+      reloadAppAsync()
     } catch (error) {
       console.error("Error logging out", error);
     }

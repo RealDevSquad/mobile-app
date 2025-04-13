@@ -1,4 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getLocalStorageItem } from '@/common/utils/common';
+import { TOKEN_KEY } from '@/constants/constants';
 import { useState, useEffect } from 'react';
 
 export default function useCheckUserSession() {
@@ -7,7 +8,7 @@ export default function useCheckUserSession() {
   useEffect(() => {
     const getToken = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('github_token');
+        const storedToken = await getLocalStorageItem(TOKEN_KEY)
         setToken(storedToken); // Set the token once retrieved
       } catch (error) {
         console.error('Error getting token:', error);
