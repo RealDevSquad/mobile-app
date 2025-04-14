@@ -78,11 +78,6 @@ export const useUserStore = create<UserStore>((set) => ({
         headers: {
           'Content-Type': 'application/json',
           accept: '*/*',
-          'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7',
-          origin: 'https://my.realdevsquad.com',
-          referer: 'https://my.realdevsquad.com/',
-          'user-agent':
-            'Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 CrKey/1.54.250320',
           Cookie: `rds-session=${cookie}`,
         },
       });
