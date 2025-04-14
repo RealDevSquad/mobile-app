@@ -1,22 +1,23 @@
+import { setLocalStorageItem } from "@/common/utils/common";
+import { TOKEN_KEY } from "@/constants/constants";
+import useCheckUserSession from "@/hooks/getUserToken";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Camera, CameraView } from "expo-camera";
+import * as Device from "expo-device";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import * as Device from "expo-device";
 import {
+  Animated,
   Dimensions,
+  Easing,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Animated, Easing
+  View
 } from "react-native";
-import { CameraView, Camera } from "expo-camera";
 import WebView from "react-native-webview";
-import AuthApi from "../../constants/apiConstant/AuthApi";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { setLocalStorageItem } from "@/common/utils/common";
-import { TOKEN_KEY } from "@/constants/constants";
+import AuthApi from "../../constants/apiConstant/auth-api";
 
 function buildUrl(url: string, params: { [key: string]: string }) {
   const queryString = Object.keys(params)
