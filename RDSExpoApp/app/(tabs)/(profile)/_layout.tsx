@@ -1,6 +1,6 @@
-import React from 'react';
-import { Stack, useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome5';
+import { Stack, useRouter } from 'expo-router';
+import React from 'react';
 
 export default function ProfileLayout() {
     const router = useRouter();

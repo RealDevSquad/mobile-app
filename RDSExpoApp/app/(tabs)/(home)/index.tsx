@@ -1,14 +1,12 @@
+import StatusUpdateForm from '@/components/statusUpdateForm';
 import useCheckUserSession from '@/hooks/getUserToken';
-import { useUserStore } from '@/store/store';
+import { useUserStore } from '@/store/store'; // Use useUserStore to access submitOOOForm and cancelOOO
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import StatusUpdateForm from '../../../components/statusUpdateForm';
-import { useOOOStore } from '../../../store/submitOOOForm';
 
 export default function ProfileScreen() {
-  const { loading, fetchUserStatus, userStatus } = useUserStore();
+  const { loading, fetchUserStatus, userStatus, submitOOOForm, cancelOOO } = useUserStore(); // Access Zustand store functions
   const { token } = useCheckUserSession(); // Get token
-  const { submitOOOForm, cancelOOO } = useOOOStore(); // Access Zustand store functions
   const [showForm, setShowForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Track loading state for cancel OOO
 

@@ -3069,8 +3069,10 @@ expo-linking@*, expo-linking@~7.0.5:
     expo-constants "~17.0.5"
     invariant "^2.2.4"
 
-expo-modules-autolinking@2.0.8:
+expo-modules-autolinking@^2.0.8, expo-modules-autolinking@2.0.8:
   version "2.0.8"
+  resolved "https://registry.npmjs.org/expo-modules-autolinking/-/expo-modules-autolinking-2.0.8.tgz"
+  integrity sha512-DezgnEYFQYic8hKGhkbztBA3QUmSftjaNDIKNAtS2iGJmzCcNIkatjN2slFDSWjSTNo8gOvPQyMKfyHWFvLpOQ==
   dependencies:
     "@expo/spawn-async" "^1.7.2"
     chalk "^4.1.0"

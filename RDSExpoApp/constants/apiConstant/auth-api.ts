@@ -1,4 +1,3 @@
-import { STAGING_BASE_URL } from './BaseUrl';
 // const basrUrl = 'https://api.realdevsquad.com'; //production
 const AuthApis = {
   USER_DETAIL: 'https://api.realdevsquad.com/users/userId/',
