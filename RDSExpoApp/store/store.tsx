@@ -128,8 +128,6 @@ export const useUserStore = create<UserStore>((set) => ({
   },
 
   submitOOOForm: async (data, token) => {
-    console.log('Submitting OOO Form Data:', data);
-
     const payload = {
       currentStatus: {
         from: new Date(data.fromDate).getTime(), // Convert fromDate to timestamp
@@ -168,8 +166,6 @@ export const useUserStore = create<UserStore>((set) => ({
   },
 
   cancelOOO: async (token) => {
-    console.log('Cancelling OOO Status');
-
     const payload = {
       cancelOoo: true, // Backend requires this field to cancel OOO
     };

@@ -1,16 +1,22 @@
-import StatusUpdateForm from '@/components/statusUpdateForm';
-import useCheckUserSession from '@/hooks/getUserToken';
-import { useUserStore } from '@/store/store'; // Use useUserStore to access submitOOOForm and cancelOOO
-import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import StatusUpdateForm from "@/components/StatusUpdateForm";
+import useCheckUserSession from "@/hooks/getUserToken";
+import { useUserStore } from "@/store/store"; // Use useUserStore to access submitOOOForm and cancelOOO
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from "react-native";
 
 export default function ProfileScreen() {
-  const { fetchUserStatus, userStatus, submitOOOForm, cancelOOO } = useUserStore(); // Access Zustand store functions
+  const { fetchUserStatus, userStatus, submitOOOForm, cancelOOO } =
+    useUserStore(); // Access Zustand store functions
   const { token } = useCheckUserSession(); // Get token
   const [showForm, setShowForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Track loading state for cancel OOO
-
-  console.log(userStatus, 'user status');
 
   useEffect(() => {
     if (token) {
@@ -23,17 +29,21 @@ export default function ProfileScreen() {
     setIsLoading(true); // Set loading state
     try {
       await cancelOOO(token); // Call cancelOOO function from Zustand store
-      Alert.alert('Success', 'Your status has been updated to ACTIVE.');
+      Alert.alert("Success", "Your status has been updated to ACTIVE.");
       fetchUserStatus(token); // Refresh the user status
     } catch (error) {
-      Alert.alert('Error', 'Failed to cancel your OOO status. Please try again.');
-      console.error('Error cancelling OOO status:', error);
+      Alert.alert("Error", "Failed to cancel your OOO status. Please try again.");
+      console.error("Error cancelling OOO status:", error);
     } finally {
       setIsLoading(false); // Reset loading state
     }
   };
 
-  const handleFormSubmit = async (fromDate: Date, toDate: Date, description: string) => {
+  const handleFormSubmit = async (
+    fromDate: Date,
+    toDate: Date,
+    description: string
+  ) => {
     if (!token) return; // Ensure token is not null
 
     // Format the dates as strings (if needed by the API)
@@ -46,13 +56,13 @@ export default function ProfileScreen() {
     try {
       const response = await submitOOOForm(formData, token);
       if (response) {
-        Alert.alert('Success', 'Your status has been updated to OOO.');
+        Alert.alert("Success", "Your status has been updated to OOO.");
         fetchUserStatus(token); // Refresh the user status
         setShowForm(false); // Close the form
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to update your status. Please try again.');
-      console.error('Error submitting OOO form:', error);
+      Alert.alert("Error", "Failed to update your status. Please try again.");
+      console.error("Error submitting OOO form:", error);
     }
   };
 
@@ -60,21 +70,29 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       {!showForm && (
         <>
-          <Text style={[styles.title, styles.highlight]}>
-            You are currently {userStatus?.data?.currentStatus?.state}
+          <Text style={styles.title}>
+            You are currently{" "}
+            <Text style={styles.highlight}>
+              {userStatus?.data?.currentStatus?.state || "UNKNOWN"}
+            </Text>
           </Text>
-          {userStatus?.data?.currentStatus?.state === 'OOO' ? (
+          {userStatus?.data?.currentStatus?.state === "OOO" ? (
             <TouchableOpacity
-              style={styles.button}
+              style={[styles.button, styles.cancelButton]}
               onPress={handleCancelOOO}
               disabled={isLoading} // Disable button while loading
             >
-              <Text style={styles.buttonText}>
-                {isLoading ? 'Cancelling...' : 'Cancel OOO'}
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Cancel OOO</Text>
+              )}
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity style={styles.button} onPress={() => setShowForm(true)}>
+            <TouchableOpacity
+              style={[styles.button, styles.submitButton]}
+              onPress={() => setShowForm(true)}
+            >
               <Text style={styles.buttonText}>Submit OOO</Text>
             </TouchableOpacity>
           )}
@@ -94,29 +112,45 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#f5f5f5",
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 20,
   },
   highlight: {
-    color: '#2819b2',
+    color: "#4CAF50",
+    fontWeight: "bold",
   },
   button: {
-    borderWidth: 2,
-    borderColor: 'green',
-    borderRadius: 5,
-    paddingVertical: 10,
+    borderRadius: 25,
+    paddingVertical: 12,
     paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "60%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
     marginTop: 20,
   },
+  submitButton: {
+    backgroundColor: "#4CAF50",
+  },
+  cancelButton: {
+    backgroundColor: "#FF5722",
+  },
   buttonText: {
-    color: 'green',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
