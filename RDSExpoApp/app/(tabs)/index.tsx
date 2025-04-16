@@ -2,11 +2,12 @@ import { setLocalStorageItem } from "@/common/utils/common";
 import { TOKEN_KEY } from "@/constants/constants";
 import useCheckUserSession from "@/hooks/getUserToken";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Camera, CameraView } from "expo-camera";
+import { Camera} from "expo-camera";
 import * as Device from "expo-device";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Animated,
   Dimensions,
   Easing,
@@ -14,10 +15,23 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import WebView from "react-native-webview";
 import AuthApi from "../../constants/apiConstant/auth-api";
+import ToastManager, { Toast } from "toastify-react-native";
+import CameraModal from "@/components/Modal/CameraModal";
+import GitHubLoginModal from "@/components/Modal/GithubLoginModal";
+
+
+const toastConfig = {
+  success: (props: { text1: string; text2?: string }) => (
+    <View style={{ backgroundColor: "#4CAF50", padding: 16, borderRadius: 10 }}>
+      <Text style={{ color: "white", fontWeight: "bold" }}>{props.text1}</Text>
+      {props.text2 && <Text style={{ color: "white" }}>{props.text2}</Text>}
+    </View>
+  ),
+  // Override other toast types as needed
+};
 
 function buildUrl(url: string, params: { [key: string]: string }) {
   const queryString = Object.keys(params)
@@ -28,14 +42,17 @@ function buildUrl(url: string, params: { [key: string]: string }) {
 
 const AuthScreen = () => {
   const router = useRouter();
-  const [modalAnimation] = useState(new Animated.Value(Dimensions.get("window").height));
+  const [modalAnimation] = useState(
+    new Animated.Value(Dimensions.get("window").height)
+  );
 
   const { token: storedToken } = useCheckUserSession();
 
   const [githubLogin, setGithubLogin] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
-  // const [scannedUserId, setScannedUserID] = useState("");
+  const [scannedUserId, setScannedUserId] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const openModal = () => {
     Animated.timing(modalAnimation, {
@@ -64,7 +81,6 @@ const AuthScreen = () => {
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      console.log("Camera permission status:", status);
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -100,126 +116,103 @@ const AuthScreen = () => {
     setCameraVisible(true);
   };
 
-  const handleBarCodeScanned = ({
-    type,
-    data,
-  }: {
-    type: string;
-    data: string;
-  }) => {
-    console.log(`QR Code scanned: ${data}`);
-    setCameraVisible(false);
-    // Handle the scanned QR code data here
+  const qrCodeLogin = async () => {
+    const deviceId = Device.osBuildId;
+    const url = `${AuthApi.QR_AUTH_API}?device_id=${deviceId}`;
+    try {
+      const userInfo = await fetch(url);
+      const userInfoJson = await userInfo.json();
+      if (userInfoJson.data.token) {
+        setLocalStorageItem(TOKEN_KEY, userInfoJson.data.token);
+        setCameraVisible(false);
+        router.replace("/(tabs)/(home)");
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Please authorize from my-site by giving confirmations",
+          position: "bottom",
+          bottomOffset: 80,
+        });
+        setScannedUserId("")
+      }
+    } catch (err) {
+      console.error("Error during QR code login:", err);
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong, please try again later",
+        position: "bottom",
+        bottomOffset: 80,
+      });
+    }
   };
 
-  console.log(Device.osBuildId, "Device");
+  const getAuthStatus = async () => {
+    const deviceInfo = Device.modelName;
+    const deviceId = Device.osBuildId;
+    const url = `${AuthApi.QR_AUTH_API}?device_id=${deviceId}`;
+    try {
+      const data = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          device_info: deviceInfo,
+          user_id: scannedUserId,
+          device_id: deviceId,
+        }),
+      });
 
-  // const qrCodeLogin = async () => {
-  //   console.log("hello");
-  //   const deviceId = Device.osBuildId;
+      if (data.ok) {
+        const dataJson = await data.json();
+        Alert.alert("Please Confirm", dataJson.message, [
+          {
+            text: "Cancel",
+            onPress: () => {          
+              setCameraVisible(false)
+              setScannedUserId("")
+            }
+          },
+          {
+            text: "OK",
+            onPress: () => {
+              setShowModal(true); 
+            },
+          },
+        ]);
+      } else {
+        await data.json();
+        Toast.show({
+          type: 'error',
+          text1: 'Something went wrong, please try again',
+          position: 'bottom',
+          bottomOffset: 80,
+        });
+      }
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1:
+          (err as Error).message || 'Something went wrong, please try again',
+        position: 'bottom',
+        bottomOffset: 80,
+      });
+    }
+  };
 
-  //   console.log(deviceId, "device id");
-
-  //   const url = `${AuthApi.QR_AUTH_API}?device_id=${deviceId}`;
-  //   try {
-  //     console.log("try");
-  //     const userInfo = await fetch(url);
-  //     const userInfoJson = await userInfo.json();
-
-  //     console.log(userInfoJson, "userInfoJson");
-  //     // if (userInfoJson.data.token) {
-  //     //   updateUserData(userInfoJson.data.token);
-  //     // } else {
-  //     //   Toast.show({
-  //     //     type: 'error',
-  //     //     text1: 'Please authorize from my-site by giving confirmations',
-  //     //     position: 'bottom',
-  //     //     bottomOffset: 80,
-  //     //   });
-  //     // }
-  //   } catch (err) {
-  //     // confirm.log(err)
-  //     // Toast.show({
-  //     //   type: 'error',
-  //     //   text1: 'Something went wrong, please try again later',
-  //     //   position: 'bottom',
-  //     //   bottomOffset: 80,
-  //     // });
-  //   }
-  // };
-
-  // const getAuthStatus = async () => {
-  //   const deviceInfo = Device;
-  //   const deviceId = Device.osBuildId;
-  //   const url = `${AuthApi.QR_AUTH_API}?device_id=${deviceId}`;
-  //   console.log(url);
-  //   // setLoading(true);
-  //   try {
-  //     const data = await fetch(url, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         device_info: deviceInfo,
-  //         user_id: scannedUserId,
-  //         device_id: deviceId,
-  //       }),
-  //     });
-
-  //     console.log(data, "data");
-
-  //     if (data.ok) {
-  //       const dataJson = await data.json();
-  //       console.log(dataJson, "data");
-  //       // Alert.alert('Please Confirm', dataJson.message, [
-  //       //   {
-  //       //     text: 'Cancel',
-  //       //     // onPress: () => setCameraActive(false),
-  //       //   },
-  //       //   {
-  //       //     text: 'OK',
-  //       //     onPress: () => {
-  //       //       // setCameraActive(false);
-  //       //       // setModalVisible(true);
-  //       //     },
-  //       //   },
-  //       // ]);
-  //     } else {
-  //       // await data.json();
-  //       // Toast.show({
-  //       //   type: 'error',
-  //       //   text1: 'Something went wrong, please try again',
-  //       //   position: 'bottom',
-  //       //   bottomOffset: 80,
-  //       // });
-  //     }
-  //   } catch (err) {
-  //     // Toast.show({
-  //     //   type: 'error',
-  //     //   text1:
-  //     //     (err as Error).message || 'Something went wrong, please try again',
-  //     //   position: 'bottom',
-  //     //   bottomOffset: 80,
-  //     // });
-  //   }
-  //   // setLoading(false);
-  // };
-
-  // useEffect(() => {
-  //   console.log("calling");
-  //   if (scannedUserId !== "") {
-  //     console.log("calling..........");
-  //     getAuthStatus();
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [scannedUserId]);
+  useEffect(() => {
+    if (scannedUserId !== "") {
+      getAuthStatus();
+    }
+  }, [scannedUserId]);
 
   useEffect(() => {
     if (storedToken) {
       router.replace("/(tabs)/(home)");
     }
   }, [storedToken]);
+
+
   if (cameraVisible) {
     if (!hasPermission) {
       return (
@@ -232,64 +225,29 @@ const AuthScreen = () => {
     }
 
     return (
-      <CameraView
-        style={styles.camera}
-        // type={CameraType.back}
-        facing="back"
-        // onBarcodeScanned={(data) => {
-        //   setScannedUserID(data.data);
-        //   console.log(data.data);
-        //   qrCodeLogin();
-        // }}
-      >
-        <View style={styles.overlay}>
-          {/* Scanner Frame */}
-          <View style={styles.scannerFrame}>
-            <View style={styles.scannerBorder} />
-          </View>
-
-          {/* Close Button */}
-          <TouchableOpacity
-            style={[styles.closeButton, { top: 80, right: 20 }]}
-            onPress={() => setCameraVisible(false)}
-          >
-            <FontAwesome name="times" size={24} color="#FFF" />
-          </TouchableOpacity>
-        </View>
-      </CameraView>
-    );
+      <CameraModal
+      onBarcodeScanned={(data) => setScannedUserId(data)}
+      onClose={() => setCameraVisible(false)}
+      showModal={showModal}
+      qrCodeLogin={() => {
+        qrCodeLogin();
+        setCameraVisible(false);
+        setShowModal(false);
+      }}
+    />
+      )
   }
 
   return (
     <View style={styles.container}>
       {githubLogin ? (
-        <Animated.View
-        style={[
-          styles.modal,
-          {
-            transform: [{ translateY: modalAnimation }],
-            position: "absolute",
-            bottom: 0,
-            width: "100%",
-            height: "100%",
-          },
-        ]}
-      >
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={closeModal}
-        >
-          <FontAwesome name="times" size={24} color="#000" />
-        </TouchableOpacity>
-        <WebView
+        <GitHubLoginModal
+          visible={githubLogin}
+          animation={modalAnimation}
+          url={githubAuthUrl}
+          onClose={closeModal}
           onNavigationStateChange={handleNavigationStateChange}
-          source={{
-            uri: githubAuthUrl,
-          }}
-          incognito
-          style={{ flex: 1 }}
         />
-      </Animated.View>
       ) : (
         <View style={styles.content}>
           <Image
@@ -317,6 +275,7 @@ const AuthScreen = () => {
           </TouchableOpacity>
         </View>
       )}
+      <ToastManager config={toastConfig} />
     </View>
   );
 };
@@ -378,62 +337,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 10,
   },
-  modal: {
-    width: "90%",
-    height: "80%",
-    borderRadius: 15,
-    overflow: "hidden",
-    backgroundColor: "#FFF",
-    position: "relative",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  closeButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 1,
-    backgroundColor: "#E94560",
-    borderRadius: 50,
-    padding: 5,
-    elevation: 5,
-  },
-  camera: {
-    flex: 1,
-  },
-  cameraOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
   message: {
     color: "#FFF",
     fontSize: 16,
     textAlign: "center",
     marginBottom: 10,
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dimmed background
-  },
-  scannerFrame: {
-    width: 250,
-    height: 250,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "transparent",
-  },
-  scannerBorder: {
-    width: "100%",
-    height: "100%",
-    borderWidth: 2,
-    borderColor: "#E94560", // Scanner border color
-    borderRadius: 50, // Rounded corners
   },
 });

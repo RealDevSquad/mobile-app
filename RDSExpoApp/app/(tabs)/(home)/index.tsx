@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 export default function ProfileScreen() {
-  const { fetchUserStatus, userStatus, submitOOOForm, cancelOOO } =
+  const { fetchUserStatus, userStatus, submitOOOForm, cancelOOO,loading } =
     useUserStore(); // Access Zustand store functions
   const { token } = useCheckUserSession(); // Get token
   const [showForm, setShowForm] = useState(false);
@@ -65,6 +65,15 @@ export default function ProfileScreen() {
       console.error("Error submitting OOO form:", error);
     }
   };
+
+ if (!token || loading) { // Show loading indicator while token or store is loading
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

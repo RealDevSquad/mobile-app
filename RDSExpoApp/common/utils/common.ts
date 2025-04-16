@@ -53,3 +53,10 @@ export const removeLocalStorageItem = async (key: string): Promise<void> => {
     console.error(`Error removing item with key "${key}":`, error);
   }
 };
+
+export function buildUrl(url: string, params: { [key: string]: string }): string {
+  const queryString = Object.keys(params)
+    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+    .join("&");
+  return `${url}?${queryString}`;
+}
