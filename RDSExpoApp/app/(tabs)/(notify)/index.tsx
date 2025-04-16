@@ -1,10 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function ProfileScreen() {
+  const handleNotify = () => {
+    
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Notification Screen</Text>
+      <Pressable style={styles.notifyButton} onPress={handleNotify}>
+        <Text style={styles.notifyText}>Notify</Text>
+      </Pressable>
     </View>
   );
 }
@@ -12,11 +18,20 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 50,
+    padding:30,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  notifyButton: {
+    backgroundColor: '#2819b2',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    width: '100%',
+    alignItems: 'center',
+    borderRadius:8,
+  },
+  notifyText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
