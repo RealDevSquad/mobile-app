@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function ProfileScreen() {
   const handleNotify = () => {
-    alert('You pressed Notify!');
+    
   };
 
   return (
