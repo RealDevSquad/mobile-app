@@ -1,11 +1,15 @@
 import { setLocalStorageItem } from "@/common/utils/common";
+import CameraModal from "@/components/Modal/CameraModal";
+import GitHubLoginModal from "@/components/Modal/GithubLoginModal";
+import Colors from '@/constants/Colors';
 import { TOKEN_KEY } from "@/constants/constants";
 import useCheckUserSession from "@/hooks/getUserToken";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Camera} from "expo-camera";
+import { Camera } from "expo-camera";
 import * as Device from "expo-device";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+
 import {
   Alert,
   Animated,
@@ -17,10 +21,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import AuthApi from "../../constants/apiConstant/auth-api";
 import ToastManager, { Toast } from "toastify-react-native";
-import CameraModal from "@/components/Modal/CameraModal";
-import GitHubLoginModal from "@/components/Modal/GithubLoginModal";
+import AuthApi from "../../constants/apiConstant/auth-api";
 
 
 const toastConfig = {
@@ -300,7 +302,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    color: "#E94560",
+    color: Colors.primary,
     fontWeight: "600",
     marginBottom: 5,
   },
@@ -329,7 +331,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#333",
   },
   webButton: {
-    backgroundColor: "#E94560",
+    backgroundColor: Colors.primary,
   },
   buttonText: {
     color: "#FFF",
