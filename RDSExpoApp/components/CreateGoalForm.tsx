@@ -2,26 +2,33 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
     Alert,
+    FlatList,
+    Image,
+    Modal,
     Pressable,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    View
+    View,
 } from 'react-native';
 import DatePicker from "react-native-date-picker";
 
 interface CreateGoalFormProps {
   onSubmit: (title: string, description: string, assignedTo: string, dueDate: Date | null) => void;
+  onBack: () => void; 
+  members: { username: string; name: string; picture: string }[];
 }
 
-const CreateGoalForm: React.FC<CreateGoalFormProps> = ({ onSubmit }) => {
+const CreateGoalForm: React.FC<CreateGoalFormProps> = ({ onSubmit, onBack, members }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [assignedToName, setAssignedToName] = useState('');
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !assignedTo) {
@@ -36,8 +43,34 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({ onSubmit }) => {
     setDueDate(null);
   };
 
+  const filteredMembers = members.filter((member) =>
+    member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const renderMemberItem = ({ item }: { item: { username: string; name: string; picture: string } }) => (
+    <TouchableOpacity
+      style={styles.memberItem}
+      onPress={() => {
+        setAssignedTo(item.username);
+        setAssignedToName(item.name);
+        setShowDropdown(false);
+      }}
+    >
+      <Image
+        source={{ uri: item.picture || 'https://ui-avatars.com/api/?name=' + item.name }}
+        style={styles.avatar}
+      />
+      <Text style={styles.memberName}>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
+      {/* Back Icon */}
+      <TouchableOpacity style={styles.backIcon} onPress={onBack}>
+        <Ionicons name="arrow-back" size={24} color="#2819b2" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Create New Goal</Text>
 
       <Text style={styles.label}>Title</Text>
@@ -61,7 +94,7 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({ onSubmit }) => {
       <Text style={styles.label}>Assign To</Text>
       <TouchableOpacity
         style={styles.dropdownSelector}
-        onPress={() => {/* Implement dropdown logic here */}}
+        onPress={() => setShowDropdown(true)}
       >
         <View style={styles.dropdownContent}>
           <Text style={{ color: assignedToName ? '#000' : '#888' }}>
@@ -70,6 +103,28 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({ onSubmit }) => {
           <Ionicons name="chevron-down" size={20} color="#666" />
         </View>
       </TouchableOpacity>
+
+      {/* Members Dropdown Modal */}
+      <Modal visible={showDropdown} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search members..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            <FlatList
+              data={filteredMembers}
+              keyExtractor={(item) => item.username}
+              renderItem={renderMemberItem}
+            />
+            <TouchableOpacity style={styles.closeButton} onPress={() => setShowDropdown(false)}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <Text style={styles.label}>Deadline</Text>
       <TouchableOpacity
@@ -109,6 +164,12 @@ const styles = StyleSheet.create({
     padding: 35,
     marginTop: 40,
   },
+  backIcon: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -140,12 +201,53 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    maxHeight: '70%',
+    padding: 10,
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  memberItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  memberName: {
+    marginLeft: 10,
+    fontSize: 16,
+  },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#eee',
+  },
   button: {
     backgroundColor: '#2819b2',
     paddingVertical: 12,
     alignItems: 'center',
     borderRadius: 8,
     marginTop: 16,
+  },
+  closeButton: {
+    backgroundColor: '#aaa',
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 8,
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',
