@@ -1,19 +1,14 @@
+import CreateGoalForm from '@/components/CreateGoalForm';
 import GoalsApi from '@/constants/apiConstant/goals-api';
-import { Ionicons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    Image,
-    Modal,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 type Member = {
@@ -31,6 +26,8 @@ export default function AddTodoScreen() {
   const [loadingMembers, setLoadingMembers] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [openDatePicker, setOpenDatePicker] = useState(false);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -57,24 +54,9 @@ export default function AddTodoScreen() {
     fetchMembers();
   }, []);
 
-  const handleSubmit = () => {
-    if (!title.trim() || !description.trim() || !assignedTo) {
-      Alert.alert('Error', 'Please fill out all fields');
-      return;
-    }
-
-    const newGoal = {
-      title,
-      description,
-      assigned_to: assignedTo,
-    };
-
-    console.log('New Goal:', newGoal);
+  const handleGoalSubmit = (title: string, description: string, assignedTo: string, dueDate: Date | null) => {
+    console.log('New Goal:', { title, description, assignedTo, dueDate });
     Alert.alert('Success', 'Goal added successfully!');
-    setTitle('');
-    setDescription('');
-    setAssignedTo('');
-    setAssignedToName('');
   };
 
   const filteredMembers = members.filter((member) =>
@@ -98,6 +80,11 @@ export default function AddTodoScreen() {
     </TouchableOpacity>
   );
 
+  const handleDateChange = (date: Date) => {
+    setOpenDatePicker(false);
+    setDueDate(date);
+  };
+
   return (
     <>
       <Stack.Screen
@@ -107,68 +94,8 @@ export default function AddTodoScreen() {
           headerTintColor: '#fff',
         }}
       />
-      <View style={styles.container}>
-        <Text style={styles.title}>Create New Goal</Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Title"
-          value={title}
-          onChangeText={setTitle}
-        />
-
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          placeholder="Description"
-          multiline
-          numberOfLines={4}
-          value={description}
-          onChangeText={setDescription}
-        />
-
-        {loadingMembers ? (
-          <ActivityIndicator size="small" color="#2819b2" />
-        ) : (
-          <>
-            <TouchableOpacity
-              style={styles.dropdownSelector}
-              onPress={() => setShowDropdown(true)}
-            >
-              <View style={styles.dropdownContent}>
-                <Text style={{ color: assignedToName ? '#000' : '#888' }}>
-                  {assignedToName || 'Assign To'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </View>
-            </TouchableOpacity>
-
-            <Modal visible={showDropdown} transparent animationType="slide">
-              <View style={styles.modalOverlay}>
-                <View style={styles.modalContent}>
-                  <TextInput
-                    placeholder="Search members..."
-                    style={styles.searchInput}
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                  />
-                  <FlatList
-                    data={filteredMembers}
-                    keyExtractor={(item) => item.username}
-                    renderItem={renderMemberItem}
-                    keyboardShouldPersistTaps="handled"
-                  />
-                  <Pressable style={styles.closeButton} onPress={() => setShowDropdown(false)}>
-                    <Text style={styles.buttonText}>Close</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modal>
-          </>
-        )}
-
-        <Pressable style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </Pressable>
+      <View style={{ flex: 1 }}>
+        <CreateGoalForm onSubmit={handleGoalSubmit} />
       </View>
     </>
   );
@@ -177,7 +104,8 @@ export default function AddTodoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 35,
+    marginTop:40,
   },
   title: {
     fontSize: 24,
@@ -261,5 +189,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
   },
 });
