@@ -1,14 +1,14 @@
-import StatusUpdateForm from "@/components/StatusUpdateForm";
+import StatusUpdateForm from "@/components/statusUpdateForm";
 import useCheckUserSession from "@/hooks/getUserToken";
 import { useUserStore } from "@/store/store"; // Use useUserStore to access submitOOOForm and cancelOOO
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 
 export default function ProfileScreen() {
