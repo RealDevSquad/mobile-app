@@ -38,9 +38,10 @@ To contribute, make sure you have the following:
 
 - JDK ( openjdk  17.0.13 2025-03-15 )
 - Node setup ( use version v18.*, tested on v18.18.0)
-- [Volta](https://docs.volta.sh/guide/getting-started) | [Why Volta?](https://docs.volta.sh/guide/#why-volta)
 - React Native development environment set up
 - Android Studio installed
+- Xcode installed
+- Cocopods for IOS installed
 - Node.js installed
 - for Node version management: [Volta](https://docs.volta.sh/guide/getting-started) | [Why Volta?](https://docs.volta.sh/guide/#why-volta)
 - Expo installed locally (Global installation is deprecated)
