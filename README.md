@@ -38,7 +38,7 @@ To contribute, make sure you have the following:
 
 - JDK ( openjdk  17.0.13 2025-03-15 )
 - Node setup ( use version v18.*, tested on v18.18.0)
-- React Native development environment set up
+- React Native development environment set up (EXPO)
 - Android Studio installed
 - Xcode installed
 - Cocopods for IOS installed
