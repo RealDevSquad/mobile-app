@@ -8,8 +8,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
-  },
+    "lint": "expo lint" ,
+    "start:staging": "set APP_ENV=staging && npx expo start",
+    "start:prod": "set APP_ENV=production && npx expo start"
+},
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
