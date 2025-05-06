@@ -1,6 +1,11 @@
 import { Link } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
+// Access environment variables
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+const apiKey = process.env.EXPO_PUBLIC_API_KEY;
+const testVar = process.env.EXPO_PUBLIC_TEST_VAR;
+
 export default function Index() {
   return (
     <View
@@ -11,6 +16,9 @@ export default function Index() {
       }}
     >
       <Text style={styles.text}>Welcome to RDS mobile app</Text>
+      <Text>API URL: {apiUrl}</Text>
+      <Text>API Key: {apiKey}</Text>
+      <Text>Env Test: {testVar}</Text>
 
       <Link href="/profile" style={styles.button}>
         Go to Profile screen
