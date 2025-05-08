@@ -5,7 +5,7 @@ module.exports = {
 
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"], // Recognized file extensions for modules
   rootDir: ".", // Root directory for resolving all relative paths
-  testMatch: ["<rootDir>/tests/**/*.test.{ts,tsx,js,jsx}"], // Pattern Jest uses to detect test files
+  testMatch: ["<rootDir>/__tests__/**/*.test.{ts,tsx,js,jsx}"], // Pattern Jest uses to detect test files
 
   moduleNameMapper: {
     // Support for path aliasing (e.g., @/components/Button)
@@ -26,4 +26,6 @@ module.exports = {
       "|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg" +
       "|expo-modules-core|expo-image|expo-asset|expo-constants)/)",
   ],
+  collectCoverage: true,
+  coverageReporters: ["text"],
 };
