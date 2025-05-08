@@ -17,10 +17,10 @@ export default function Index() {
       
       <Text style={styles.text}>Welcome to RDS mobile app</Text>
 
-      {__DEV__ ? (
-        <Text style={styles.text}>This is the development version</Text>
-      ) : null
-}
+      {environment === "development" && (
+  <Text style={styles.text}>This is the development version</Text>
+)}
+
 
       <Text style={styles.env}>API URL: {apiUrl}</Text>
       <Text style={styles.env}>API Key: {apiKey}</Text>
