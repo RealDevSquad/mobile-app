@@ -37,3 +37,8 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+
+# dev,staging, prod .env's
+.env*
+

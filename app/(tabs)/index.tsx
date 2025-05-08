@@ -4,9 +4,6 @@ import { StyleSheet, Text, View } from "react-native";
 
 const { apiUrl, apiKey, environment } = Constants.expoConfig?.extra ?? {};
 
-console.log("API URL:", apiUrl);
-console.log("API Key:", apiKey);
-console.log("Environment:", environment);
 
 export default function Index() {
   return (
@@ -17,13 +14,13 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      {/* Always show the welcome text */}
+      
       <Text style={styles.text}>Welcome to RDS mobile app</Text>
 
-      {/* Conditionally render the extra heading only in development environment */}
-      {environment === "development" && (
+      {__DEV__ ? (
         <Text style={styles.text}>This is the development version</Text>
-      )}
+      ) : null
+}
 
       <Text style={styles.env}>API URL: {apiUrl}</Text>
       <Text style={styles.env}>API Key: {apiKey}</Text>
