@@ -39,6 +39,6 @@ yarn-error.*
 app-example
 
 
-# dev,staging, prod .env's
-.env*
+# dev and prod .env's
+.env
 
