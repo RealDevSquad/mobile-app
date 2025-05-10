@@ -56,14 +56,16 @@ const StatusUpdateForm: React.FC<StatusUpdateFormProps> = ({
       setFromDate(null);
       setToDate(null);
       setDescription("");
+      setOpenFromDatePicker(false);
+      setOpenToDatePicker(false);
     }
   };
 
   return (
     <View style={styles.wrapper}>
       {/* Close Icon */}
-      <TouchableOpacity 
-        style={styles.closeIcon} 
+      <TouchableOpacity
+        style={styles.closeIcon}
         onPress={onClose}
         testID="close-button"
       >

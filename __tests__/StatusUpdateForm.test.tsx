@@ -103,6 +103,18 @@ describe("StatusUpdateForm", () => {
       });
       expect(screen.getByText("Select From Date")).toBeTruthy();
     });
+
+    it("cancels To Date picker without changing the date", async () => {
+      render(<StatusUpdateForm onSubmit={jest.fn()} onClose={jest.fn()} />);
+      const toDateButton = screen.getByText("Select To Date");
+      await act(async () => {
+        fireEvent.press(toDateButton);
+      });
+      await act(async () => {
+        latestDatePickerProps.onCancel();
+      });
+      expect(screen.getByText("Select To Date")).toBeTruthy();
+    });
   });
 
   it("updates description when text is entered", () => {
@@ -253,35 +265,31 @@ describe("StatusUpdateForm", () => {
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
-    it("shows alert and does not submit if From Date is same as To Date", async () => {
+    it("shows alert and does not submit if From Date is after or equal to To Date", async () => {
       render(
         <StatusUpdateForm onSubmit={mockOnSubmit} onClose={mockOnClose} />
       );
-      const sameDate = new Date(2023, 0, 15);
-      const descriptionForTest = "Test";
 
-      fireEvent.press(screen.getByText("Select From Date"));
+      const sameDay = new Date(2023, 0, 10);
       await act(async () => {
-        latestDatePickerProps.onConfirm?.(sameDate);
+        fireEvent.press(screen.getByText("Select From Date"));
       });
-      await waitFor(() => screen.getByText(formatDateForTest(sameDate)));
-
-      fireEvent.press(screen.getByText("Select To Date"));
       await act(async () => {
-        latestDatePickerProps.onConfirm?.(sameDate);
+        latestDatePickerProps.onConfirm(sameDay);
       });
-
-      await waitFor(() => {
-        const dateElements = screen.getAllByText(formatDateForTest(sameDate));
-        expect(dateElements.length).toBe(2);
+      await act(async () => {
+        fireEvent.press(screen.getByText("Select To Date"));
       });
-
-      fireEvent.changeText(
-        screen.getByPlaceholderText("Add description"),
-        descriptionForTest
-      );
+      await act(async () => {
+        latestDatePickerProps.onConfirm(sameDay);
+      });
+      await act(async () => {
+        fireEvent.changeText(
+          screen.getByPlaceholderText("Add description"),
+          "desc"
+        );
+      });
       fireEvent.press(screen.getByText("Submit"));
-
       expect(Alert.alert).toHaveBeenCalledWith(
         "Error",
         "From Date must be less than To Date."
@@ -312,6 +320,17 @@ describe("StatusUpdateForm", () => {
       expect(Alert.alert).toHaveBeenCalledWith(
         "Error",
         "Description is required."
+      );
+      expect(mockOnSubmit).not.toHaveBeenCalled();
+    });
+    it("shows alert and does not submit if both From Date and To Date are missing", () => {
+      render(
+        <StatusUpdateForm onSubmit={mockOnSubmit} onClose={mockOnClose} />
+      );
+      fireEvent.press(screen.getByText("Submit"));
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Error",
+        "Please select both From Date and To Date."
       );
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });

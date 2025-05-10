@@ -1,10 +1,9 @@
-// jest.setup.ts
-import React from "react"; // Required for JSX
-import { Alert as ReactNativeAlert, View } from "react-native";
-import "react-native-gesture-handler/jestSetup"; // If you use gesture handler
+import { Alert as ReactNativeAlert } from "react-native";
+import "react-native-gesture-handler/jestSetup";
 
 // ---- Mock for @expo/vector-icons ----
 interface IoniconsProps {
+  // Keep interface definition
   name: string;
   size?: number;
   color?: string;
@@ -13,6 +12,9 @@ interface IoniconsProps {
 }
 
 jest.mock("@expo/vector-icons", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+
   const MockIonicons: React.FC<IoniconsProps> = (props) =>
     React.createElement(View, { ...props, testID: props.testID || "icon" });
   return {
@@ -22,6 +24,7 @@ jest.mock("@expo/vector-icons", () => {
 
 // ---- Mock react-native-date-picker ----
 interface MockDatePickerComponentProps {
+  // Keep interface
   open: boolean;
   date: Date;
   onConfirm: (date: Date) => void;
@@ -30,14 +33,10 @@ interface MockDatePickerComponentProps {
   mode?: "date" | "datetime" | "time";
 }
 
-// Global state variables for the mock. These will hold the props of the
-// most recently interacted-with/rendered DatePicker instance.
 let mockDatePickerOpen = false;
-let mockDatePickerDate: Date = new Date();
 let mockDatePickerOnConfirm: (date: Date) => void = () => {};
 let mockDatePickerOnCancel: () => void = () => {};
 
-// This includes the component signature and the static helper methods.
 interface MockDatePickerModule extends React.FC<MockDatePickerComponentProps> {
   simulateConfirm: (date: Date) => void;
   simulateCancel: () => void;
@@ -72,5 +71,11 @@ jest.mock("react-native-date-picker", (): MockDatePickerModule => {
 });
 
 // ---- Mock React Native Alert ----
-// Spy on Alert.alert from react-native
 jest.spyOn(ReactNativeAlert, "alert");
+
+// ---- Mock React Native Linking ----
+export const mockLinkingOpenURL = jest.fn();
+export const mockLinkingCanOpenURL = jest.fn(() => Promise.resolve(true));
+export const mockLinkingGetInitialURL = jest.fn(() => Promise.resolve(null));
+export const mockLinkingAddEventListener = jest.fn();
+export const mockLinkingRemoveEventListener = jest.fn();
