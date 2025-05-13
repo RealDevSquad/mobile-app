@@ -14,7 +14,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "types": ["jest"], // Helps IDE recognize jest globals
+    "types": ["react", "jest"], // Helps IDE recognize jest globals
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
