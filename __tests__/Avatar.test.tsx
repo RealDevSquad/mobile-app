@@ -25,4 +25,14 @@ describe("Avatar Component", () => {
     expect(image.props.style.height).toBe(size);
     expect(image.props.style.borderRadius).toBe(size / 2);
   });
+
+  it("renders with empty uri", () => {
+    const size = 40;
+    // @ts-expect-error: intentionally omitting uri
+    const { getByTestId } = render(<Avatar size={size} />);
+    const image = getByTestId("avatar-image");
+    expect(image.props.source).toStrictEqual([{ uri: "" }]);
+    expect(image.props.style.width).toBe(size);
+    expect(image.props.style.height).toBe(size);
+  });
 });
