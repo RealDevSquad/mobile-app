@@ -3,7 +3,10 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "lib": ["dom", "esnext"],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
     "jsx": "react-native",
     "moduleResolution": "node",
     "allowJs": true,
@@ -14,18 +17,31 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "types": ["react", "jest"], // Helps IDE recognize jest globals
+    "types": [
+      "react",
+      "jest"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
     "**/*.ts",
+<<<<<<< HEAD
     "**/*.tsx" ,
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
+=======
+    "**/*.tsx",
+>>>>>>> a1f8b7d4fbfe2b162e8eec4529837b1ae1e96f56
     "jest.setup.ts"
   ],
-  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js"
+  ]
 }

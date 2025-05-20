@@ -1,34 +1,75 @@
-import { Tabs } from 'expo-router';
+import colors from "@/constants/colors";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Tabs } from "expo-router";
+import React from "react";
 
-import Ionicons from '@expo/vector-icons/Ionicons';
-
+const colorScheme: "light" | "dark" = "light";
 
 export default function TabLayout() {
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: '#1d1283',
-      }}
+      screenOptions={({ route }) => ({
+        tabBarActiveTintColor: colors[colorScheme].tint,
+        headerShown: false,
+        tabBarStyle: route.name === "index" ? { display: "none" } : undefined,
+      })}
     >
+      {/* index screen */}
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'home-sharp' : 'home-outline'} color={color} size={24} />
+          href: null,
+          headerShown: false,
+        }}
+      />
+
+      {/* Home tab */}
+      <Tabs.Screen
+        name="(home)"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome
+              name="home"
+              size={28}
+              color={color}
+              style={{ marginBottom: -3 }}
+            />
           ),
         }}
       />
+
+      {/* Notify tab */}
       <Tabs.Screen
-        name="profile"
+        name="(notify)"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={24}/>
+          title: "Notify",
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome
+              name="user"
+              size={28}
+              color={color}
+              style={{ marginBottom: -3 }}
+            />
+          ),
+        }}
+      />
+
+      {/* Profile tab */}
+      <Tabs.Screen
+        name="(profile)"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome
+              name="user"
+              size={28}
+              color={color}
+              style={{ marginBottom: -3 }}
+            />
           ),
         }}
       />
     </Tabs>
   );
 }
-
