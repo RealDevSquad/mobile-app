@@ -7,9 +7,10 @@ dotenv.config();
 // Define a schema for environment variables
 const configSchema = z.object({
   EXPO_PUBLIC_API_URL: z.string().url(),
-  EXPO_PUBLIC_API_KEY: z.string().min(1),
+  EXPO_PUBLIC_API_KEY: z.string().optional(), // <-- Make optional
   APP_ENV: z.enum(["development", "staging", "production"]).default("development"),
 });
+
 
 // Validate the environment variables
 export const validateEnv = () => {
