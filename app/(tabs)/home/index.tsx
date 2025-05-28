@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 
-export default function ProfileScreen() {
+export default function HomeScreen() {
   const { fetchUserStatus, userStatus, submitOOOForm, cancelOOO, loading } =
     useUserStore(); // Access Zustand store functions
   const { token } = useCheckUserSession(); // Get token
