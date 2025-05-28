@@ -1,5 +1,12 @@
+import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
 import { Alert as ReactNativeAlert } from "react-native";
 import "react-native-gesture-handler/jestSetup";
+
+
+// Mock for @react-native-async-storage/async-storage
+jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
+
+
 
 // ---- Mock for @expo/vector-icons ----
 interface IoniconsProps {
@@ -69,6 +76,8 @@ jest.mock("react-native-date-picker", (): MockDatePickerModule => {
 
   return MockDatePickerComponent;
 });
+
+
 
 // ---- Mock React Native Alert ----
 jest.spyOn(ReactNativeAlert, "alert");
