@@ -7,6 +7,9 @@ module.exports = {
   rootDir: ".", // Root directory for resolving all relative paths
   testMatch: ["<rootDir>/__tests__/**/*.test.{ts,tsx,js,jsx}"], // Pattern Jest uses to detect test files
 
+  
+   setupFiles: ["<rootDir>/jest.setup.ts"], // Path to the setup file for Jest]
+
   moduleNameMapper: {
     // Support for path aliasing (e.g., @/components/Button)
     "^@/(.*)$": "<rootDir>/$1",
