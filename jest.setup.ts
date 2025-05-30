@@ -3,9 +3,32 @@ import "react-native-gesture-handler/jestSetup";
 
 
 // Mock for @react-native-async-storage/async-storage
-jest.mock('@react-native-async-storage/async-storage', () =>
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
-);
+
+const mockStorage: Record<string, string> = {};
+
+jest.mock('@react-native-async-storage/async-storage', () => {
+  const originalMock = require('@react-native-async-storage/async-storage/jest/async-storage-mock');
+
+  return {
+    ...originalMock,
+    setItem: jest.fn((key: string, value: string) => {
+      mockStorage[key] = value;
+      return Promise.resolve();
+    }),
+    getItem: jest.fn((key: string) => {
+      return Promise.resolve(mockStorage[key] ?? null);
+    }),
+    removeItem: jest.fn((key: string) => {
+      delete mockStorage[key];
+      return Promise.resolve();
+    }),
+    clear: jest.fn(() => {
+      Object.keys(mockStorage).forEach((key) => delete mockStorage[key]);
+      return Promise.resolve();
+    }),
+  };
+});
+
 
 
 
