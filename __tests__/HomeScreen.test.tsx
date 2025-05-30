@@ -1,6 +1,7 @@
 import HomeScreen from "@/app/(tabs)/home/index";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import React from "react";
+import { Alert } from "react-native";
 
 // Mocks for Zustand store and hooks
 const mockFetchUserStatus = jest.fn();
@@ -13,6 +14,11 @@ jest.mock("@/store/store", () => ({
 
 jest.mock("@/hooks/getUserToken");
 
+// Mock Alert to avoid actual alerts during testing
+jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+
+// Mock console.error to avoid cluttering test output
+const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
 jest.mock("@/components/StatusUpdateForm", () => {
   const React = require("react");
@@ -47,6 +53,7 @@ import { useUserStore } from "@/store/store";
 describe("HomeScreen Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    consoleSpy.mockClear();
     (useUserStore as unknown as jest.Mock).mockReturnValue({
       fetchUserStatus: mockFetchUserStatus,
       userStatus: { data: { currentStatus: { state: "ACTIVE" } } },
@@ -59,6 +66,18 @@ describe("HomeScreen Integration", () => {
 
   it("shows loading indicator if token or loading", () => {
     (useCheckUserSession as unknown as jest.Mock).mockReturnValue({ token: null });
+    const { getByText } = render(<HomeScreen />);
+    expect(getByText("Loading...")).toBeTruthy();
+  });
+
+  it("shows loading indicator if store is loading", () => {
+    (useUserStore as unknown as jest.Mock).mockReturnValue({
+      fetchUserStatus: mockFetchUserStatus,
+      userStatus: { data: { currentStatus: { state: "ACTIVE" } } },
+      submitOOOForm: mockSubmitOOOForm,
+      cancelOOO: mockCancelOOO,
+      loading: true,
+    });
     const { getByText } = render(<HomeScreen />);
     expect(getByText("Loading...")).toBeTruthy();
   });
@@ -102,6 +121,42 @@ describe("HomeScreen Integration", () => {
     });
   });
 
+  it("handles error on OOO form submission", async () => {
+    const error = new Error("Submit failed");
+    mockSubmitOOOForm.mockRejectedValueOnce(error);
+    const { getByText, getByTestId } = render(<HomeScreen />);
+    
+    fireEvent.press(getByText("Submit OOO"));
+    fireEvent.press(getByTestId("mock-form-submit"));
+    
+    await waitFor(() => {
+      expect(mockSubmitOOOForm).toHaveBeenCalled();
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Error",
+        "Failed to update your status. Please try again."
+      );
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Error submitting OOO form:",
+        error
+      );
+    });
+  });
+
+  it("does not submit OOO form when token is null", async () => {
+    (useCheckUserSession as unknown as jest.Mock).mockReturnValue({ token: null });
+    (useUserStore as unknown as jest.Mock).mockReturnValue({
+      fetchUserStatus: mockFetchUserStatus,
+      userStatus: { data: { currentStatus: { state: "ACTIVE" } } },
+      submitOOOForm: mockSubmitOOOForm,
+      cancelOOO: mockCancelOOO,
+      loading: false,
+    });
+    
+    const { getByText } = render(<HomeScreen />);
+    // Since token is null, we should see loading screen
+    expect(getByText("Loading...")).toBeTruthy();
+  });
+
   it("cancels OOO and updates status", async () => {
     (useUserStore as unknown as jest.Mock).mockReturnValue({
       fetchUserStatus: mockFetchUserStatus,
@@ -134,4 +189,83 @@ describe("HomeScreen Integration", () => {
       expect(mockCancelOOO).toHaveBeenCalled();
     });
   });
+
+  it("does not cancel OOO when token is null", async () => {
+    (useCheckUserSession as unknown as jest.Mock).mockReturnValue({ token: null });
+    (useUserStore as unknown as jest.Mock).mockReturnValue({
+      fetchUserStatus: mockFetchUserStatus,
+      userStatus: { data: { currentStatus: { state: "OOO" } } },
+      submitOOOForm: mockSubmitOOOForm,
+      cancelOOO: mockCancelOOO,
+      loading: false,
+    });
+    
+    const { getByText } = render(<HomeScreen />);
+    // Since token is null, we should see loading screen
+    expect(getByText("Loading...")).toBeTruthy();
+  });
+
+  it("shows loading indicator while cancelling OOO", async () => {
+    (useUserStore as unknown as jest.Mock).mockReturnValue({
+      fetchUserStatus: mockFetchUserStatus,
+      userStatus: { data: { currentStatus: { state: "OOO" } } },
+      submitOOOForm: mockSubmitOOOForm,
+      cancelOOO: mockCancelOOO,
+      loading: false,
+    });
+    
+    // Mock cancelOOO to delay resolution so we can test loading state
+    let resolveCancel: (value: boolean) => void;
+    const cancelPromise = new Promise<boolean>((resolve) => {
+      resolveCancel = resolve;
+    });
+    mockCancelOOO.mockReturnValueOnce(cancelPromise);
+    
+    const { getByText, UNSAFE_getByType } = render(<HomeScreen />);
+    fireEvent.press(getByText("Cancel OOO"));
+    
+    // Should show loading indicator inside the button
+    const activityIndicator = UNSAFE_getByType(require("react-native").ActivityIndicator);
+    expect(activityIndicator).toBeTruthy();
+    
+    // Resolve the promise
+    resolveCancel!(true);
+    
+    await waitFor(() => {
+      expect(mockCancelOOO).toHaveBeenCalled();
+    });
+  });
+
+  it("fetches user status when token becomes available", () => {
+    const { rerender } = render(<HomeScreen />);
+    expect(mockFetchUserStatus).toHaveBeenCalledWith("mock-token");
+    
+    // Clear the mock calls
+    mockFetchUserStatus.mockClear();
+    
+    // Change token and rerender
+    (useCheckUserSession as unknown as jest.Mock).mockReturnValue({ token: "new-token" });
+    rerender(<HomeScreen />);
+    
+    expect(mockFetchUserStatus).toHaveBeenCalledWith("new-token");
+  });
+
+  it("displays UNKNOWN status when status is not available", () => {
+    (useUserStore as unknown as jest.Mock).mockReturnValue({
+      fetchUserStatus: mockFetchUserStatus,
+      userStatus: { data: { currentStatus: null } },
+      submitOOOForm: mockSubmitOOOForm,
+      cancelOOO: mockCancelOOO,
+      loading: false,
+    });
+    
+    const { getByText } = render(<HomeScreen />);
+    expect(getByText(/UNKNOWN/)).toBeTruthy();
+  });
+});
+
+// Clean up mocks after all tests
+afterAll(() => {
+  consoleSpy.mockRestore();
+  jest.restoreAllMocks();
 });
