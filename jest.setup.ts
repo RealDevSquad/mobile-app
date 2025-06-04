@@ -1,5 +1,10 @@
+import "@testing-library/jest-native/extend-expect";
 import { Alert as ReactNativeAlert } from "react-native";
 import "react-native-gesture-handler/jestSetup";
+
+jest.mock("@react-native-async-storage/async-storage", () =>
+  require("@react-native-async-storage/async-storage/jest/async-storage-mock")
+);
 
 // ---- Mock for @expo/vector-icons ----
 interface IoniconsProps {
