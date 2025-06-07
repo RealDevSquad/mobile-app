@@ -155,7 +155,6 @@ export const useUserStore = create<UserStore>((set) => ({
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Status updated successfully:", responseData);
         return responseData; // Return the response data
       } else {
         const errorData = await response.json();
@@ -187,7 +186,6 @@ export const useUserStore = create<UserStore>((set) => ({
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("OOO status cancelled successfully:", responseData);
         return responseData; // Return the response data
       } else {
         const errorData = await response.json();

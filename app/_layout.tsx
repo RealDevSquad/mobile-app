@@ -41,10 +41,10 @@ function RootLayoutNav() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-      <Stack.Screen
+      {/* <Stack.Screen
         name="modal"
         options={{ presentation: "modal", headerShown: false }}
-      />
+      /> */}
     </Stack>
     // </ThemeProvider>
   );

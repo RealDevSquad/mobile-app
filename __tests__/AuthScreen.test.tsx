@@ -114,7 +114,7 @@ describe("AuthScreen", () => {
     mockStoredToken = "existing-token";
     render(<AuthScreen />);
     await waitFor(() => {
-      expect(mockRouterReplace).toHaveBeenCalledWith("/(tabs)");
+      expect(mockRouterReplace).toHaveBeenCalledWith("/home");
     });
   });
 
@@ -172,7 +172,7 @@ describe("AuthScreen", () => {
           ACTUAL_TOKEN_KEY_USED_BY_COMPONENT,
           "fake-github-token"
         );
-        expect(mockRouterReplace).toHaveBeenCalledWith("/(tabs)");
+        expect(mockRouterReplace).toHaveBeenCalledWith("/home");
       });
     });
 
@@ -423,7 +423,7 @@ describe("AuthScreen", () => {
           ACTUAL_TOKEN_KEY_USED_BY_COMPONENT,
           "fake-qr-token"
         );
-        expect(mockRouterReplace).toHaveBeenCalledWith("/(tabs)");
+        expect(mockRouterReplace).toHaveBeenCalledWith("/home");
       });
     });
 

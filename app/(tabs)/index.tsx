@@ -92,7 +92,6 @@ const AuthScreen = () => {
   };
 
   const githubAuthUrl = buildUrl(AuthApis.GITHUB_AUTH_API, queryParams);
-
   const handleNavigationStateChange = (navState: any) => {
     if (navState.url.includes("token=")) {
       try {
@@ -101,7 +100,7 @@ const AuthScreen = () => {
         if (token) {
           setLocalStorageItem(TOKEN_KEY, token);
           setGithubLogin(false);
-          router.replace("/(tabs)"); //@vignesh check whether this is the correc
+          router.replace("/home");
         }
       } catch (error) {
         console.error("Error parsing URL:", error);
@@ -126,7 +125,7 @@ const AuthScreen = () => {
       if (userInfoJson.data.token) {
         setLocalStorageItem(TOKEN_KEY, userInfoJson.data.token);
         setCameraVisible(false);
-        router.replace("/(tabs)");
+        router.replace("/home");
       } else {
         Toast.show({
           type: "error",
@@ -209,7 +208,7 @@ const AuthScreen = () => {
 
   useEffect(() => {
     if (storedToken) {
-      router.replace("/(tabs)");
+      router.replace("/home");
     }
   }, [storedToken]);
 
