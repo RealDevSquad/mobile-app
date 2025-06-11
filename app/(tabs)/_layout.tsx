@@ -25,7 +25,7 @@ export default function TabLayout() {
 
       {/* Home tab */}
       <Tabs.Screen
-        name="(home)"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color }: { color: string }) => (
@@ -41,12 +41,12 @@ export default function TabLayout() {
 
       {/* Notify tab */}
       <Tabs.Screen
-        name="(notify)"
+        name="notify"
         options={{
           title: "Notify",
           tabBarIcon: ({ color }: { color: string }) => (
             <FontAwesome
-              name="user"
+              name="bell-o"
               size={28}
               color={color}
               style={{ marginBottom: -3 }}
@@ -57,7 +57,7 @@ export default function TabLayout() {
 
       {/* Profile tab */}
       <Tabs.Screen
-        name="(profile)"
+        name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color }: { color: string }) => (

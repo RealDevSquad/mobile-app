@@ -30,7 +30,11 @@ const GitHubLoginModal: React.FC<GitHubLoginModalProps> = ({
       ]}
       testID="github-modal-container"
     >
-      <TouchableOpacity style={styles.closeButton} onPress={onClose} testID="close-button">
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={onClose}
+        testID="close-button"
+      >
         <FontAwesome name="times" size={24} color="#000" />
       </TouchableOpacity>
       <WebView

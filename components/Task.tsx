@@ -1,4 +1,4 @@
-// import { useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import moment from "moment";
 import React from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
@@ -9,20 +9,20 @@ const Task = ({ tasks }: { tasks: any[] }) => {
     const endDate = moment.unix(timestamp);
     return endDate.from(currentDate);
   };
-  // const router = useRouter();
+  const router = useRouter();
 
   const renderItem = ({ item }: { item: any }) => {
     return (
       <TouchableOpacity
         style={styles.card}
-        // onPress={() =>
-        //   router.navigate({
-        //     pathname: "/(tabs)/(profile)/details",
-        //     params: {
-        //       ...item, // Pass the entire item object
-        //     },
-        //   })
-        // }
+        onPress={() =>
+          router.navigate({
+            pathname: "/profile/details",
+            params: {
+              ...item, // Pass the entire item object
+            },
+          })
+        }
       >
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.text}>

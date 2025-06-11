@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react-native";
+import { fireEvent, render } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 import Task from "../components/Task";
@@ -59,20 +59,20 @@ describe("Task component", () => {
     expect(getByText("No active tasks found...")).toBeTruthy();
   });
 
-  //   it("navigates to details page with correct params on task press", () => {
-  //     const { getByText } = render(<Task tasks={mockTasks} />);
-  //     fireEvent.press(getByText("Task 1"));
-  //     expect(mockNavigate).toHaveBeenCalledWith({
-  //       pathname: "/(tabs)/(profile)/details",
-  //       params: expect.objectContaining({
-  //         id: "1",
-  //         title: "Task 1",
-  //         createdBy: "Alice",
-  //         assignee: "Bob",
-  //         endsOn: 1700000000,
-  //         startedOn: 1690000000,
-  //         status: "Open",
-  //       }),
-  //     });
-  //   });
+  it("navigates to details page with correct params on task press", () => {
+    const { getByText } = render(<Task tasks={mockTasks} />);
+    fireEvent.press(getByText("Task 1"));
+    expect(mockNavigate).toHaveBeenCalledWith({
+      pathname: "/profile/details",
+      params: expect.objectContaining({
+        id: "1",
+        title: "Task 1",
+        createdBy: "Alice",
+        assignee: "Bob",
+        endsOn: 1700000000,
+        startedOn: 1690000000,
+        status: "Open",
+      }),
+    });
+  });
 });
