@@ -57,12 +57,10 @@ export default function ProfileScreen() {
     };
 
     try {
-      const response = await submitOOOForm(formData, token);
-      if (response) {
-        Alert.alert("Success", "Your status has been updated to OOO.");
-        fetchUserStatus(token); // Refresh the user status
-        setShowForm(false); // Close the form
-      }
+      await submitOOOForm(formData, token);
+      Alert.alert("Success", "Your status has been updated to OOO.");
+      fetchUserStatus(token); // Refresh the user status
+      setShowForm(false); // Close the form
     } catch (error) {
       Alert.alert("Error", "Failed to update your status. Please try again.");
       console.error("Error submitting OOO form:", error);
@@ -96,7 +94,7 @@ export default function ProfileScreen() {
               disabled={isLoading} // Disable button while loading
             >
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color="#fff" testID="loading-indicator" />
               ) : (
                 <Text style={styles.buttonText}>Cancel OOO</Text>
               )}
