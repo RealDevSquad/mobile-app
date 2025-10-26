@@ -33,6 +33,9 @@ interface UserStore {
   hasMoreTasks: boolean;
   tasksNext: string;
   loadingTasks: boolean; // Separate loading state for tasks
+  selectedAssignee: string | null; // Currently selected assignee for filtering
+  searchResults: UserData[]; // Search results for users
+  loadingSearch: boolean; // Loading state for user search
   userStatus: UserStatus | null; // Add userStatus property
   extensionRequests: ExtensionRequestDTO[];
   hasMoreExtensionRequests: boolean;
@@ -46,7 +49,14 @@ interface UserStore {
   error: string | null;
   fetchUsers: (cookie: string) => Promise<void>;
   fetchActiveTask: (cookie: string) => Promise<void>;
-  fetchTasks: (cookie: string, next?: string) => Promise<void>;
+  fetchTasks: (
+    cookie: string,
+    next?: string,
+    assignee?: string
+  ) => Promise<void>;
+  searchUsers: (cookie: string, searchTerm: string) => Promise<void>;
+  setSelectedAssignee: (assignee: string | null) => void;
+  clearSearchResults: () => void;
   fetchUserStatus: (cookie: string) => Promise<void>; // Add fetchUserStatus method
   fetchExtensionRequests: (
     cookie: string,
@@ -86,6 +96,9 @@ export const useUserStore = create<UserStore>((set) => ({
   hasMoreTasks: false,
   tasksNext: "",
   loadingTasks: false, // Initialize loadingTasks as false
+  selectedAssignee: null, // Initialize selectedAssignee as null
+  searchResults: [], // Initialize searchResults as empty array
+  loadingSearch: false, // Initialize loadingSearch as false
   userStatus: null, // Initialize userStatus as null
   extensionRequests: [],
   hasMoreExtensionRequests: false,
@@ -180,11 +193,14 @@ export const useUserStore = create<UserStore>((set) => ({
     }
   },
 
-  fetchTasks: async (cookie: string, next?: string) => {
-    console.log("fetchTasks called with next:", next);
+  fetchTasks: async (cookie: string, next?: string, assignee?: string) => {
+    console.log("fetchTasks called with next:", next, "assignee:", assignee);
     set({ loadingTasks: true });
     try {
       let url = TASK_API.GET_TASKS;
+      if (assignee) {
+        url += `&assignee=${encodeURIComponent(assignee)}`;
+      }
       if (next) {
         // The next parameter is already a full path, so we need to extract just the cursor value
         const nextParam = next.includes("next=")
@@ -255,6 +271,63 @@ export const useUserStore = create<UserStore>((set) => ({
         loadingTasks: false,
       });
     }
+  },
+
+  searchUsers: async (cookie: string, searchTerm: string) => {
+    console.log("searchUsers called with searchTerm:", searchTerm);
+    set({ loadingSearch: true });
+    try {
+      const url = `${USER_API.SEARCH_USERS}?search=${encodeURIComponent(
+        searchTerm
+      )}&size=5`;
+      console.log("Searching users from URL:", url);
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+          Cookie: `rds-session=${cookie}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to search users: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("User search response:", {
+        usersCount: data.users?.length || 0,
+        fullResponse: data,
+      });
+
+      const users = data.users || [];
+      set({
+        searchResults: users,
+        loadingSearch: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error("Error searching users:", error);
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to search users",
+        loadingSearch: false,
+      });
+    }
+  },
+
+  setSelectedAssignee: (assignee: string | null) => {
+    console.log("setSelectedAssignee called with:", assignee);
+    set({ selectedAssignee: assignee });
+  },
+
+  clearSearchResults: () => {
+    console.log("clearSearchResults called");
+    set({ searchResults: [], selectedAssignee: null });
   },
 
   submitOOOForm: async (data, token) => {
