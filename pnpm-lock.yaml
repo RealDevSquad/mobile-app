@@ -20,6 +20,9 @@ importers:
       '@react-native-community/netinfo':
         specifier: ^11.4.1
         version: 11.4.1(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))
+      '@react-native-community/slider':
+        specifier: ^5.1.0
+        version: 5.1.0
       '@react-navigation/bottom-tabs':
         specifier: ^7.3.10
         version: 7.5.0(@react-navigation/native@7.1.18(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-safe-area-context@5.4.0(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-screens@4.10.0(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -1007,6 +1010,9 @@ packages:
     resolution: {integrity: sha512-B0BYAkghz3Q2V09BF88RA601XursIEA111tnc2JOaN7axJWmNefmfjZqw/KdSxKZp7CZUuPpjBmz/WCR9uaHYg==}
     peerDependencies:
       react-native: '>=0.59'
+
+  '@react-native-community/slider@5.1.0':
+    resolution: {integrity: sha512-79nzA7eXPgM6UMo5ZZ/rrJu8Gai0aRctN6stBHneQYh5Qst98hYD3piY+RQHJhDuCCrpQL85YwGVU4FdDOE3cA==}
 
   '@react-native/assets-registry@0.79.2':
     resolution: {integrity: sha512-5h2Z7/+/HL/0h88s0JHOdRCW4CXMCJoROxqzHqxdrjGL6EBD1DdaB4ZqkCOEVSW4Vjhir5Qb97C8i/MPWEYPtg==}
@@ -6168,6 +6174,8 @@ snapshots:
   '@react-native-community/netinfo@11.4.1(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))':
     dependencies:
       react-native: 0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0)
+
+  '@react-native-community/slider@5.1.0': {}
 
   '@react-native/assets-registry@0.79.2': {}
 

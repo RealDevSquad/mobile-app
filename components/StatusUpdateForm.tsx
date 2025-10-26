@@ -73,7 +73,7 @@ const StatusUpdateForm: React.FC<StatusUpdateFormProps> = ({
         <Ionicons name="close" size={24} color="#333" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Update Status</Text>
+      <Text style={styles.title}>Update Task</Text>
 
       {/* From Date Picker */}
       <TouchableOpacity

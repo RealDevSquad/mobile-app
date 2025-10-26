@@ -1,5 +1,7 @@
+import AddProgressModal from "@/components/Modal/AddProgressModal";
 import ExtensionRequestDetailsModal from "@/components/Modal/ExtensionRequestDetailsModal";
 import ExtensionRequestModal from "@/components/Modal/ExtensionRequestModal";
+import UpdateTaskStatusModal from "@/components/Modal/UpdateTaskStatusModal";
 import { EXTENSION_REQUEST_API } from "@/constants/apiConstant/extension-request-api";
 import { TASK_API } from "@/constants/apiConstant/task-api";
 import { theme } from "@/constants/theme";
@@ -41,6 +43,8 @@ export default function TaskDetailsScreen() {
   const [extensionCheckLoading, setExtensionCheckLoading] = useState(false);
   const [pendingExtensionDetails, setPendingExtensionDetails] =
     useState<any>(null);
+  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
+  const [showAddProgressModal, setShowAddProgressModal] = useState(false);
 
   const fetchTaskDetails = useCallback(async () => {
     if (!token || !id) return;
@@ -85,11 +89,18 @@ export default function TaskDetailsScreen() {
         },
       });
 
+      if (response.status === 404) {
+        console.log("No progress updates found for this task");
+        setProgressUpdates([]);
+        return;
+      }
+
       if (!response.ok) {
         const errorText = await response.text();
-        const errorMessage = `Failed to fetch progress updates: ${
-          response.status
-        } ${response.statusText}${errorText ? ` - ${errorText}` : ""}`;
+        const baseMessage = `Failed to fetch progress updates: ${response.status} ${response.statusText}`;
+        const errorMessage = errorText
+          ? `${baseMessage} - ${errorText}`
+          : baseMessage;
         throw new Error(errorMessage);
       }
 
@@ -204,6 +215,16 @@ export default function TaskDetailsScreen() {
     } else {
       setShowExtensionModal(true);
     }
+  };
+
+  const handleUpdateStatusSubmit = () => {
+    setShowUpdateStatusModal(false);
+    fetchTaskDetails();
+  };
+
+  const handleAddProgressSubmit = () => {
+    setShowAddProgressModal(false);
+    fetchProgressUpdates();
   };
 
   const renderProgressContent = () => {
@@ -364,7 +385,15 @@ export default function TaskDetailsScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Task Details</Text>
+            <View style={styles.taskDetailsHeader}>
+              <Text style={styles.sectionTitle}>Task Details</Text>
+              <TouchableOpacity
+                style={styles.updateStatusButton}
+                onPress={() => setShowUpdateStatusModal(true)}
+              >
+                <Text style={styles.updateStatusButtonText}>Update Task</Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.infoRow}>
               <Text style={styles.label}>Assignee:</Text>
               <Text style={styles.value}>{task.assignee}</Text>
@@ -457,8 +486,11 @@ export default function TaskDetailsScreen() {
           <View style={styles.section}>
             <View style={styles.progressHeader}>
               <Text style={styles.sectionTitle}>Progress Updates</Text>
-              <TouchableOpacity style={styles.sortButton}>
-                <Text style={styles.sortButtonText}>Dsc</Text>
+              <TouchableOpacity
+                style={styles.addProgressButton}
+                onPress={() => setShowAddProgressModal(true)}
+              >
+                <Text style={styles.addProgressButtonText}>Add Progress</Text>
               </TouchableOpacity>
             </View>
 
@@ -483,6 +515,24 @@ export default function TaskDetailsScreen() {
         visible={showExtensionDetailsModal}
         onClose={() => setShowExtensionDetailsModal(false)}
         extensionDetails={pendingExtensionDetails}
+      />
+
+      <UpdateTaskStatusModal
+        visible={showUpdateStatusModal}
+        onClose={() => setShowUpdateStatusModal(false)}
+        onSubmit={handleUpdateStatusSubmit}
+        taskId={id || ""}
+        currentStatus={task.status}
+        currentProgress={task.percentCompleted}
+        token={token || ""}
+      />
+
+      <AddProgressModal
+        visible={showAddProgressModal}
+        onClose={() => setShowAddProgressModal(false)}
+        onSubmit={handleAddProgressSubmit}
+        taskId={id || ""}
+        token={token || ""}
       />
     </SafeAreaView>
   );
@@ -575,6 +625,12 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.sm,
   },
+  taskDetailsHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: theme.spacing.sm,
+  },
   timelineHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -643,18 +699,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: theme.spacing.sm,
   },
-  sortButton: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderWidth: 1,
-    borderColor: theme.colors.border.secondary,
-    paddingHorizontal: theme.spacing.xs,
-    paddingVertical: theme.spacing.xs,
+  addProgressButton: {
+    backgroundColor: theme.colors.primary[600],
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
+    alignItems: "center",
   },
-  sortButtonText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.text.secondary,
-    fontWeight: theme.typography.fontWeight.medium,
+  addProgressButtonText: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text.inverted,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   progressLoading: {
     flexDirection: "row",
@@ -754,5 +809,17 @@ const styles = StyleSheet.create({
   extensionRequestButtonDisabled: {
     backgroundColor: "#CC5529", // Darker orange for disabled state
     opacity: 0.7,
+  },
+  updateStatusButton: {
+    backgroundColor: theme.colors.primary[600],
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.sm,
+    alignItems: "center",
+  },
+  updateStatusButtonText: {
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
 });
