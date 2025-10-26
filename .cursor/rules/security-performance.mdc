@@ -1,0 +1,80 @@
+---
+globs: *.ts,*.tsx
+description: Security and performance optimization guidelines
+---
+
+# Security & Performance Guidelines
+
+## Security Best Practices
+
+- Sanitize user inputs to prevent XSS attacks
+- Use react-native-encrypted-storage for sensitive data
+- Ensure secure communication with APIs using HTTPS
+- Follow Expo's Security guidelines: https://docs.expo.dev/guides/security/
+- Validate all user inputs using Zod or similar libraries
+- Implement proper authentication and authorization
+
+## Performance Optimization
+
+- Minimize useState and useEffect usage; prefer context and reducers
+- Use Expo's AppLoading and SplashScreen for optimized startup
+- Optimize images: use WebP format, include size data, implement lazy loading
+- Implement code splitting and lazy loading with React.Suspense
+- Use useMemo and useCallback hooks appropriately
+- Avoid unnecessary re-renders by memoizing components
+
+## Mobile Web Vitals
+
+- Prioritize Load Time, Jank, and Responsiveness
+- Use Expo's useWindowDimensions for responsive design
+- Implement proper image optimization with expo-image
+- Use react-native-reanimated for performant animations
+- Profile and monitor performance using React Native's built-in tools
+
+## State Management Performance
+
+- Use React Context and useReducer for global state
+- Leverage react-query for data fetching and caching
+- Avoid excessive API calls
+- Consider Zustand or Redux Toolkit for complex state
+- Handle URL search parameters efficiently
+
+## Memory Management
+
+- Clean up subscriptions and timers in useEffect cleanup
+- Avoid memory leaks in long-running components
+- Use proper dependency arrays in useEffect
+- Dispose of resources when components unmount
+- Monitor memory usage in development
+
+## Network Optimization
+
+- Implement proper caching strategies
+- Use request deduplication
+- Handle offline scenarios gracefully
+- Implement retry logic for failed requests
+- Use appropriate timeout values
+
+## Error Handling & Logging
+
+- Use Zod for runtime validation
+- Implement proper error logging with Sentry
+- Use expo-error-reporter for production logging
+- Handle errors gracefully with user-friendly messages
+- Implement global error boundaries
+
+## Accessibility Performance
+
+- Ensure high accessibility standards with ARIA roles
+- Support text scaling and font adjustments
+- Test with screen readers
+- Implement proper focus management
+- Use semantic HTML elements where possible
+
+## Internationalization Performance
+
+- Use react-native-i18n or expo-localization
+- Support multiple languages efficiently
+- Implement RTL layout support
+- Cache translations appropriately
+- Use lazy loading for translation files

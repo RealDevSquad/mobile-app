@@ -1,0 +1,76 @@
+---
+globs: *.test.ts,*.test.tsx,*.spec.ts,*.spec.tsx
+description: Testing guidelines and best practices
+---
+
+# Testing Guidelines
+
+## Testing Framework
+
+- Use Jest and React Native Testing Library for unit tests
+- Use Detox for integration tests
+- Follow Expo's testing tools for different environments
+- Consider snapshot testing for UI consistency
+
+## Test File Organization
+
+- Test files mirror the component structure
+- Use `__tests__/` directory for all test files
+- Include mocks in `__tests__/mocks/` directory
+- Follow naming convention: `ComponentName.test.tsx`
+
+## Test Structure
+
+- Use descriptive test names that explain the behavior
+- Group related tests using `describe` blocks
+- Use `beforeEach` and `afterEach` for setup and cleanup
+- Mock external dependencies appropriately
+
+## Component Testing
+
+- Test component rendering with different props
+- Test user interactions (button clicks, form submissions)
+- Test conditional rendering based on props/state
+- Test accessibility features and ARIA roles
+
+## API Testing
+
+- Mock API calls using Jest mocks
+- Test both success and error scenarios
+- Test loading states and error handling
+- Verify correct API endpoints are called
+
+## State Management Testing
+
+- Test state updates and actions
+- Test context providers and consumers
+- Test reducer functions with different actions
+- Test async state updates
+
+## Integration Testing
+
+- Test complete user flows
+- Test navigation between screens
+- Test form submissions end-to-end
+- Test error scenarios and recovery
+
+## Mock Guidelines
+
+- Create reusable mocks in `__tests__/mocks/`
+- Mock external libraries and APIs
+- Use realistic mock data
+- Keep mocks simple and focused
+
+## Test Coverage
+
+- Aim for high test coverage on critical paths
+- Focus on testing business logic
+- Don't test implementation details
+- Test edge cases and error conditions
+
+## Performance Testing
+
+- Test component rendering performance
+- Test memory leaks in long-running tests
+- Use React Native Testing Library's performance utilities
+- Monitor test execution time

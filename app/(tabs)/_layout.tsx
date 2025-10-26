@@ -39,6 +39,22 @@ export default function TabLayout() {
         }}
       />
 
+      {/* Extension Requests tab */}
+      <Tabs.Screen
+        name="extension-requests"
+        options={{
+          title: "ER",
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome
+              name="file-text-o"
+              size={28}
+              color={color}
+              style={{ marginBottom: -3 }}
+            />
+          ),
+        }}
+      />
+
       {/* Notify tab */}
       <Tabs.Screen
         name="notify"
@@ -68,6 +84,29 @@ export default function TabLayout() {
               style={{ marginBottom: -3 }}
             />
           ),
+        }}
+      />
+
+      {/* Hidden screens - accessible via home screen navigation */}
+      <Tabs.Screen
+        name="task-requests"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="tasks"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>

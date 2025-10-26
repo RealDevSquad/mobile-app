@@ -1,0 +1,81 @@
+---
+globs: *.tsx,*.ts
+description: Expo and Mobile UI development guidelines
+---
+
+# Expo & Mobile UI Development Rules
+
+## Expo Framework
+
+- Follow Expo's official documentation: https://docs.expo.dev/
+- Use Expo's managed workflow for streamlined development and deployment
+- Use expo-constants for managing environment variables and configuration
+- Use expo-permissions to handle device permissions gracefully
+- Implement expo-updates for over-the-air (OTA) updates
+
+## UI and Styling
+
+- Use Expo's built-in components for common UI patterns and layouts
+- Implement responsive design with Flexbox and Expo's useWindowDimensions for screen size adjustments
+- Use styled-components or Tailwind CSS for component styling
+- Implement dark mode support using Expo's useColorScheme
+- Ensure high accessibility (a11y) standards using ARIA roles and native accessibility props
+- Leverage react-native-reanimated and react-native-gesture-handler for performant animations and gestures
+
+## Safe Area Management
+
+- Use SafeAreaProvider from react-native-safe-area-context to manage safe areas globally
+- Wrap top-level components with SafeAreaView to handle notches, status bars, and other screen insets
+- Use SafeAreaScrollView for scrollable content to ensure it respects safe area boundaries
+- Avoid hardcoding padding or margins for safe areas; rely on SafeAreaView and context hooks
+
+## Performance Optimization
+
+- Use Expo's AppLoading and SplashScreen for optimized app startup experience
+- Optimize images: use WebP format where supported, include size data, implement lazy loading with expo-image
+- Profile and monitor performance using React Native's built-in tools and Expo's debugging features
+- Prioritize Mobile Web Vitals (Load Time, Jank, and Responsiveness)
+
+## Navigation
+
+- Use react-navigation for routing and navigation; follow its best practices for stack, tab, and drawer navigators
+- Leverage deep linking and universal links for better user engagement and navigation flow
+- Use dynamic routes with expo-router for better navigation handling
+
+## State Management
+
+- Use React Context and useReducer for managing global state
+- Leverage react-query for data fetching and caching; avoid excessive API calls
+- For complex state management, consider using Zustand or Redux Toolkit
+- Handle URL search parameters using libraries like expo-linking
+
+## Security
+
+- Sanitize user inputs to prevent XSS attacks
+- Use react-native-encrypted-storage for secure storage of sensitive data
+- Ensure secure communication with APIs using HTTPS and proper authentication
+- Use Expo's Security guidelines: https://docs.expo.dev/guides/security/
+
+## Internationalization (i18n)
+
+- Use react-native-i18n or expo-localization for internationalization and localization
+- Support multiple languages and RTL layouts
+- Ensure text scaling and font adjustments for accessibility
+
+## Testing
+
+- Write unit tests using Jest and React Native Testing Library
+- Implement integration tests for critical user flows using Detox
+- Use Expo's testing tools for running tests in different environments
+- Consider snapshot testing for components to ensure UI consistency
+
+## Error Handling
+
+- Use Zod for runtime validation and error handling
+- Implement proper error logging using Sentry or a similar service
+- Use expo-error-reporter for logging and reporting errors in production
+
+## Deployment
+
+- Follow Expo's best practices for app deployment and publishing: https://docs.expo.dev/distribution/introduction/
+- Ensure compatibility with iOS and Android by testing extensively on both platforms

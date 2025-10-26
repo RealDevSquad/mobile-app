@@ -1,5 +1,7 @@
+import { EXTENSION_REQUEST_API } from "@/constants/apiConstant/extension-request-api";
 import { HomeApi } from "@/constants/apiConstant/home-api";
 import { USER_API } from "@/constants/apiConstant/user-api";
+import { ExtensionRequestDTO } from "@/types/extension-request.dto";
 import { TaskDTO } from "@/types/task.dto";
 import { create } from "zustand";
 
@@ -29,11 +31,27 @@ interface UserStore {
   userData: User[];
   tasks: TaskDTO[]; // Updated to use TaskDTO
   userStatus: UserStatus | null; // Add userStatus property
+  extensionRequests: ExtensionRequestDTO[];
+  hasMoreExtensionRequests: boolean;
+  extensionRequestsFilter: string;
+  extensionRequestsNext: string;
   loading: boolean;
   error: string | null;
   fetchUsers: (cookie: string) => Promise<void>;
   fetchActiveTask: (cookie: string) => Promise<void>;
   fetchUserStatus: (cookie: string) => Promise<void>; // Add fetchUserStatus method
+  fetchExtensionRequests: (
+    cookie: string,
+    status?: string,
+    next?: string
+  ) => Promise<void>;
+  approveExtensionRequest: (id: string, cookie: string) => Promise<void>;
+  rejectExtensionRequest: (
+    id: string,
+    cookie: string,
+    reason?: string
+  ) => Promise<void>;
+  setExtensionRequestsFilter: (status: string) => void;
   submitOOOForm: (
     data: { fromDate: string; toDate: string; description: string },
     token: string
@@ -45,6 +63,10 @@ export const useUserStore = create<UserStore>((set) => ({
   userData: [],
   tasks: [], // Updated to use TaskDTO[]
   userStatus: null, // Initialize userStatus as null
+  extensionRequests: [],
+  hasMoreExtensionRequests: false,
+  extensionRequestsFilter: "PENDING",
+  extensionRequestsNext: "",
   loading: false,
   error: null,
 
@@ -137,7 +159,7 @@ export const useUserStore = create<UserStore>((set) => ({
         until: new Date(data.toDate).getTime(), // Convert toDate to timestamp
         message: data.description, // Map description to message
         state: "OOO", // Set state to OOO
-        updatedAt: new Date().getTime(), // Add updated timestamp
+        updatedAt: Date.now(), // Add updated timestamp
       },
     };
 
@@ -196,5 +218,148 @@ export const useUserStore = create<UserStore>((set) => ({
       console.error("Error in cancelOOO:", error);
       throw error; // Re-throw the error to handle it in the calling function
     }
+  },
+
+  fetchExtensionRequests: async (
+    cookie: string,
+    status = "PENDING",
+    next?: string
+  ) => {
+    set({ loading: true });
+    try {
+      const queryParams = new URLSearchParams({
+        order: "desc",
+        size: "5",
+        q: `status:${status}`,
+      });
+
+      if (next) {
+        queryParams.append("next", next);
+      }
+
+      const url = `${EXTENSION_REQUEST_API.GET_EXTENSION_REQUESTS}?${queryParams}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+          Cookie: `rds-session=${cookie}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch extension requests: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      const newRequests = data.allExtensionRequests || [];
+
+      set((state) => ({
+        extensionRequests: next
+          ? [...state.extensionRequests, ...newRequests]
+          : newRequests,
+        hasMoreExtensionRequests: !!data.next,
+        extensionRequestsNext: data.next || "",
+        loading: false,
+        error: null,
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch extension requests",
+        loading: false,
+      });
+    }
+  },
+
+  approveExtensionRequest: async (id: string, cookie: string) => {
+    try {
+      const response = await fetch(
+        EXTENSION_REQUEST_API.UPDATE_EXTENSION_REQUEST_STATUS(id),
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `rds-session=${cookie}`,
+          },
+          body: JSON.stringify({ status: "APPROVED" }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to approve extension request: ${response.statusText}`
+        );
+      }
+
+      // Update the request status in the store
+      set((state) => ({
+        extensionRequests: state.extensionRequests.map((req) =>
+          req.id === id ? { ...req, status: "APPROVED" } : req
+        ),
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to approve extension request",
+      });
+      throw error;
+    }
+  },
+
+  rejectExtensionRequest: async (
+    id: string,
+    cookie: string,
+    reason?: string
+  ) => {
+    try {
+      const response = await fetch(
+        EXTENSION_REQUEST_API.UPDATE_EXTENSION_REQUEST_STATUS(id),
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `rds-session=${cookie}`,
+          },
+          body: JSON.stringify({
+            status: "DENIED",
+            ...(reason && { reason }),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to reject extension request: ${response.statusText}`
+        );
+      }
+
+      // Update the request status in the store
+      set((state) => ({
+        extensionRequests: state.extensionRequests.map((req) =>
+          req.id === id ? { ...req, status: "REJECTED" } : req
+        ),
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to reject extension request",
+      });
+      throw error;
+    }
+  },
+
+  setExtensionRequestsFilter: (status: string) => {
+    set({ extensionRequestsFilter: status });
   },
 }));

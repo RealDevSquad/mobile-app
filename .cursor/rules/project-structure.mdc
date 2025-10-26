@@ -1,0 +1,56 @@
+---
+alwaysApply: true
+description: Project structure and organization guidelines
+---
+
+# Project Structure Guide
+
+## Main Entry Points
+
+- Main app entry: [app/\_layout.tsx](mdc:app/_layout.tsx)
+- Tab navigation: [app/(tabs)/\_layout.tsx](<mdc:app/(tabs)/_layout.tsx>)
+- App configuration: [app.config.ts](mdc:app.config.ts)
+
+## Directory Structure
+
+- **app/**: Expo Router file-based routing
+  - **app/(tabs)/**: Tab-based navigation screens
+  - **app/(tabs)/home/**: Home screen and related components
+  - **app/(tabs)/profile/**: Profile screens and user details
+  - **app/(tabs)/notify/**: Notification screens
+- **components/**: Reusable UI components
+  - **components/Modal/**: Modal components (CameraModal, CustomModal, GithubLoginModal)
+- **constants/**: App constants and configuration
+  - **constants/apiConstant/**: API endpoint definitions
+- **hooks/**: Custom React hooks
+- **store/**: State management (Zustand/Redux)
+- **types/**: TypeScript type definitions
+- ****tests**/**: Test files and mocks
+
+## Key Files
+
+- [package.json](mdc:package.json): Dependencies and scripts
+- [tsconfig.json](mdc:tsconfig.json): TypeScript configuration
+- [jest.config.js](mdc:jest.config.js): Testing configuration
+- [eslint.config.ts](mdc:eslint.config.ts): Linting rules
+
+## Component Organization
+
+- Components should be in the `components/` directory
+- Use lowercase with dashes for component directories
+- Group related components in subdirectories (e.g., `Modal/`)
+- Export components as named exports
+- Include TypeScript interfaces for component props
+
+## API Organization
+
+- API constants in `constants/apiConstant/`
+- Separate files for different API domains (auth, user, home)
+- Use consistent naming for API endpoints
+
+## Testing Structure
+
+- Test files mirror the component structure
+- Use `__tests__/` directory for all test files
+- Include mocks in `__tests__/mocks/` directory
+- Follow naming convention: `ComponentName.test.tsx`
