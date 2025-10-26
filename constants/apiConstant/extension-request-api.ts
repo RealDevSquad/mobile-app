@@ -1,7 +1,7 @@
-const baseUrl = "https://api.realdevsquad.com";
+import { BASE_URL } from "./base-url";
 
 export const EXTENSION_REQUEST_API = {
-  GET_EXTENSION_REQUESTS: `${baseUrl}/extension-requests`,
+  GET_EXTENSION_REQUESTS: `${BASE_URL}/extension-requests`,
   UPDATE_EXTENSION_REQUEST_STATUS: (id: string) =>
-    `${baseUrl}/extension-requests/${id}/status`,
+    `${BASE_URL}/extension-requests/${id}/status`,
 };

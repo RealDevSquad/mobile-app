@@ -7,6 +7,7 @@ import { ExtensionRequestDTO } from "@/types/extension-request.dto";
 import { TaskRequestDTO } from "@/types/task-request.dto";
 import { TaskDTO } from "@/types/task.dto";
 import { UserData } from "@/types/user.dto";
+import { createAuthHeaders } from "@/utils/authHeaders";
 import { create } from "zustand";
 
 export interface GithubIssue {
@@ -75,9 +76,14 @@ interface UserStore {
     status?: string,
     next?: string
   ) => Promise<void>;
-  approveTaskRequest: (id: string, cookie: string) => Promise<void>;
+  approveTaskRequest: (
+    taskRequestId: string,
+    userId: string,
+    cookie: string
+  ) => Promise<void>;
   rejectTaskRequest: (
-    id: string,
+    taskRequestId: string,
+    userId: string,
     cookie: string,
     reason?: string
   ) => Promise<void>;
@@ -116,14 +122,14 @@ export const useUserStore = create<UserStore>((set) => ({
     try {
       const response = await fetch(USER_API.USER_DETAIL, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `rds-session=${cookie}`,
-        },
+        headers: createAuthHeaders(cookie),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch users: ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to fetch users: ${response.status} ${response.statusText} - ${errorText}`
+        );
       }
 
       const data = await response.json();
@@ -142,9 +148,8 @@ export const useUserStore = create<UserStore>((set) => ({
       const response = await fetch(USER_API.GET_ACTIVE_TASK, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          ...createAuthHeaders(cookie),
           accept: "*/*",
-          Cookie: `rds-session=${cookie}`,
         },
       });
 
@@ -170,10 +175,7 @@ export const useUserStore = create<UserStore>((set) => ({
     try {
       const response = await fetch(USER_API.GET_USER_STATUS, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `rds-session=${cookie}`,
-        },
+        headers: createAuthHeaders(cookie),
       });
 
       if (!response.ok) {
@@ -214,10 +216,9 @@ export const useUserStore = create<UserStore>((set) => ({
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          ...createAuthHeaders(cookie),
           accept: "*/*",
           "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-          Cookie: `rds-session=${cookie}`,
         },
       });
 
@@ -285,10 +286,9 @@ export const useUserStore = create<UserStore>((set) => ({
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          ...createAuthHeaders(cookie),
           accept: "*/*",
           "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-          Cookie: `rds-session=${cookie}`,
         },
       });
 
@@ -344,8 +344,7 @@ export const useUserStore = create<UserStore>((set) => ({
     const options = {
       method: "PATCH", // Use PATCH as per backend requirements
       headers: {
-        "Content-Type": "application/json",
-        cookie: `rds-session=${token}`, // Include the session token for authentication
+        ...createAuthHeaders(token),
       },
       body: JSON.stringify(payload),
     };
@@ -375,8 +374,7 @@ export const useUserStore = create<UserStore>((set) => ({
     const options = {
       method: "PATCH", // Use PATCH as per backend requirements
       headers: {
-        "Content-Type": "application/json",
-        cookie: `rds-session=${token}`, // Include the session token for authentication
+        ...createAuthHeaders(token),
       },
       body: JSON.stringify(payload), // Send the required payload
     };
@@ -420,10 +418,9 @@ export const useUserStore = create<UserStore>((set) => ({
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          ...createAuthHeaders(cookie),
           accept: "*/*",
           "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-          Cookie: `rds-session=${cookie}`,
         },
       });
 
@@ -463,8 +460,7 @@ export const useUserStore = create<UserStore>((set) => ({
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
-            Cookie: `rds-session=${cookie}`,
+            ...createAuthHeaders(cookie),
           },
           body: JSON.stringify({ status: "APPROVED" }),
         }
@@ -504,8 +500,7 @@ export const useUserStore = create<UserStore>((set) => ({
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
-            Cookie: `rds-session=${cookie}`,
+            ...createAuthHeaders(cookie),
           },
           body: JSON.stringify({
             status: "DENIED",
@@ -581,7 +576,7 @@ export const useUserStore = create<UserStore>((set) => ({
           "sec-fetch-mode": "cors",
           "sec-fetch-site": "same-site",
           priority: "u=1, i",
-          Cookie: `rds-session=${cookie}`,
+          ...createAuthHeaders(cookie),
         },
       });
 
@@ -621,33 +616,71 @@ export const useUserStore = create<UserStore>((set) => ({
     }
   },
 
-  approveTaskRequest: async (id: string, cookie: string) => {
+  approveTaskRequest: async (
+    taskRequestId: string,
+    userId: string,
+    cookie: string
+  ) => {
     try {
-      const response = await fetch(
-        TASK_REQUEST_API.UPDATE_TASK_REQUEST_STATUS(id),
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `rds-session=${cookie}`,
-          },
-          body: JSON.stringify({ status: "APPROVED" }),
-        }
+      console.log("Approving task request:", { taskRequestId, userId });
+      console.log("API URL:", TASK_REQUEST_API.APPROVE_TASK_REQUEST);
+
+      const requestBody = {
+        taskRequestId,
+        userId,
+      };
+      console.log("Request body:", requestBody);
+
+      const headers = {
+        accept: "*/*",
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        Referer: "https://dashboard.realdevsquad.com/",
+        Origin: "https://dashboard.realdevsquad.com",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-ch-ua":
+          '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+        priority: "u=1, i",
+        ...createAuthHeaders(cookie),
+      };
+      console.log("Request headers:", headers);
+
+      const response = await fetch(TASK_REQUEST_API.APPROVE_TASK_REQUEST, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("Response status:", response.status);
+      console.log(
+        "Response headers:",
+        Object.fromEntries(response.headers.entries())
       );
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error Response:", errorText);
         throw new Error(
-          `Failed to approve task request: ${response.statusText}`
+          `Failed to approve task request: ${response.status} ${response.statusText} - ${errorText}`
         );
       }
+
+      const responseData = await response.json();
+      console.log("Success response:", responseData);
 
       // Update the request status in the store
       set((state) => ({
         taskRequests: state.taskRequests.map((req) =>
-          req.id === id ? { ...req, status: "APPROVED" } : req
+          req.id === taskRequestId ? { ...req, status: "APPROVED" } : req
         ),
       }));
     } catch (error) {
+      console.error("Error approving task request:", error);
       set({
         error:
           error instanceof Error
@@ -658,36 +691,73 @@ export const useUserStore = create<UserStore>((set) => ({
     }
   },
 
-  rejectTaskRequest: async (id: string, cookie: string, reason?: string) => {
+  rejectTaskRequest: async (
+    taskRequestId: string,
+    userId: string,
+    cookie: string,
+    reason?: string
+  ) => {
     try {
-      const response = await fetch(
-        TASK_REQUEST_API.UPDATE_TASK_REQUEST_STATUS(id),
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `rds-session=${cookie}`,
-          },
-          body: JSON.stringify({
-            status: "REJECTED",
-            ...(reason && { reason }),
-          }),
-        }
+      console.log("Rejecting task request:", { taskRequestId, userId, reason });
+      console.log("API URL:", TASK_REQUEST_API.REJECT_TASK_REQUEST);
+
+      const requestBody = {
+        taskRequestId,
+        userId,
+        ...(reason && { reason }),
+      };
+      console.log("Request body:", requestBody);
+
+      const headers = {
+        accept: "*/*",
+        "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        Referer: "https://dashboard.realdevsquad.com/",
+        Origin: "https://dashboard.realdevsquad.com",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-ch-ua":
+          '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+        priority: "u=1, i",
+        ...createAuthHeaders(cookie),
+      };
+      console.log("Request headers:", headers);
+
+      const response = await fetch(TASK_REQUEST_API.REJECT_TASK_REQUEST, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("Response status:", response.status);
+      console.log(
+        "Response headers:",
+        Object.fromEntries(response.headers.entries())
       );
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error Response:", errorText);
         throw new Error(
-          `Failed to reject task request: ${response.statusText}`
+          `Failed to reject task request: ${response.status} ${response.statusText} - ${errorText}`
         );
       }
+
+      const responseData = await response.json();
+      console.log("Success response:", responseData);
 
       // Update the request status in the store
       set((state) => ({
         taskRequests: state.taskRequests.map((req) =>
-          req.id === id ? { ...req, status: "REJECTED" } : req
+          req.id === taskRequestId ? { ...req, status: "REJECTED" } : req
         ),
       }));
     } catch (error) {
+      console.error("Error rejecting task request:", error);
       set({
         error:
           error instanceof Error

@@ -9,7 +9,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Camera } from "expo-camera";
 import * as Device from "expo-device";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
   Alert,
@@ -55,14 +55,14 @@ const AuthScreen = () => {
   const [scannedUserId, setScannedUserId] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  const openModal = () => {
+  const openModal = useCallback(() => {
     Animated.timing(modalAnimation, {
       toValue: Dimensions.get("window").height * 0.2, // Adjust the final position
       duration: 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
-  };
+  }, [modalAnimation]);
 
   const closeModal = () => {
     Animated.timing(modalAnimation, {
@@ -77,7 +77,7 @@ const AuthScreen = () => {
     if (githubLogin) {
       openModal();
     }
-  }, [githubLogin]);
+  }, [githubLogin, openModal]);
 
   useEffect(() => {
     (async () => {
@@ -92,18 +92,27 @@ const AuthScreen = () => {
   };
 
   const githubAuthUrl = buildUrl(AuthApis.GITHUB_AUTH_API, queryParams);
-  const handleNavigationStateChange = (navState: any) => {
+  const handleNavigationStateChange = async (navState: any) => {
     if (navState.url.includes("token=")) {
       try {
         const urlObj = new URL(navState.url);
         const token = urlObj.searchParams.get("token");
         if (token) {
-          setLocalStorageItem(TOKEN_KEY, token);
+          // Await token storage before navigation
+          await setLocalStorageItem(TOKEN_KEY, token);
           setGithubLogin(false);
           router.replace("/home");
         }
       } catch (error) {
-        console.error("Error parsing URL:", error);
+        console.error("Error parsing URL or saving token:", error);
+        // Show error to user
+        Toast.show({
+          type: "error",
+          text1: "Login failed",
+          text2: "Unable to save authentication token",
+          position: "bottom",
+          bottomOffset: 80,
+        });
       }
     }
   };
@@ -123,7 +132,8 @@ const AuthScreen = () => {
       const userInfo = await fetch(url);
       const userInfoJson = await userInfo.json();
       if (userInfoJson.data.token) {
-        setLocalStorageItem(TOKEN_KEY, userInfoJson.data.token);
+        // Await token storage before navigation
+        await setLocalStorageItem(TOKEN_KEY, userInfoJson.data.token);
         setCameraVisible(false);
         router.replace("/home");
       } else {
@@ -146,7 +156,7 @@ const AuthScreen = () => {
     }
   };
 
-  const getAuthStatus = async () => {
+  const getAuthStatus = useCallback(async () => {
     const deviceInfo = Device.modelName;
     const deviceId = Device.osBuildId;
     const url = `${AuthApis.QR_AUTH_API}?device_id=${deviceId}`;
@@ -198,19 +208,19 @@ const AuthScreen = () => {
         bottomOffset: 80,
       });
     }
-  };
+  }, [scannedUserId]);
 
   useEffect(() => {
     if (scannedUserId !== "") {
       getAuthStatus();
     }
-  }, [scannedUserId]);
+  }, [scannedUserId, getAuthStatus]);
 
   useEffect(() => {
     if (storedToken) {
       router.replace("/home");
     }
-  }, [storedToken]);
+  }, [storedToken, router]);
 
   if (cameraVisible) {
     if (!hasPermission) {

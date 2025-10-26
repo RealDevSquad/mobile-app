@@ -2,6 +2,7 @@ import { TASK_REQUEST_API } from "@/constants/apiConstant/task-request-api";
 import useCheckUserSession from "@/hooks/getUserToken";
 import { useUserStore } from "@/store/store";
 import { TaskRequestDTO } from "@/types/task-request.dto";
+import { createAuthHeaders } from "@/utils/authHeaders";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -49,7 +50,19 @@ export default function TaskRequestDetailsScreen() {
             "Content-Type": "application/json",
             accept: "*/*",
             "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-            Cookie: `rds-session=${token}`,
+            "User-Agent":
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+            Referer: "https://dashboard.realdevsquad.com/",
+            Origin: "https://dashboard.realdevsquad.com",
+            "sec-ch-ua-platform": '"macOS"',
+            "sec-ch-ua":
+              '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+            "sec-ch-ua-mobile": "?0",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site",
+            priority: "u=1, i",
+            ...createAuthHeaders(token),
           },
         }
       );
@@ -104,7 +117,11 @@ export default function TaskRequestDetailsScreen() {
           onPress: async () => {
             setIsApproving(true);
             try {
-              await approveTaskRequest(id, token);
+              await approveTaskRequest(
+                id,
+                taskRequest?.requestors?.[0] || "",
+                token
+              );
               Alert.alert("Success", "Task request approved successfully.");
               router.back();
             } catch (error) {
@@ -133,7 +150,11 @@ export default function TaskRequestDetailsScreen() {
           onPress: async () => {
             setIsRejecting(true);
             try {
-              await rejectTaskRequest(id, token);
+              await rejectTaskRequest(
+                id,
+                taskRequest?.requestors?.[0] || "",
+                token
+              );
               Alert.alert("Success", "Task request rejected successfully.");
               router.back();
             } catch (error) {

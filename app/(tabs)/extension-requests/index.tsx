@@ -32,10 +32,8 @@ const ExtensionRequestsScreen: React.FC = () => {
   const [isRetrying, setIsRetrying] = useState(false);
 
   const filterOptions = [
-    { label: "All", value: "ALL" },
     { label: "Pending", value: "PENDING" },
     { label: "Approved", value: "APPROVED" },
-    { label: "Rejected", value: "REJECTED" },
     { label: "Denied", value: "DENIED" },
   ];
 

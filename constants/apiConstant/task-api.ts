@@ -1,5 +1,5 @@
-const baseUrl = "https://api.realdevsquad.com";
+import { BASE_URL } from "./base-url";
 
 export const TASK_API = {
-  GET_TASKS: `${baseUrl}/tasks?dev=true`,
+  GET_TASKS: `${BASE_URL}/tasks?dev=true`,
 };

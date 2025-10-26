@@ -1,6 +1,8 @@
+import { BASE_URL } from "./base-url";
+
 export const USER_API = {
-  USER_DETAIL: "https://api.realdevsquad.com/users?profile=true",
-  GET_ACTIVE_TASK: "https://api.realdevsquad.com/tasks/self",
-  GET_USER_STATUS: "https://api.realdevsquad.com/users/status/self",
-  SEARCH_USERS: "https://api.realdevsquad.com/users",
+  USER_DETAIL: `${BASE_URL}/users?profile=true`,
+  GET_ACTIVE_TASK: `${BASE_URL}/tasks/self`,
+  GET_USER_STATUS: `${BASE_URL}/users/status/self`,
+  SEARCH_USERS: `${BASE_URL}/users`,
 };

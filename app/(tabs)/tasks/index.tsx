@@ -30,7 +30,7 @@ export default function TasksScreen() {
 
   useEffect(() => {
     if (token) {
-      fetchTasks(token, undefined, selectedAssignee);
+      fetchTasks(token, undefined, selectedAssignee ?? undefined);
     }
   }, [token, fetchTasks, selectedAssignee]);
 
@@ -44,10 +44,11 @@ export default function TasksScreen() {
 
     if (hasMoreTasks && !loadingTasks && !isLoadingMore.current && token) {
       isLoadingMore.current = true;
-      console.log("Fetching more tasks with next:", tasksNext);
-      fetchTasks(token, tasksNext, selectedAssignee).finally(() => {
-        isLoadingMore.current = false;
-      });
+      fetchTasks(token, tasksNext, selectedAssignee ?? undefined).finally(
+        () => {
+          isLoadingMore.current = false;
+        }
+      );
     }
   }, [
     hasMoreTasks,
