@@ -68,10 +68,24 @@ export const TasksApi = {
   getTaskProgress: {
     key: (id: string) => ["TasksApi.getTaskProgress", id],
     fn: async (id: string): Promise<TGetTaskProgressDto> => {
-      const { data } = await apiClient.get<TGetTaskProgressDto>(`/progresses`, {
-        params: { taskId: id, dev: false },
-      });
-      return data;
+      try {
+        const { data } = await apiClient.get<TGetTaskProgressDto>(
+          `/progresses`,
+          {
+            params: { taskId: id, dev: false },
+          }
+        );
+        return data;
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return {
+            message: "No progress updates found",
+            count: 0,
+            data: [],
+          };
+        }
+        throw error;
+      }
     },
   },
 

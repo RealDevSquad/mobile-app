@@ -1,15 +1,21 @@
 import { TasksApi } from "@/api/tasks/tasks.api";
-import { theme } from "@/constants/theme";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
 import {
-  ActivityIndicator,
+  addProgressSchema,
+  TAddProgressFormData,
+} from "@/api/tasks/tasks.schema";
+import FormInput from "@/components/form/FormInput";
+import FormSubmitButton from "@/components/form/FormSubmitButton";
+import { theme } from "@/constants/theme";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
   Alert,
   Modal,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -29,10 +35,21 @@ export default function AddProgressModal({
   taskId,
   token,
 }: AddProgressModalProps) {
-  const [completed, setCompleted] = useState("");
-  const [planned, setPlanned] = useState("");
-  const [blockers, setBlockers] = useState("");
   const queryClient = useQueryClient();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+  } = useForm<TAddProgressFormData>({
+    resolver: zodResolver(addProgressSchema),
+    defaultValues: {
+      completed: "",
+      planned: "",
+      blockers: "",
+    },
+  });
 
   const submitProgressMutation = useMutation({
     mutationFn: (progressData: {
@@ -44,11 +61,10 @@ export default function AddProgressModal({
     }) => TasksApi.submitProgress.fn(progressData, token || undefined),
     onSuccess: () => {
       Alert.alert("Success", "Progress updated successfully");
-      setCompleted("");
-      setPlanned("");
-      setBlockers("");
+      reset();
       queryClient.invalidateQueries({ queryKey: ["TasksApi.getSelfTasks"] });
       queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskProgress"] });
       onSubmit();
       onClose();
     },
@@ -61,25 +77,18 @@ export default function AddProgressModal({
     },
   });
 
-  const handleSubmit = () => {
-    if (!completed.trim() && !planned.trim() && !blockers.trim()) {
-      Alert.alert("Error", "Please fill at least one field");
-      return;
-    }
-
+  const handleFormSubmit = (data: TAddProgressFormData) => {
     submitProgressMutation.mutate({
       type: "task",
       taskId,
-      completed: completed.trim() || "",
-      planned: planned.trim() || "",
-      blockers: blockers.trim() || "",
+      completed: data.completed?.trim() || "",
+      planned: data.planned?.trim() || "",
+      blockers: data.blockers?.trim() || "",
     });
   };
 
   const handleClose = () => {
-    setCompleted("");
-    setPlanned("");
-    setBlockers("");
+    reset();
     onClose();
   };
 
@@ -118,74 +127,76 @@ export default function AddProgressModal({
               </Text>
             </View>
 
-            <View style={styles.inputSection}>
-              <Text style={styles.inputLabel}>Completed</Text>
-              <TextInput
-                style={styles.textInput}
-                value={completed}
-                onChangeText={setCompleted}
-                placeholder="What have you completed since the last update?"
-                placeholderTextColor={theme.colors.text.tertiary}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
+            <View style={styles.form}>
+              <Controller
+                control={control}
+                name="completed"
+                render={({ field: { onChange, value } }) => (
+                  <FormInput
+                    label="Completed"
+                    placeholder="What have you completed since the last update?"
+                    errorMessage={errors.completed?.message}
+                    icon="checkmark-circle-outline"
+                    multiline
+                    numberOfLines={3}
+                    style={styles.textInput}
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                )}
               />
-            </View>
 
-            <View style={styles.inputSection}>
-              <Text style={styles.inputLabel}>Planned</Text>
-              <TextInput
-                style={styles.textInput}
-                value={planned}
-                onChangeText={setPlanned}
-                placeholder="What do you plan to work on next?"
-                placeholderTextColor={theme.colors.text.tertiary}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
+              <Controller
+                control={control}
+                name="planned"
+                render={({ field: { onChange, value } }) => (
+                  <FormInput
+                    label="Planned"
+                    placeholder="What do you plan to work on next?"
+                    errorMessage={errors.planned?.message}
+                    icon="calendar-outline"
+                    multiline
+                    numberOfLines={3}
+                    style={styles.textInput}
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                )}
               />
-            </View>
 
-            <View style={styles.inputSection}>
-              <Text style={styles.inputLabel}>Blockers</Text>
-              <TextInput
-                style={styles.textInput}
-                value={blockers}
-                onChangeText={setBlockers}
-                placeholder="Any issues or blockers preventing progress?"
-                placeholderTextColor={theme.colors.text.tertiary}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
+              <Controller
+                control={control}
+                name="blockers"
+                render={({ field: { onChange, value } }) => (
+                  <FormInput
+                    label="Blockers"
+                    placeholder="Any issues or blockers preventing progress?"
+                    errorMessage={errors.blockers?.message}
+                    icon="warning-outline"
+                    multiline
+                    numberOfLines={3}
+                    style={styles.textInput}
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                )}
               />
             </View>
           </ScrollView>
 
           <View style={styles.footer}>
-            <TouchableOpacity
-              style={styles.cancelButton}
+            <FormSubmitButton
+              text="Cancel"
               onPress={handleClose}
-              disabled={submitProgressMutation.isPending}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.submitButton,
-                submitProgressMutation.isPending && styles.submitButtonDisabled,
-              ]}
-              onPress={handleSubmit}
-              disabled={submitProgressMutation.isPending}
-            >
-              {submitProgressMutation.isPending ? (
-                <ActivityIndicator
-                  size="small"
-                  color={theme.colors.text.inverted}
-                />
-              ) : (
-                <Text style={styles.submitButtonText}>Submit</Text>
-              )}
-            </TouchableOpacity>
+              variant="secondary"
+              isDisabled={submitProgressMutation.isPending}
+            />
+            <FormSubmitButton
+              text="Submit"
+              onPress={handleSubmit(handleFormSubmit)}
+              isLoading={submitProgressMutation.isPending}
+              isDisabled={!isDirty || submitProgressMutation.isPending}
+            />
           </View>
         </TouchableOpacity>
       </View>
@@ -252,14 +263,8 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.secondary,
   },
-  inputSection: {
-    marginBottom: theme.spacing.md,
-  },
-  inputLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+  form: {
+    marginTop: theme.spacing.lg,
   },
   textInput: {
     backgroundColor: theme.colors.surface.primary,
@@ -270,6 +275,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.primary,
     minHeight: 70,
+    textAlignVertical: "top",
     ...theme.shadow.sm,
   },
   footer: {

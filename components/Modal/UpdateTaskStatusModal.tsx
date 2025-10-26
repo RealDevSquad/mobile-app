@@ -62,9 +62,9 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
       TasksApi.updateTaskStatus.fn(taskId, statusData, token || undefined),
     onSuccess: () => {
       Alert.alert("Success", "Task status and progress updated successfully.");
-      // Invalidate task-related queries
       queryClient.invalidateQueries({ queryKey: ["TasksApi.getSelfTasks"] });
       queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskProgress"] });
       onSubmit();
       onClose();
     },

@@ -1,70 +1,47 @@
+import {
+  statusUpdateSchema,
+  TStatusUpdateFormData,
+} from "@/api/users/users.schema";
+import FormDatePicker from "@/components/form/FormDatePicker";
+import FormInput from "@/components/form/FormInput";
+import FormSubmitButton from "@/components/form/FormSubmitButton";
 import { theme } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import DatePicker from "react-native-date-picker";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface StatusUpdateFormProps {
   onSubmit: (fromDate: Date, toDate: Date, description: string) => void;
-  onClose: () => void; // Callback to handle closing the form
+  onClose: () => void;
 }
 
 const StatusUpdateForm: React.FC<StatusUpdateFormProps> = ({
   onSubmit,
   onClose,
 }) => {
-  const [fromDate, setFromDate] = useState<Date | null>(null); // State for From Date
-  const [toDate, setToDate] = useState<Date | null>(null); // State for To Date
-  const [description, setDescription] = useState("");
-  const [openFromDatePicker, setOpenFromDatePicker] = useState(false); // State to toggle From Date picker
-  const [openToDatePicker, setOpenToDatePicker] = useState(false); // State to toggle To Date picker
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+  } = useForm<TStatusUpdateFormData>({
+    resolver: zodResolver(statusUpdateSchema),
+    defaultValues: {
+      fromDate: undefined,
+      toDate: undefined,
+      description: "",
+    },
+  });
 
-  const formatDate = (date: Date): string => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
-  };
-
-  const isFormValid = (): boolean => {
-    if (!fromDate || !toDate) {
-      Alert.alert("Error", "Please select both From Date and To Date.");
-      return false;
-    }
-    if (fromDate >= toDate) {
-      Alert.alert("Error", "From Date must be less than To Date.");
-      return false;
-    }
-    if (!description) {
-      Alert.alert("Error", "Description is required.");
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = () => {
-    if (isFormValid()) {
-      const formattedFromDate = fromDate ? fromDate : new Date();
-      const formattedToDate = toDate ? toDate : new Date();
-      onSubmit(formattedFromDate, formattedToDate, description);
-      setFromDate(null);
-      setToDate(null);
-      setDescription("");
-      setOpenFromDatePicker(false);
-      setOpenToDatePicker(false);
-    }
+  const handleFormSubmit = (data: TStatusUpdateFormData) => {
+    onSubmit(data.fromDate, data.toDate, data.description);
+    reset();
   };
 
   return (
     <View style={styles.wrapper}>
-      {/* Close Icon */}
       <TouchableOpacity
         style={styles.closeIcon}
         onPress={onClose}
@@ -75,62 +52,64 @@ const StatusUpdateForm: React.FC<StatusUpdateFormProps> = ({
 
       <Text style={styles.title}>Update Task</Text>
 
-      {/* From Date Picker */}
-      <TouchableOpacity
-        style={[styles.input, styles.spaceAbove]}
-        onPress={() => setOpenFromDatePicker(true)}
-      >
-        <Text style={styles.dateText}>
-          {fromDate ? formatDate(fromDate) : "Select From Date"}
-        </Text>
-      </TouchableOpacity>
-      <DatePicker
-        modal
-        open={openFromDatePicker}
-        date={fromDate || new Date()}
-        mode="date"
-        onConfirm={(date) => {
-          setOpenFromDatePicker(false);
-          setFromDate(date);
-        }}
-        onCancel={() => setOpenFromDatePicker(false)}
-      />
+      <View style={styles.form}>
+        <Controller
+          control={control}
+          name="fromDate"
+          render={({ field: { onChange, value } }) => (
+            <FormDatePicker
+              label="From Date"
+              value={value}
+              onDateChange={onChange}
+              placeholder="Select From Date"
+              required
+              errorMessage={errors.fromDate?.message}
+              icon="calendar-outline"
+            />
+          )}
+        />
 
-      {/* To Date Picker */}
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() => setOpenToDatePicker(true)}
-      >
-        <Text style={styles.dateText}>
-          {toDate ? formatDate(toDate) : "Select To Date"}
-        </Text>
-      </TouchableOpacity>
-      <DatePicker
-        modal
-        open={openToDatePicker}
-        date={toDate || new Date()}
-        mode="date"
-        onConfirm={(date) => {
-          setOpenToDatePicker(false);
-          setToDate(date);
-        }}
-        onCancel={() => setOpenToDatePicker(false)}
-      />
+        <Controller
+          control={control}
+          name="toDate"
+          render={({ field: { onChange, value } }) => (
+            <FormDatePicker
+              label="To Date"
+              value={value}
+              onDateChange={onChange}
+              placeholder="Select To Date"
+              required
+              errorMessage={errors.toDate?.message}
+              icon="calendar-outline"
+            />
+          )}
+        />
 
-      {/* Description Input */}
-      <TextInput
-        placeholder="Add description"
-        style={[styles.input, styles.textArea]}
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        numberOfLines={4}
-      />
+        <Controller
+          control={control}
+          name="description"
+          render={({ field: { onChange, value } }) => (
+            <FormInput
+              label="Description"
+              placeholder="Add description"
+              required
+              errorMessage={errors.description?.message}
+              icon="document-text-outline"
+              multiline
+              numberOfLines={4}
+              style={styles.textArea}
+              value={value}
+              onChangeText={onChange}
+            />
+          )}
+        />
 
-      {/* Submit Button */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
-      </TouchableOpacity>
+        <FormSubmitButton
+          text="Submit"
+          onPress={handleSubmit(handleFormSubmit)}
+          isDisabled={!isDirty}
+        />
+      </View>
     </View>
   );
 };
@@ -160,46 +139,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: theme.spacing.lg,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.primary,
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-    width: "100%",
-    justifyContent: "center",
-    backgroundColor: theme.colors.surface.secondary,
-  },
-  dateText: {
-    color: theme.colors.text.secondary,
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.regular,
+  form: {
+    marginTop: theme.spacing.lg,
   },
   textArea: {
     height: 100,
-    borderColor: theme.colors.border.primary,
-    borderWidth: 1,
-    borderRadius: theme.radius.md,
-    paddingHorizontal: theme.spacing.md,
-    backgroundColor: theme.colors.surface.secondary,
-  },
-  submitButton: {
-    backgroundColor: theme.colors.primary[500],
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.radius.md,
-    alignSelf: "center",
-    width: "50%",
-    ...theme.shadow.lg,
-  },
-  submitButtonText: {
-    color: theme.colors.text.inverted,
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.bold,
-    textAlign: "center",
-  },
-  spaceAbove: {
-    marginTop: theme.spacing.lg,
+    textAlignVertical: "top",
   },
 });
 

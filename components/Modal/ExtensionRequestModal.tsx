@@ -1,17 +1,23 @@
 import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
+import {
+  extensionRequestSchema,
+  TExtensionRequestFormData,
+} from "@/api/extension-requests/extension-requests.schema";
+import FormDatePicker from "@/components/form/FormDatePicker";
+import FormInput from "@/components/form/FormInput";
+import FormSubmitButton from "@/components/form/FormSubmitButton";
 import { theme } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
-import React, { useState } from "react";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
   Modal,
-  Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -45,42 +51,24 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
   assignee,
   token,
 }) => {
-  const [title, setTitle] = useState("");
-  const [reason, setReason] = useState("");
-  const [newDeadline, setNewDeadline] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const queryClient = useQueryClient();
 
-  const formatDate = (date: Date): string => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  const isFormValid = (): boolean => {
-    if (!title.trim()) {
-      Alert.alert("Error", "Title is required.");
-      return false;
-    }
-    if (!reason.trim()) {
-      Alert.alert("Error", "Reason is required.");
-      return false;
-    }
-    if (!newDeadline) {
-      Alert.alert("Error", "New deadline is required.");
-      return false;
-    }
-
-    // Check if new deadline is after old deadline
-    const oldDeadlineDate = moment.unix(oldEndsOn).toDate();
-    if (newDeadline <= oldDeadlineDate) {
-      Alert.alert("Error", "New deadline must be after the current deadline.");
-      return false;
-    }
-
-    return true;
-  };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+  } = useForm<TExtensionRequestFormData>({
+    resolver: zodResolver(extensionRequestSchema),
+    defaultValues: {
+      title: "",
+      reason: "",
+      newDeadline: undefined,
+      taskId,
+      assignee,
+      oldEndsOn,
+    },
+  });
 
   const createExtensionRequestMutation = useMutation({
     mutationFn: (extensionData: {
@@ -101,7 +89,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
         {
           text: "OK",
           onPress: () => {
-            resetForm();
+            reset();
             // Invalidate extension request queries
             queryClient.invalidateQueries({
               queryKey: ["ExtensionRequestsApi.getExtensionRequests"],
@@ -124,31 +112,22 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
     },
   });
 
-  const handleSubmit = () => {
-    if (!isFormValid() || !newDeadline) return;
-
+  const handleFormSubmit = (data: TExtensionRequestFormData) => {
     const extensionRequestData: ExtensionRequestData = {
-      assignee,
-      newEndsOn: moment(newDeadline).unix(),
-      oldEndsOn,
-      reason: reason.trim(),
+      assignee: data.assignee,
+      newEndsOn: moment(data.newDeadline).unix(),
+      oldEndsOn: data.oldEndsOn,
+      reason: data.reason.trim(),
       status: "PENDING",
-      taskId,
-      title: title.trim(),
+      taskId: data.taskId,
+      title: data.title.trim(),
     };
 
     createExtensionRequestMutation.mutate(extensionRequestData);
   };
 
-  const resetForm = () => {
-    setTitle("");
-    setReason("");
-    setNewDeadline(null);
-    setShowDatePicker(false);
-  };
-
   const handleClose = () => {
-    resetForm();
+    reset();
     onClose();
   };
 
@@ -185,107 +164,81 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
             <Text style={styles.infoValue}>{oldDeadlineDate}</Text>
           </View>
 
-          {/* Title Input */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Title *</Text>
-            <TextInput
-              style={[
-                styles.input,
-                createExtensionRequestMutation.isPending &&
-                  styles.disabledInput,
-              ]}
-              placeholder="Enter extension request title"
-              value={title}
-              onChangeText={setTitle}
-              editable={!createExtensionRequestMutation.isPending}
+          <View style={styles.form}>
+            {/* Title Input */}
+            <Controller
+              control={control}
+              name="title"
+              render={({ field: { onChange, value } }) => (
+                <FormInput
+                  label="Title"
+                  placeholder="Enter extension request title"
+                  required
+                  errorMessage={errors.title?.message}
+                  icon="document-text-outline"
+                  editable={!createExtensionRequestMutation.isPending}
+                  value={value}
+                  onChangeText={onChange}
+                />
+              )}
             />
-          </View>
 
-          {/* Reason Input */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Reason *</Text>
-            <TextInput
-              style={[
-                styles.input,
-                styles.textArea,
-                createExtensionRequestMutation.isPending &&
-                  styles.disabledInput,
-              ]}
-              placeholder="Explain why you need an extension"
-              value={reason}
-              onChangeText={setReason}
-              multiline
-              numberOfLines={4}
-              editable={!createExtensionRequestMutation.isPending}
+            {/* Reason Input */}
+            <Controller
+              control={control}
+              name="reason"
+              render={({ field: { onChange, value } }) => (
+                <FormInput
+                  label="Reason"
+                  placeholder="Explain why you need an extension"
+                  required
+                  errorMessage={errors.reason?.message}
+                  icon="chatbubble-outline"
+                  multiline
+                  numberOfLines={4}
+                  style={styles.textArea}
+                  editable={!createExtensionRequestMutation.isPending}
+                  value={value}
+                  onChangeText={onChange}
+                />
+              )}
             />
-          </View>
 
-          {/* New Deadline Picker */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>New Deadline *</Text>
-            <TouchableOpacity
-              style={[
-                styles.dateButton,
-                createExtensionRequestMutation.isPending &&
-                  styles.disabledInput,
-              ]}
-              onPress={() =>
-                !createExtensionRequestMutation.isPending &&
-                setShowDatePicker(true)
-              }
-              disabled={createExtensionRequestMutation.isPending}
-            >
-              <Text style={styles.dateButtonText}>
-                {newDeadline ? formatDate(newDeadline) : "Select new deadline"}
-              </Text>
-              <Ionicons
-                name="calendar-outline"
-                size={20}
-                color={theme.colors.text.secondary}
-              />
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={newDeadline || new Date()}
-                mode="date"
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                minimumDate={moment.unix(oldEndsOn).add(1, "day").toDate()}
-                onChange={(event, selectedDate) => {
-                  setShowDatePicker(false);
-                  if (selectedDate) {
-                    setNewDeadline(selectedDate);
-                  }
-                }}
-              />
-            )}
+            {/* New Deadline Picker */}
+            <Controller
+              control={control}
+              name="newDeadline"
+              render={({ field: { onChange, value } }) => (
+                <FormDatePicker
+                  label="New Deadline"
+                  value={value}
+                  onDateChange={onChange}
+                  placeholder="Select new deadline"
+                  required
+                  errorMessage={errors.newDeadline?.message}
+                  icon="calendar-outline"
+                  minimumDate={moment.unix(oldEndsOn).add(1, "day").toDate()}
+                  disabled={createExtensionRequestMutation.isPending}
+                />
+              )}
+            />
           </View>
 
           {/* Action Buttons */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+            <FormSubmitButton
+              text="Cancel"
               onPress={handleClose}
-              disabled={createExtensionRequestMutation.isPending}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
+              variant="secondary"
+              isDisabled={createExtensionRequestMutation.isPending}
+            />
 
-            <TouchableOpacity
-              style={[
-                styles.button,
-                styles.submitButton,
-                createExtensionRequestMutation.isPending &&
-                  styles.disabledButton,
-              ]}
-              onPress={handleSubmit}
-              disabled={createExtensionRequestMutation.isPending}
-            >
-              <Text style={styles.submitButtonText}>
-                {createExtensionRequestMutation.isPending
-                  ? "Submitting..."
-                  : "Submit Request"}
-              </Text>
-            </TouchableOpacity>
+            <FormSubmitButton
+              text="Submit Request"
+              onPress={handleSubmit(handleFormSubmit)}
+              isLoading={createExtensionRequestMutation.isPending}
+              isDisabled={!isDirty || createExtensionRequestMutation.isPending}
+            />
           </View>
         </View>
       </View>
@@ -342,44 +295,12 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
     fontWeight: theme.typography.fontWeight.medium,
   },
-  inputContainer: {
-    marginBottom: theme.spacing.md,
-  },
-  label: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.primary,
-    borderRadius: theme.radius.sm,
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.sm,
-    fontSize: theme.typography.fontSize.base,
-    color: theme.colors.text.primary,
-    backgroundColor: theme.colors.background.primary,
+  form: {
+    marginTop: theme.spacing.lg,
   },
   textArea: {
     height: 80,
     textAlignVertical: "top",
-  },
-  dateButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: theme.colors.border.primary,
-    borderRadius: theme.radius.sm,
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.background.primary,
-  },
-  dateButtonText: {
-    fontSize: theme.typography.fontSize.base,
-    color: theme.colors.text.primary,
-    flex: 1,
   },
   buttonContainer: {
     flexDirection: "row",
