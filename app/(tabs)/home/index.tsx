@@ -37,7 +37,7 @@ export default function HomeScreen() {
     router.push(`/${route}`);
   };
 
-  const getUserDisplayName = () => {
+  const getUserDisplayName = (): string => {
     if (userData?.first_name) {
       return userData.first_name;
     }
@@ -55,11 +55,14 @@ export default function HomeScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Image
-            source={require("../../../assets/images/rdsLogo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../../assets/images/rdsLogo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <Text style={styles.logoText}>RDS</Text>
+          </View>
           {userData?.picture?.url && (
             <Avatar uri={userData.picture.url} size={40} />
           )}
@@ -117,6 +120,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logoText: {
+    fontSize: 28,
+    fontWeight: "semibold",
+    color: "#333333",
+    marginLeft: 8,
+  },
   loadingContainer: {
     flex: 1,
     backgroundColor: "#f5f5f5",
@@ -137,8 +150,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E0E0E0",
   },
   logo: {
-    width: 80,
-    height: 28,
+    width: 40,
+    height: 40,
   },
   greetingSection: {
     paddingHorizontal: 16,

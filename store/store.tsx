@@ -1,20 +1,18 @@
 import { EXTENSION_REQUEST_API } from "@/constants/apiConstant/extension-request-api";
 import { HomeApi } from "@/constants/apiConstant/home-api";
+import { TASK_REQUEST_API } from "@/constants/apiConstant/task-request-api";
 import { USER_API } from "@/constants/apiConstant/user-api";
 import { ExtensionRequestDTO } from "@/types/extension-request.dto";
+import { TaskRequestDTO } from "@/types/task-request.dto";
 import { TaskDTO } from "@/types/task.dto";
+import { UserData } from "@/types/user.dto";
 import { create } from "zustand";
 
 export interface GithubIssue {
   [key: string]: any;
 }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  address: { city: string };
-}
+// User interface replaced with UserData from types/user.dto.ts
 
 interface UserStatus {
   data: {
@@ -28,13 +26,17 @@ interface UserStatus {
 }
 
 interface UserStore {
-  userData: User[];
+  userData: UserData | null;
   tasks: TaskDTO[]; // Updated to use TaskDTO
   userStatus: UserStatus | null; // Add userStatus property
   extensionRequests: ExtensionRequestDTO[];
   hasMoreExtensionRequests: boolean;
   extensionRequestsFilter: string;
   extensionRequestsNext: string;
+  taskRequests: TaskRequestDTO[];
+  hasMoreTaskRequests: boolean;
+  taskRequestsFilter: string;
+  taskRequestsNext: string;
   loading: boolean;
   error: string | null;
   fetchUsers: (cookie: string) => Promise<void>;
@@ -52,6 +54,18 @@ interface UserStore {
     reason?: string
   ) => Promise<void>;
   setExtensionRequestsFilter: (status: string) => void;
+  fetchTaskRequests: (
+    cookie: string,
+    status?: string,
+    next?: string
+  ) => Promise<void>;
+  approveTaskRequest: (id: string, cookie: string) => Promise<void>;
+  rejectTaskRequest: (
+    id: string,
+    cookie: string,
+    reason?: string
+  ) => Promise<void>;
+  setTaskRequestsFilter: (status: string) => void;
   submitOOOForm: (
     data: { fromDate: string; toDate: string; description: string },
     token: string
@@ -60,13 +74,17 @@ interface UserStore {
 }
 
 export const useUserStore = create<UserStore>((set) => ({
-  userData: [],
+  userData: null,
   tasks: [], // Updated to use TaskDTO[]
   userStatus: null, // Initialize userStatus as null
   extensionRequests: [],
   hasMoreExtensionRequests: false,
   extensionRequestsFilter: "PENDING",
   extensionRequestsNext: "",
+  taskRequests: [],
+  hasMoreTaskRequests: false,
+  taskRequestsFilter: "PENDING",
+  taskRequestsNext: "",
   loading: false,
   error: null,
 
@@ -361,5 +379,166 @@ export const useUserStore = create<UserStore>((set) => ({
 
   setExtensionRequestsFilter: (status: string) => {
     set({ extensionRequestsFilter: status });
+  },
+
+  fetchTaskRequests: async (
+    cookie: string,
+    status = "PENDING",
+    next?: string
+  ) => {
+    set({ loading: true });
+    try {
+      // Handle "ALL" case - don't add status filter
+      let url;
+      if (status === "ALL") {
+        url = `${TASK_REQUEST_API.GET_TASK_REQUESTS}?size=20&q=sort%3Acreated-desc`;
+      } else {
+        // Convert status to lowercase
+        const lowercaseStatus = status.toLowerCase();
+        url = `${TASK_REQUEST_API.GET_TASK_REQUESTS}?size=20&q=status%3A${lowercaseStatus}++sort%3Acreated-desc`;
+      }
+
+      if (next) {
+        url += `&next=${encodeURIComponent(next)}`;
+      }
+      console.log("Task requests API URL:", url);
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+          Referer: "https://dashboard.realdevsquad.com/",
+          Origin: "https://dashboard.realdevsquad.com",
+          "sec-ch-ua-platform": '"macOS"',
+          "sec-ch-ua":
+            '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-site",
+          priority: "u=1, i",
+          Cookie: `rds-session=${cookie}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Task requests API error:", {
+          status: response.status,
+          statusText: response.statusText,
+          url: url,
+          errorBody: errorText,
+        });
+        throw new Error(
+          `Failed to fetch task requests: ${response.status} ${response.statusText} - ${errorText}`
+        );
+      }
+
+      const data = await response.json();
+      const newRequests = data.data || [];
+
+      set((state) => ({
+        taskRequests: next
+          ? [...state.taskRequests, ...newRequests]
+          : newRequests,
+        hasMoreTaskRequests: !!data.next,
+        taskRequestsNext: data.next || "",
+        loading: false,
+        error: null,
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch task requests",
+        loading: false,
+      });
+    }
+  },
+
+  approveTaskRequest: async (id: string, cookie: string) => {
+    try {
+      const response = await fetch(
+        TASK_REQUEST_API.UPDATE_TASK_REQUEST_STATUS(id),
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `rds-session=${cookie}`,
+          },
+          body: JSON.stringify({ status: "APPROVED" }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to approve task request: ${response.statusText}`
+        );
+      }
+
+      // Update the request status in the store
+      set((state) => ({
+        taskRequests: state.taskRequests.map((req) =>
+          req.id === id ? { ...req, status: "APPROVED" } : req
+        ),
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to approve task request",
+      });
+      throw error;
+    }
+  },
+
+  rejectTaskRequest: async (id: string, cookie: string, reason?: string) => {
+    try {
+      const response = await fetch(
+        TASK_REQUEST_API.UPDATE_TASK_REQUEST_STATUS(id),
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `rds-session=${cookie}`,
+          },
+          body: JSON.stringify({
+            status: "REJECTED",
+            ...(reason && { reason }),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to reject task request: ${response.statusText}`
+        );
+      }
+
+      // Update the request status in the store
+      set((state) => ({
+        taskRequests: state.taskRequests.map((req) =>
+          req.id === id ? { ...req, status: "REJECTED" } : req
+        ),
+      }));
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to reject task request",
+      });
+      throw error;
+    }
+  },
+
+  setTaskRequestsFilter: (status: string) => {
+    set({ taskRequestsFilter: status });
   },
 }));
