@@ -105,7 +105,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.primary,
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
-    margin: theme.spacing.md,
+    marginHorizontal: theme.spacing.md,
+    marginVertical: theme.spacing.sm,
     backgroundColor: theme.colors.background.primary,
     ...theme.shadow.md,
   },
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     flex: 1,
     marginRight: theme.spacing.sm,
   },

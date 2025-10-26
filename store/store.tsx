@@ -29,6 +29,8 @@ interface UserStore {
   searchResults: UserData[]; // Search results for users
   loadingSearch: boolean; // Loading state for user search
   userStatus: UserStatus | null; // Add userStatus property
+  selfTasks: TaskDTO[]; // Self-assigned tasks
+  loadingSelfTasks: boolean; // Loading state for self tasks
   extensionRequests: ExtensionRequestDTO[];
   hasMoreExtensionRequests: boolean;
   extensionRequestsFilter: string;
@@ -57,6 +59,7 @@ interface UserStore {
   setSelectedAssignee: (assignee: string | null) => void;
   clearSearchResults: () => void;
   fetchUserStatus: (cookie: string) => Promise<void>; // Add fetchUserStatus method
+  fetchSelfTasks: (cookie: string) => Promise<void>; // Add fetchSelfTasks method
   fetchExtensionRequests: (
     cookie: string,
     status?: string,
@@ -117,6 +120,8 @@ export const useUserStore = create<UserStore>((set) => ({
   searchResults: [], // Initialize searchResults as empty array
   loadingSearch: false, // Initialize loadingSearch as false
   userStatus: null, // Initialize userStatus as null
+  selfTasks: [], // Initialize selfTasks as empty array
+  loadingSelfTasks: false, // Initialize loadingSelfTasks as false
   extensionRequests: [],
   hasMoreExtensionRequests: false,
   extensionRequestsFilter: "PENDING",
@@ -209,6 +214,29 @@ export const useUserStore = create<UserStore>((set) => ({
             ? error.message
             : "Failed to fetch user status",
         loading: false,
+      });
+    }
+  },
+
+  fetchSelfTasks: async (cookie: string) => {
+    set({ loadingSelfTasks: true });
+    try {
+      const response = await fetch(TASK_API.GET_SELF_TASKS, {
+        method: "GET",
+        headers: createAuthHeaders(cookie),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch self tasks: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      set({ selfTasks: data, loadingSelfTasks: false, error: null });
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to fetch self tasks",
+        loadingSelfTasks: false,
       });
     }
   },

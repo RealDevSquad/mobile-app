@@ -81,20 +81,20 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.primary,
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
-    margin: theme.spacing.md,
+    margin: theme.spacing.sm,
     backgroundColor: theme.colors.background.primary,
     ...theme.shadow.md,
   },
   title: {
-    fontSize: theme.typography.fontSize.lg,
-    fontFamily: theme.typography.fontFamily.bold,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.medium,
     marginBottom: theme.spacing.sm,
     color: theme.colors.primary[700],
   },
   text: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     marginBottom: 6,
-    fontFamily: theme.typography.fontFamily.bold,
+    fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.text.primary,
   },
   assignee: {
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   progress: {
     color: theme.colors.success[500],
-    fontFamily: theme.typography.fontFamily.bold,
+    fontFamily: theme.typography.fontFamily.medium,
   },
   endsOn: {
     color: theme.colors.text.secondary,
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   status: {
-    fontFamily: theme.typography.fontFamily.bold,
+    fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.info[500],
   },
   emptyView: {

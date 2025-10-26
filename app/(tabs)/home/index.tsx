@@ -1,5 +1,6 @@
 import Avatar from "@/components/Avatar";
 import OOOModal from "@/components/Modal/OOOModal";
+import MyTasksCard from "@/components/MyTasksCard";
 import QuickActionCard from "@/components/QuickActionCard";
 import UserStatusCard from "@/components/UserStatusCard";
 import { theme } from "@/constants/theme";
@@ -46,10 +47,6 @@ export default function HomeScreen() {
       </SafeAreaView>
     );
   }
-
-  const handleNavigation = (route: string) => {
-    router.push(`/${route}`);
-  };
 
   const getUserDisplayName = (): string => {
     if (userData?.first_name) {
@@ -117,6 +114,26 @@ export default function HomeScreen() {
     setIsOOOModalVisible(false);
   };
 
+  const handleMyTasksPress = () => {
+    router.push("/my-tasks");
+  };
+
+  const handleExtensionRequestsPress = () => {
+    router.push("/extension-requests");
+  };
+
+  const handleTaskRequestsPress = () => {
+    router.push("/task-requests");
+  };
+
+  const handleTasksPress = () => {
+    router.push("/tasks");
+  };
+
+  const handleCalendarPress = () => {
+    router.push("/calendar");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -146,6 +163,11 @@ export default function HomeScreen() {
           />
         </View>
 
+        {/* My Tasks Card */}
+        <View>
+          <MyTasksCard onPress={handleMyTasksPress} />
+        </View>
+
         {/* Quick Actions Grid */}
         <View style={styles.quickActionsContainer}>
           <View style={styles.gridRow}>
@@ -153,14 +175,14 @@ export default function HomeScreen() {
               <QuickActionCard
                 icon="file-text-o"
                 label="Extension Requests"
-                onPress={() => handleNavigation("extension-requests")}
+                onPress={handleExtensionRequestsPress}
               />
             </View>
             <View style={styles.gridItem}>
               <QuickActionCard
                 icon="tasks"
                 label="Task Requests"
-                onPress={() => handleNavigation("task-requests")}
+                onPress={handleTaskRequestsPress}
               />
             </View>
           </View>
@@ -169,14 +191,14 @@ export default function HomeScreen() {
               <QuickActionCard
                 icon="check-square-o"
                 label="Tasks"
-                onPress={() => handleNavigation("tasks")}
+                onPress={handleTasksPress}
               />
             </View>
             <View style={styles.gridItem}>
               <QuickActionCard
                 icon="calendar"
                 label="Calendar"
-                onPress={() => handleNavigation("calendar")}
+                onPress={handleCalendarPress}
               />
             </View>
           </View>
@@ -210,7 +232,7 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.sm,
   },
   welcomeText: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.primary,
     marginLeft: theme.spacing.sm,
