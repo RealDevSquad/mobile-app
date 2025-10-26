@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
@@ -100,7 +101,7 @@ const OOOModal: React.FC<OOOModalProps> = ({
           onPress={handleClose}
           testID="close-button"
         >
-          <Ionicons name="close" size={24} color="#333" />
+          <Ionicons name="close" size={24} color={theme.colors.text.primary} />
         </TouchableOpacity>
 
         <Text style={styles.title}>Apply for OOO</Text>
@@ -116,7 +117,11 @@ const OOOModal: React.FC<OOOModalProps> = ({
             <Text style={styles.dateButtonText}>
               {fromDate ? formatDate(fromDate) : "Select Start Date"}
             </Text>
-            <Ionicons name="calendar-outline" size={20} color="#666" />
+            <Ionicons
+              name="calendar-outline"
+              size={20}
+              color={theme.colors.text.secondary}
+            />
           </TouchableOpacity>
           {showFromDatePicker && (
             <DateTimePicker
@@ -147,7 +152,11 @@ const OOOModal: React.FC<OOOModalProps> = ({
                 ? formatDate(toDate)
                 : "Select End Date (After start date)"}
             </Text>
-            <Ionicons name="calendar-outline" size={20} color="#666" />
+            <Ionicons
+              name="calendar-outline"
+              size={20}
+              color={theme.colors.text.secondary}
+            />
           </TouchableOpacity>
           {showToDatePicker && (
             <DateTimePicker
@@ -221,14 +230,10 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: "90%",
     maxWidth: 400,
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.radius.lg,
+    ...theme.shadow.lg,
   },
   closeIcon: {
     position: "absolute",
@@ -237,73 +242,70 @@ const styles = StyleSheet.create({
     zIndex: 4,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: theme.typography.fontSize.xl,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.sm,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
+    borderColor: theme.colors.border.primary,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
     width: "100%",
     justifyContent: "center",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: theme.colors.surface.secondary,
   },
   dateButton: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
+    borderColor: theme.colors.border.primary,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: theme.colors.surface.secondary,
   },
   dateButtonText: {
-    color: "#555",
-    fontSize: 16,
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
   },
   textArea: {
     height: 100,
-    borderColor: "#ddd",
+    borderColor: theme.colors.border.primary,
     borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    backgroundColor: "#f9f9f9",
+    borderRadius: theme.radius.md,
+    paddingHorizontal: theme.spacing.md,
+    backgroundColor: theme.colors.surface.secondary,
   },
   submitButton: {
-    backgroundColor: "#FF6B35",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    backgroundColor: theme.colors.primary[500],
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.radius.md,
     alignSelf: "center",
     width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    ...theme.shadow.md,
   },
   submitButtonDisabled: {
-    backgroundColor: "#CCCCCC",
+    backgroundColor: theme.colors.gray[300],
     shadowOpacity: 0.1,
   },
   submitButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.bold,
     textAlign: "center",
   },
   loadingContainer: {
@@ -312,11 +314,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   disabledInput: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: theme.colors.surface.tertiary,
     opacity: 0.6,
   },
   spaceAbove: {
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
   },
 });
 

@@ -8,7 +8,7 @@ import { ExtensionRequestDTO } from "@/types/extension-request.dto";
 import { DateActivities, LogEntry, MarkedDates } from "@/types/logs.dto";
 import { TaskRequestDTO } from "@/types/task-request.dto";
 import { TaskDTO } from "@/types/task.dto";
-import { UserData } from "@/types/user.dto";
+import { UserData, UserStatus } from "@/types/user.dto";
 import { createAuthHeaders } from "@/utils/authHeaders";
 import { create } from "zustand";
 
@@ -17,17 +17,6 @@ export interface GithubIssue {
 }
 
 // User interface replaced with UserData from types/user.dto.ts
-
-interface UserStatus {
-  data: {
-    currentStatus: {
-      state: string;
-      from: number;
-      until: number;
-      message: string;
-    };
-  };
-}
 
 interface UserStore {
   userData: UserData | null;

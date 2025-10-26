@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import { UserStatus } from "@/types/user.dto";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -18,11 +19,11 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
   const getStatusColor = (state: string): string => {
     switch (state?.toUpperCase()) {
       case "ACTIVE":
-        return "#4CAF50"; // Green
+        return theme.colors.success[500]; // Green
       case "OOO":
-        return "#FF9800"; // Orange
+        return theme.colors.warning[500]; // Orange
       default:
-        return "#9E9E9E"; // Gray
+        return theme.colors.gray[500]; // Gray
     }
   };
 
@@ -100,22 +101,18 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: theme.colors.background.primary,
+    marginHorizontal: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    ...theme.shadow.md,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   statusContainer: {
     flexDirection: "row",
@@ -126,51 +123,52 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: 8,
+    marginRight: theme.spacing.sm,
   },
   statusText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333333",
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.text.primary,
   },
   actionButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     borderRadius: 20,
     minWidth: 100,
     alignItems: "center",
   },
   applyButton: {
-    backgroundColor: "#FF6B35",
+    backgroundColor: theme.colors.primary[500],
   },
   cancelButton: {
-    backgroundColor: "#F44336",
+    backgroundColor: theme.colors.error[500],
   },
   buttonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.medium,
   },
   messageContainer: {
-    marginTop: 8,
-    padding: 12,
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
+    marginTop: theme.spacing.sm,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface.secondary,
+    borderRadius: theme.radius.sm,
   },
   messageText: {
-    fontSize: 14,
-    color: "#666666",
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text.secondary,
     lineHeight: 20,
+    fontFamily: theme.typography.fontFamily.regular,
   },
   dateContainer: {
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   dateText: {
-    fontSize: 12,
-    color: "#888888",
-    fontWeight: "500",
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.text.tertiary,
+    fontFamily: theme.typography.fontFamily.medium,
   },
 });
 

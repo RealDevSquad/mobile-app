@@ -2,8 +2,9 @@ import { setLocalStorageItem } from "@/common/utils/common";
 import CameraModal from "@/components/Modal/CameraModal";
 import GitHubLoginModal from "@/components/Modal/GithubLoginModal";
 import AuthApis from "@/constants/apiConstant/auth-api";
-import Colors from "@/constants/colors";
+// import Colors from "@/constants/colors"; // Replaced with theme
 import { TOKEN_KEY } from "@/constants/constants";
+import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Camera } from "expo-camera";
@@ -296,7 +297,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#1A1A2E",
+    backgroundColor: theme.colors.gray[900],
   },
   content: {
     alignItems: "center",
@@ -305,51 +306,48 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   title: {
-    fontSize: 28,
-    color: Colors.primary,
-    fontWeight: "600",
+    fontSize: theme.typography.fontSize["3xl"],
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.primary[500],
     marginBottom: 5,
   },
   title1: {
-    fontSize: 32,
-    color: "#FFF",
-    fontWeight: "bold",
-    marginBottom: 40,
+    fontSize: theme.typography.fontSize["4xl"],
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.inverted,
+    marginBottom: theme.spacing["2xl"],
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginBottom: 15,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.radius.sm,
+    marginBottom: theme.spacing.md,
     width: 250,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    ...theme.shadow.lg,
   },
   githubButton: {
-    backgroundColor: "#333",
+    backgroundColor: theme.colors.gray[800],
   },
   webButton: {
-    backgroundColor: Colors.primary,
+    backgroundColor: theme.colors.primary[500],
   },
   buttonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "600",
-    marginLeft: 10,
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.medium,
+    marginLeft: theme.spacing.sm,
   },
   message: {
-    color: "#FFF",
-    fontSize: 16,
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
 });

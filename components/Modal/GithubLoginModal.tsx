@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
@@ -35,7 +36,7 @@ const GitHubLoginModal: React.FC<GitHubLoginModalProps> = ({
         onPress={onClose}
         testID="close-button"
       >
-        <FontAwesome name="times" size={24} color="#000" />
+        <FontAwesome name="times" size={24} color={theme.colors.text.primary} />
       </TouchableOpacity>
       <WebView
         onNavigationStateChange={onNavigationStateChange}
@@ -56,14 +57,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "#FFF",
+    backgroundColor: theme.colors.background.primary,
   },
   closeButton: {
     position: "absolute",
     top: 10,
     right: 10,
     zIndex: 1,
-    backgroundColor: "#E94560",
+    backgroundColor: theme.colors.primary[500],
     borderRadius: 50,
     padding: 5,
   },

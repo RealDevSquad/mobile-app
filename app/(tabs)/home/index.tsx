@@ -2,6 +2,7 @@ import Avatar from "@/components/Avatar";
 import OOOModal from "@/components/Modal/OOOModal";
 import QuickActionCard from "@/components/QuickActionCard";
 import UserStatusCard from "@/components/UserStatusCard";
+import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
 import { useUserStore } from "@/store/store";
 import { useRouter } from "expo-router";
@@ -9,7 +10,6 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -71,7 +71,7 @@ export default function HomeScreen() {
     setIsSubmitting(true);
     try {
       await cancelOOO(token);
-      await fetchUserStatus(token); // Refresh status
+      await fetchUserStatus(token);
       Alert.alert("Success", "OOO status cancelled successfully");
     } catch (error) {
       Alert.alert("Error", "Failed to cancel OOO status");
@@ -102,7 +102,7 @@ export default function HomeScreen() {
         token
       );
 
-      await fetchUserStatus(token); // Refresh status
+      await fetchUserStatus(token);
       setIsOOOModalVisible(false);
       Alert.alert("Success", "OOO request submitted successfully");
     } catch (error) {
@@ -125,33 +125,26 @@ export default function HomeScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require("../../../assets/images/rdsLogo.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={styles.logoText}>RDS</Text>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.usernameText}>
+              Hello {getUserDisplayName()}!
+            </Text>
+            <Text style={styles.welcomeText}>Welcome to RDS</Text>
           </View>
           {userData?.picture?.url && (
             <Avatar uri={userData.picture.url} size={40} />
           )}
         </View>
 
-        {/* Greeting Section */}
-        <View style={styles.greetingSection}>
-          <Text style={styles.greeting}>
-            Ready to make today awesome, {getUserDisplayName()}?
-          </Text>
-        </View>
-
         {/* User Status Card */}
-        <UserStatusCard
-          userStatus={userStatus}
-          onApplyOOO={handleApplyOOO}
-          onCancelOOO={handleCancelOOO}
-          isLoading={isSubmitting}
-        />
+        <View style={styles.userStatusContainer}>
+          <UserStatusCard
+            userStatus={userStatus}
+            onApplyOOO={handleApplyOOO}
+            onCancelOOO={handleCancelOOO}
+            isLoading={isSubmitting}
+          />
+        </View>
 
         {/* Quick Actions Grid */}
         <View style={styles.quickActionsContainer}>
@@ -204,21 +197,27 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: theme.colors.surface.secondary,
   },
-  logoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  headerTextContainer: {
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
-  logoText: {
-    fontSize: 28,
-    fontWeight: "semibold",
-    color: "#333333",
-    marginLeft: 8,
+  usernameText: {
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
+    marginLeft: theme.spacing.sm,
+  },
+  welcomeText: {
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.primary,
+    marginLeft: theme.spacing.sm,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: theme.colors.surface.secondary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -229,43 +228,47 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: "#FFFFFF",
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
+    backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: theme.colors.border.primary,
   },
   logo: {
     width: 40,
     height: 40,
   },
   greetingSection: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    backgroundColor: "#FFFFFF",
-    marginBottom: 16,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing["2xl"],
+    backgroundColor: theme.colors.background.primary,
+    marginBottom: theme.spacing.md,
   },
   greeting: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333333",
+    fontSize: theme.typography.fontSize["2xl"],
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 16,
-    color: "#666666",
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.secondary,
   },
   quickActionsContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingHorizontal: theme.spacing.sm,
+    paddingBottom: theme.spacing.lg,
   },
   gridRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   gridItem: {
     flex: 1,
-    marginHorizontal: 8,
+    marginHorizontal: theme.spacing.sm,
+  },
+  userStatusContainer: {
+    marginTop: theme.spacing.md,
   },
 });

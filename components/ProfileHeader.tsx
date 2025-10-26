@@ -3,6 +3,7 @@ import Avatar from "@/components/Avatar";
 import SocialLinks from "@/components/SocialLinks";
 import UserDetails from "@/components/UserDetails";
 import { TOKEN_KEY } from "@/constants/constants";
+import { theme } from "@/constants/theme";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { reloadAppAsync } from "expo";
 import { router } from "expo-router";
@@ -55,7 +56,11 @@ const Header: React.FC<any> = (props) => {
           accessibilityRole="button"
           testID="menu-button"
         >
-          <FontAwesome name="ellipsis-v" size={24} color="#000" />
+          <FontAwesome
+            name="ellipsis-v"
+            size={24}
+            color={theme.colors.text.primary}
+          />
         </TouchableOpacity>
         {menuVisible && (
           <View style={styles.menu}>
@@ -97,20 +102,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 20,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.radius.sm,
+    padding: theme.spacing.sm,
+    ...theme.shadow.md,
   },
   menuItem: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    color: "#000",
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.primary,
   },
 });
 

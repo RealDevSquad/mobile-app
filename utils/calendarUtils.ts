@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import {
   ActivityGroup,
   ActivityType,
@@ -8,10 +9,10 @@ import {
 
 // Color mapping for different activity types
 export const ACTIVITY_COLORS = {
-  task: "#007AFF", // Blue
-  oooRequests: "#FF9500", // Orange
-  taskRequests: "#34C759", // Green
-  extensionRequests: "#FF3B30", // Red
+  task: theme.colors.info[500], // Blue
+  oooRequests: theme.colors.warning[500], // Orange
+  taskRequests: theme.colors.success[500], // Green
+  extensionRequests: theme.colors.error[500], // Red
 } as const;
 
 export const ACTIVITY_LABELS = {
@@ -282,17 +283,17 @@ export const getStatusColor = (status: string): string => {
   switch (status) {
     case "ACTIVE":
     case "COMPLETED":
-      return "#28a745"; // Green
+      return theme.colors.success[500]; // Green
     case "OOO":
-      return "#dc3545"; // Red
+      return theme.colors.error[500]; // Red
     case "REQUEST":
-      return "#17a2b8"; // Blue
+      return theme.colors.info[500]; // Blue
     case "EXTENSION":
-      return "#ffc107"; // Yellow
+      return theme.colors.warning[500]; // Yellow
     case "TASK":
-      return "#007bff"; // Blue
+      return theme.colors.info[500]; // Blue
     default:
-      return "#6c757d"; // Gray
+      return theme.colors.gray[500]; // Gray
   }
 };
 

@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -16,7 +17,11 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.iconContainer}>
-        <FontAwesome name={icon as any} size={32} color="#1D1283" />
+        <FontAwesome
+          name={icon as any}
+          size={32}
+          color={theme.colors.primary[700]}
+        />
       </View>
       <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>
@@ -25,25 +30,21 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.lg,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    ...theme.shadow.md,
     minHeight: 120,
   },
   iconContainer: {
-    marginBottom: 12,
+    marginBottom: theme.spacing.md,
   },
   label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333333",
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.text.primary,
     textAlign: "center",
   },
 });

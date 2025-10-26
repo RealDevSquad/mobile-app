@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { CameraView } from "expo-camera";
 import React from "react";
@@ -43,7 +44,11 @@ const CameraModal: React.FC<CameraModalProps> = ({
           accessibilityRole="button"
           testID="close-button"
         >
-          <FontAwesome name="times" size={24} color="#FFF" />
+          <FontAwesome
+            name="times"
+            size={24}
+            color={theme.colors.text.inverted}
+          />
         </TouchableOpacity>
 
         {/* Modal */}
@@ -81,14 +86,15 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   instruction: {
-    color: "#FFF",
-    fontSize: 16,
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   link: {
-    color: "#4CAF50",
-    fontWeight: "bold",
+    color: theme.colors.success[500],
+    fontFamily: theme.typography.fontFamily.bold,
     textDecorationLine: "underline",
   },
   scannerFrame: {
@@ -102,16 +108,16 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderWidth: 2,
-    borderColor: "#E94560",
+    borderColor: theme.colors.primary[500],
     borderRadius: 50,
   },
   closeButton: {
     position: "absolute",
     top: 80,
     right: 20,
-    backgroundColor: "#E94560",
+    backgroundColor: theme.colors.primary[500],
     borderRadius: 50,
-    padding: 10,
+    padding: theme.spacing.sm,
   },
   modalContainer: {
     position: "absolute",
@@ -125,26 +131,27 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "80%",
-    padding: 20,
-    backgroundColor: "#FFF",
-    borderRadius: 10,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.radius.md,
     alignItems: "center",
   },
   modalText: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.primary,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   modalButton: {
-    backgroundColor: "#E94560",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+    backgroundColor: theme.colors.primary[500],
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.radius.sm,
   },
   modalButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.bold,
   },
 });

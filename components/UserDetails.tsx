@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -27,28 +28,30 @@ const UserDetails = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: theme.spacing.sm,
   },
   name: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "black",
+    fontSize: theme.typography.fontSize.xl,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
     textAlign: "center",
   },
   username: {
-    fontSize: 13,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.regular,
     textAlign: "center",
-    color: "grey",
+    color: theme.colors.text.secondary,
   },
   designation: {
-    fontSize: 15,
-    color: "black",
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.primary,
     textAlign: "center",
   },
   company: {
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "grey",
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.secondary,
     textAlign: "center",
   },
 });

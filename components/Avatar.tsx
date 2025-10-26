@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   image: {
-    backgroundColor: "#0553",
+    backgroundColor: theme.colors.surface.secondary,
   },
 });
 

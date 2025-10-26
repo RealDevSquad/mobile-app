@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -51,27 +52,28 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "80%",
-    padding: 20,
-    backgroundColor: "#FFF",
-    borderRadius: 10,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.radius.md,
     alignItems: "center",
   },
   modalText: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.primary,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   modalButton: {
-    backgroundColor: "#E94560",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 10,
+    backgroundColor: theme.colors.primary[500],
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.radius.sm,
+    marginTop: theme.spacing.sm,
   },
   modalButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.bold,
   },
 });

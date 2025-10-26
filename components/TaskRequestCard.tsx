@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import { TaskRequestDTO } from "@/types/task-request.dto";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import moment from "moment";
@@ -22,13 +23,13 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
-        return "#FFA500";
+        return theme.colors.warning[500];
       case "APPROVED":
-        return "#4CAF50";
+        return theme.colors.success[500];
       case "REJECTED":
-        return "#F44336";
+        return theme.colors.error[500];
       default:
-        return "#666";
+        return theme.colors.gray[500];
     }
   };
 
@@ -101,69 +102,65 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 16,
-    margin: 12,
-    backgroundColor: "white",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    borderColor: theme.colors.border.primary,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    margin: theme.spacing.md,
+    backgroundColor: theme.colors.background.primary,
+    ...theme.shadow.md,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
     paddingVertical: 4,
   },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    marginRight: 8,
+    marginRight: theme.spacing.sm,
   },
   title: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#1D1283",
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.primary[700],
     flex: 1,
-    marginRight: 8,
+    marginRight: theme.spacing.sm,
   },
   arrowIcon: {
-    marginLeft: 8,
+    marginLeft: theme.spacing.sm,
   },
   statusBadge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: theme.spacing.sm,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: theme.radius.xl,
     minWidth: 80,
     alignItems: "center",
   },
   statusText: {
-    color: "white",
-    fontSize: 12,
-    fontWeight: "bold",
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.xs,
+    fontFamily: theme.typography.fontFamily.bold,
   },
   text: {
-    fontSize: 14,
+    fontSize: theme.typography.fontSize.sm,
     marginBottom: 4,
-    fontWeight: "bold",
-    color: "#333",
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
   },
   requestor: {
-    color: "grey",
-    fontWeight: "normal",
+    color: theme.colors.text.secondary,
+    fontFamily: theme.typography.fontFamily.regular,
   },
   type: {
-    color: "grey",
-    fontWeight: "normal",
+    color: theme.colors.text.secondary,
+    fontFamily: theme.typography.fontFamily.regular,
   },
   timestamp: {
-    color: "grey",
-    fontWeight: "normal",
+    color: theme.colors.text.secondary,
+    fontFamily: theme.typography.fontFamily.regular,
   },
 });
 

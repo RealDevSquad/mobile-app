@@ -17,9 +17,12 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // Load only the custom font you need.
+  // Load custom fonts
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    // "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
+    // "Inter-Medium": require("../assets/fonts/Inter-Medium.ttf"),
+    // "Inter-Bold": require("../assets/fonts/Inter-Bold.ttf"),
   });
 
   useEffect(() => {

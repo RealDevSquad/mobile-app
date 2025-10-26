@@ -1,6 +1,7 @@
 import GithubSvg from "@/assets/svgs/github_logo";
 import LinkedInSvg from "@/assets/svgs/linkedIn";
 import TwitterSvg from "@/assets/svgs/twitter";
+import { theme } from "@/constants/theme";
 import React from "react";
 import { Linking, Pressable, StyleSheet, View } from "react-native";
 
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
   },
 });
 

@@ -1,3 +1,4 @@
+import { theme } from "@/constants/theme";
 import moment from "moment";
 import React from "react";
 import {
@@ -77,57 +78,58 @@ const Task = ({
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 16,
-    margin: 12,
-    backgroundColor: "white",
-    elevation: 3,
+    borderColor: theme.colors.border.primary,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    margin: theme.spacing.md,
+    backgroundColor: theme.colors.background.primary,
+    ...theme.shadow.md,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#1D1283",
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.bold,
+    marginBottom: theme.spacing.sm,
+    color: theme.colors.primary[700],
   },
   text: {
-    fontSize: 16,
+    fontSize: theme.typography.fontSize.base,
     marginBottom: 6,
-    fontWeight: "bold",
-    color: "#333",
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
   },
   assignee: {
-    color: "grey",
+    color: theme.colors.text.secondary,
   },
   progress: {
-    color: "#27ae60",
-    fontWeight: "bold",
+    color: theme.colors.success[500],
+    fontFamily: theme.typography.fontFamily.bold,
   },
   endsOn: {
-    color: "grey",
+    color: theme.colors.text.secondary,
   },
   startedOn: {
-    color: "grey",
+    color: theme.colors.text.secondary,
   },
   status: {
-    fontWeight: "bold",
-    color: "#3498db",
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.info[500],
   },
   emptyView: {
-    color: "black",
-    marginTop: 20,
+    color: theme.colors.text.primary,
+    marginTop: theme.spacing.lg,
     textAlign: "center",
   },
   footerLoader: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20,
+    paddingVertical: theme.spacing.lg,
   },
   loadingText: {
-    marginLeft: 10,
-    color: "#666",
-    fontSize: 14,
+    marginLeft: theme.spacing.sm,
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.regular,
   },
 });
 

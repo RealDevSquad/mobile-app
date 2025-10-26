@@ -1,22 +1,27 @@
+// DEPRECATED: This file is deprecated. Use theme from @/constants/theme instead.
+// This file is kept for backward compatibility only.
+
+import { theme } from "./theme";
+
 const tintColorLight = "#2f95dc";
 const tintColorDark = "#fff";
-const primaryColor = "#e40063";
+const primaryColor = theme.colors.primary[500]; // Use theme primary color (#7E3AF2)
 
 export default {
   primary: primaryColor,
 
   light: {
-    text: "#000",
-    background: "#fff",
+    text: theme.colors.text.primary,
+    background: theme.colors.background.primary,
     tint: tintColorLight,
-    tabIconDefault: "#ccc",
+    tabIconDefault: theme.colors.text.secondary,
     tabIconSelected: tintColorLight,
   },
   dark: {
-    text: "#fff",
-    background: "#000",
+    text: theme.colors.text.inverted,
+    background: theme.colors.gray[900],
     tint: tintColorDark,
-    tabIconDefault: "#ccc",
+    tabIconDefault: theme.colors.text.secondary,
     tabIconSelected: tintColorDark,
   },
 };
