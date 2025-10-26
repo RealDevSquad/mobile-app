@@ -1,4 +1,5 @@
 import { theme } from "@/constants/theme";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import moment from "moment";
 import React from "react";
 import {
@@ -6,6 +7,7 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -13,10 +15,12 @@ const Task = ({
   tasks,
   onEndReached,
   loading = false,
+  onTaskPress,
 }: {
   tasks: any[];
   onEndReached?: () => void;
   loading?: boolean;
+  onTaskPress?: (task: any) => void;
 }) => {
   const formatTimeAgo = (timestamp: number) => {
     const currentDate = moment();
@@ -26,25 +30,43 @@ const Task = ({
 
   const renderItem = ({ item }: { item: any }) => {
     return (
-      <View style={styles.card}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.text}>
-          Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
-        </Text>
-        <Text style={styles.text}>
-          Progress:{" "}
-          <Text style={styles.progress}>{item.percentCompleted}%</Text>
-        </Text>
-        <Text style={styles.text}>
-          Ends On:{" "}
-          <Text style={styles.endsOn}>{formatTimeAgo(item.endsOn)}</Text>
-        </Text>
-        <Text style={styles.text}>
-          Started On:{" "}
-          <Text style={styles.startedOn}>{formatTimeAgo(item.startedOn)}</Text>
-        </Text>
-        <Text style={[styles.text, styles.status]}>Status: {item.status}</Text>
-      </View>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => onTaskPress?.(item)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.cardContent}>
+          <View style={styles.cardText}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.text}>
+              Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
+            </Text>
+            <Text style={styles.text}>
+              Progress:{" "}
+              <Text style={styles.progress}>{item.percentCompleted}%</Text>
+            </Text>
+            <Text style={styles.text}>
+              Ends On:{" "}
+              <Text style={styles.endsOn}>{formatTimeAgo(item.endsOn)}</Text>
+            </Text>
+            <Text style={styles.text}>
+              Started On:{" "}
+              <Text style={styles.startedOn}>
+                {formatTimeAgo(item.startedOn)}
+              </Text>
+            </Text>
+            <Text style={[styles.text, styles.status]}>
+              Status: {item.status}
+            </Text>
+          </View>
+          <FontAwesome
+            name="chevron-right"
+            size={16}
+            color={theme.colors.text.secondary}
+            style={styles.chevron}
+          />
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -84,6 +106,16 @@ const styles = StyleSheet.create({
     margin: theme.spacing.sm,
     backgroundColor: theme.colors.background.primary,
     ...theme.shadow.md,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  cardText: {
+    flex: 1,
+  },
+  chevron: {
+    marginLeft: theme.spacing.sm,
   },
   title: {
     fontSize: theme.typography.fontSize.base,

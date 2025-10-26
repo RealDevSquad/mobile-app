@@ -568,21 +568,6 @@ export const useUserStore = create<UserStore>((set) => ({
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          accept: "*/*",
-          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-          Referer: "https://dashboard.realdevsquad.com/",
-          Origin: "https://dashboard.realdevsquad.com",
-          "sec-ch-ua-platform": '"macOS"',
-          "sec-ch-ua":
-            '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
-          "sec-ch-ua-mobile": "?0",
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "same-site",
-          priority: "u=1, i",
           ...createAuthHeaders(cookie),
         },
       });
@@ -768,20 +753,6 @@ export const useUserStore = create<UserStore>((set) => ({
         method: "GET",
         headers: {
           ...authHeaders,
-          accept: "*/*",
-          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-          Referer: "https://dashboard.realdevsquad.com/",
-          Origin: "https://dashboard.realdevsquad.com",
-          "sec-ch-ua-platform": '"macOS"',
-          "sec-ch-ua":
-            '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
-          "sec-ch-ua-mobile": "?0",
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "same-site",
-          priority: "u=1, i",
         },
       });
 

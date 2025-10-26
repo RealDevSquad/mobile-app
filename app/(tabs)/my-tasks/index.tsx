@@ -1,6 +1,7 @@
 import Task from "@/components/Task";
 import useCheckUserSession from "@/hooks/getUserToken";
 import { useUserStore } from "@/store/store";
+import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import {
   ActivityIndicator,
@@ -13,12 +14,17 @@ import {
 export default function MyTasksScreen() {
   const { selfTasks, fetchSelfTasks, loadingSelfTasks, error } = useUserStore();
   const { token } = useCheckUserSession();
+  const router = useRouter();
 
   useEffect(() => {
     if (token) {
       fetchSelfTasks(token);
     }
   }, [token, fetchSelfTasks]);
+
+  const handleTaskPress = (task: any) => {
+    router.push(`/my-tasks/${task.id}`);
+  };
 
   if (!token) {
     return (
@@ -52,6 +58,7 @@ export default function MyTasksScreen() {
         tasks={selfTasks}
         onEndReached={() => {}}
         loading={loadingSelfTasks}
+        onTaskPress={handleTaskPress}
       />
     </SafeAreaView>
   );

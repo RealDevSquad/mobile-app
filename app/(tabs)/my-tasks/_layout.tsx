@@ -11,6 +11,13 @@ export default function MyTasksLayout() {
           headerShown: true,
         }}
       />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Task Details",
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }
