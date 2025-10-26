@@ -1,5 +1,6 @@
 import { EXTENSION_REQUEST_API } from "@/constants/apiConstant/extension-request-api";
 import { HomeApi } from "@/constants/apiConstant/home-api";
+import { TASK_API } from "@/constants/apiConstant/task-api";
 import { TASK_REQUEST_API } from "@/constants/apiConstant/task-request-api";
 import { USER_API } from "@/constants/apiConstant/user-api";
 import { ExtensionRequestDTO } from "@/types/extension-request.dto";
@@ -28,6 +29,10 @@ interface UserStatus {
 interface UserStore {
   userData: UserData | null;
   tasks: TaskDTO[]; // Updated to use TaskDTO
+  allTasks: TaskDTO[]; // All tasks from tasks API
+  hasMoreTasks: boolean;
+  tasksNext: string;
+  loadingTasks: boolean; // Separate loading state for tasks
   userStatus: UserStatus | null; // Add userStatus property
   extensionRequests: ExtensionRequestDTO[];
   hasMoreExtensionRequests: boolean;
@@ -41,6 +46,7 @@ interface UserStore {
   error: string | null;
   fetchUsers: (cookie: string) => Promise<void>;
   fetchActiveTask: (cookie: string) => Promise<void>;
+  fetchTasks: (cookie: string, next?: string) => Promise<void>;
   fetchUserStatus: (cookie: string) => Promise<void>; // Add fetchUserStatus method
   fetchExtensionRequests: (
     cookie: string,
@@ -76,6 +82,10 @@ interface UserStore {
 export const useUserStore = create<UserStore>((set) => ({
   userData: null,
   tasks: [], // Updated to use TaskDTO[]
+  allTasks: [], // Initialize allTasks as empty array
+  hasMoreTasks: false,
+  tasksNext: "",
+  loadingTasks: false, // Initialize loadingTasks as false
   userStatus: null, // Initialize userStatus as null
   extensionRequests: [],
   hasMoreExtensionRequests: false,
@@ -166,6 +176,83 @@ export const useUserStore = create<UserStore>((set) => ({
             ? error.message
             : "Failed to fetch user status",
         loading: false,
+      });
+    }
+  },
+
+  fetchTasks: async (cookie: string, next?: string) => {
+    console.log("fetchTasks called with next:", next);
+    set({ loadingTasks: true });
+    try {
+      let url = TASK_API.GET_TASKS;
+      if (next) {
+        // The next parameter is already a full path, so we need to extract just the cursor value
+        const nextParam = next.includes("next=")
+          ? next.split("next=")[1]
+          : next;
+        url += `&next=${encodeURIComponent(nextParam)}`;
+      }
+
+      console.log("Fetching tasks from URL:", url);
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+          Cookie: `rds-session=${cookie}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch tasks: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Raw API response:", JSON.stringify(data, null, 2));
+      console.log("Tasks API response:", {
+        tasksCount: data.tasks?.length || 0,
+        hasNext: !!data.next,
+        next: data.next,
+        fullResponse: data,
+      });
+
+      const newTasks = data.tasks || [];
+      console.log("New tasks to add:", newTasks.length);
+
+      if (newTasks.length === 0 && next) {
+        console.log(
+          "⚠️ No new tasks returned for pagination - might be end of data"
+        );
+      }
+
+      set((state) => {
+        console.log(
+          "Current allTasks length before update:",
+          state.allTasks.length
+        );
+        const updatedState = {
+          allTasks: next ? [...state.allTasks, ...newTasks] : newTasks,
+          hasMoreTasks: !!data.next,
+          tasksNext: data.next || "",
+          loadingTasks: false,
+          error: null,
+        };
+        console.log("Updated state:", {
+          totalTasks: updatedState.allTasks.length,
+          hasMoreTasks: updatedState.hasMoreTasks,
+          tasksNext: updatedState.tasksNext,
+        });
+        return updatedState;
+      });
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      set({
+        error: error instanceof Error ? error.message : "Failed to fetch tasks",
+        loadingTasks: false,
       });
     }
   },

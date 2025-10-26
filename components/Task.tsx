@@ -1,35 +1,38 @@
-import { useRouter } from "expo-router";
 import moment from "moment";
 import React from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-const Task = ({ tasks }: { tasks: any[] }) => {
+const Task = ({
+  tasks,
+  onEndReached,
+  loading = false,
+}: {
+  tasks: any[];
+  onEndReached?: () => void;
+  loading?: boolean;
+}) => {
   const formatTimeAgo = (timestamp: number) => {
     const currentDate = moment();
     const endDate = moment.unix(timestamp);
     return endDate.from(currentDate);
   };
-  const router = useRouter();
 
   const renderItem = ({ item }: { item: any }) => {
     return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() =>
-          router.navigate({
-            pathname: "/profile/details",
-            params: {
-              ...item, // Pass the entire item object
-            },
-          })
-        }
-      >
+      <View style={styles.card}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.text}>
-          Created By: <Text style={styles.createdBy}>{item.createdBy}</Text>
+          Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
         </Text>
         <Text style={styles.text}>
-          Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
+          Progress:{" "}
+          <Text style={styles.progress}>{item.percentCompleted}%</Text>
         </Text>
         <Text style={styles.text}>
           Ends On:{" "}
@@ -40,8 +43,20 @@ const Task = ({ tasks }: { tasks: any[] }) => {
           <Text style={styles.startedOn}>{formatTimeAgo(item.startedOn)}</Text>
         </Text>
         <Text style={[styles.text, styles.status]}>Status: {item.status}</Text>
-      </TouchableOpacity>
+      </View>
     );
+  };
+
+  const renderFooter = () => {
+    if (loading) {
+      return (
+        <View style={styles.footerLoader}>
+          <ActivityIndicator size="small" color="#0000ff" />
+          <Text style={styles.loadingText}>Loading more tasks...</Text>
+        </View>
+      );
+    }
+    return null;
   };
 
   return tasks?.length > 0 ? (
@@ -49,9 +64,13 @@ const Task = ({ tasks }: { tasks: any[] }) => {
       data={tasks}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.1}
+      showsVerticalScrollIndicator={false}
+      ListFooterComponent={renderFooter}
     />
   ) : (
-    <Text style={styles.emptyView}>No active tasks found...</Text>
+    <Text style={styles.emptyView}>No tasks found...</Text>
   );
 };
 
@@ -77,11 +96,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  createdBy: {
-    color: "grey",
-  },
   assignee: {
     color: "grey",
+  },
+  progress: {
+    color: "#27ae60",
+    fontWeight: "bold",
   },
   endsOn: {
     color: "grey",
@@ -97,6 +117,17 @@ const styles = StyleSheet.create({
     color: "black",
     marginTop: 20,
     textAlign: "center",
+  },
+  footerLoader: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
+  loadingText: {
+    marginLeft: 10,
+    color: "#666",
+    fontSize: 14,
   },
 });
 

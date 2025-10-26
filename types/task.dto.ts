@@ -18,4 +18,5 @@ export interface TaskDTO {
   title: string;
   type: string;
   updatedAt: number;
+  dependsOn: string[];
 }
