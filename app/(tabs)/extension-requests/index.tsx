@@ -1,7 +1,8 @@
+import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
 import ExtensionRequestCard from "@/components/ExtensionRequestCard";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
-import React, { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -14,22 +15,12 @@ import {
 } from "react-native";
 
 const ExtensionRequestsScreen: React.FC = () => {
-  const {
-    extensionRequests,
-    hasMoreExtensionRequests,
-    extensionRequestsFilter,
-    loading,
-    error,
-    fetchExtensionRequests,
-    approveExtensionRequest,
-    rejectExtensionRequest,
-    setExtensionRequestsFilter,
-  } = useUserStore();
-
   const { token } = useCheckUserSession();
+  const queryClient = useQueryClient();
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [extensionRequestsFilter, setExtensionRequestsFilter] =
+    useState("PENDING");
 
   const filterOptions = [
     { label: "Pending", value: "PENDING" },
@@ -37,48 +28,86 @@ const ExtensionRequestsScreen: React.FC = () => {
     { label: "Denied", value: "DENIED" },
   ];
 
-  useEffect(() => {
-    if (token) {
-      fetchExtensionRequests(token, extensionRequestsFilter);
-    }
-  }, [token, extensionRequestsFilter, fetchExtensionRequests]);
+  // Fetch extension requests with filtering
+  const {
+    data: extensionRequestsData,
+    isLoading: loading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ExtensionRequestsApi.getExtensionRequests.key({
+      status: extensionRequestsFilter,
+    }),
+    queryFn: () =>
+      ExtensionRequestsApi.getExtensionRequests.fn(
+        { status: extensionRequestsFilter },
+        token || undefined
+      ),
+    enabled: !!token,
+  });
+
+  const extensionRequests = extensionRequestsData?.allExtensionRequests || [];
+  const hasMoreExtensionRequests = !!extensionRequestsData?.next;
 
   const handleLoadMore = async () => {
-    if (!token || !hasMoreExtensionRequests || isLoadingMore) return;
-
-    setIsLoadingMore(true);
-    try {
-      await fetchExtensionRequests(
-        token,
-        extensionRequestsFilter,
-        useUserStore.getState().extensionRequestsNext
-      );
-    } catch (error) {
-      console.error("Error loading more extension requests:", error);
-      Alert.alert("Error", "Failed to load more extension requests.");
-    } finally {
-      setIsLoadingMore(false);
-    }
+    // Note: For now, we'll handle pagination in a future update
+    // This would require implementing infinite queries
+    console.log(
+      "Load more functionality needs to be implemented with infinite queries"
+    );
   };
 
-  const handleApprove = async (id: string) => {
-    if (!token) return;
-    try {
-      await approveExtensionRequest(id, token);
-    } catch (error) {
+  // Approve extension request mutation
+  const approveMutation = useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+      ExtensionRequestsApi.updateExtensionRequestStatus.fn(
+        id,
+        { status: "APPROVED", reason },
+        token || undefined
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ExtensionRequestsApi.getExtensionRequests.key({
+          status: extensionRequestsFilter,
+        }),
+      });
+      Alert.alert("Success", "Extension request approved successfully");
+    },
+    onError: (error) => {
       console.error("Error approving extension request:", error);
-      throw error; // Re-throw to be handled by the card component
-    }
+      Alert.alert("Error", "Failed to approve extension request");
+    },
+  });
+
+  // Reject extension request mutation
+  const rejectMutation = useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+      ExtensionRequestsApi.updateExtensionRequestStatus.fn(
+        id,
+        { status: "DENIED", reason },
+        token || undefined
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ExtensionRequestsApi.getExtensionRequests.key({
+          status: extensionRequestsFilter,
+        }),
+      });
+      Alert.alert("Success", "Extension request rejected successfully");
+    },
+    onError: (error) => {
+      console.error("Error rejecting extension request:", error);
+      Alert.alert("Error", "Failed to reject extension request");
+    },
+  });
+
+  const handleApprove = async (id: string) => {
+    approveMutation.mutate({ id });
   };
 
   const handleReject = async (id: string) => {
-    if (!token) return;
-    try {
-      await rejectExtensionRequest(id, token);
-    } catch (error) {
-      console.error("Error rejecting extension request:", error);
-      throw error; // Re-throw to be handled by the card component
-    }
+    rejectMutation.mutate({ id });
   };
 
   const handleFilterChange = (filter: string) => {
@@ -162,17 +191,19 @@ const ExtensionRequestsScreen: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error: {error}</Text>
+        <Text style={styles.errorText}>
+          Error: {error?.message || "Failed to load extension requests"}
+        </Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={async () => {
-            if (token && !isRetrying) {
+            if (!isRetrying) {
               setIsRetrying(true);
               try {
-                await fetchExtensionRequests(token, extensionRequestsFilter);
+                await refetch();
               } catch (error) {
                 console.error("Error retrying:", error);
               } finally {

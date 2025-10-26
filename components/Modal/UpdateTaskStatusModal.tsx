@@ -1,8 +1,8 @@
-import { TASK_API } from "@/constants/apiConstant/task-api";
+import { TasksApi } from "@/api/tasks/tasks.api";
 import { theme } from "@/constants/theme";
-import { createAuthHeaders } from "@/utils/authHeaders";
 import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import {
   Alert,
@@ -55,9 +55,29 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
   const [progress, setProgress] = useState(currentProgress);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async () => {
+  const updateTaskStatusMutation = useMutation({
+    mutationFn: (statusData: { status: string; percentCompleted: number }) =>
+      TasksApi.updateTaskStatus.fn(taskId, statusData, token || undefined),
+    onSuccess: () => {
+      Alert.alert("Success", "Task status and progress updated successfully.");
+      // Invalidate task-related queries
+      queryClient.invalidateQueries({ queryKey: ["TasksApi.getSelfTasks"] });
+      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskDetails"] });
+      onSubmit();
+      onClose();
+    },
+    onError: (error) => {
+      console.error("Error updating task status:", error);
+      Alert.alert(
+        "Error",
+        error instanceof Error ? error.message : "Failed to update task status."
+      );
+    },
+  });
+
+  const handleSubmit = () => {
     if (!selectedStatus || progress < 0 || progress > 100) {
       Alert.alert(
         "Error",
@@ -66,42 +86,10 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(TASK_API.UPDATE_TASK_STATUS(taskId), {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...createAuthHeaders(token),
-        },
-        body: JSON.stringify({
-          status: selectedStatus,
-          percentCompleted: Math.round(progress),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `Failed to update task status: ${response.status} ${
-            response.statusText
-          }${errorText ? ` - ${errorText}` : ""}`
-        );
-      }
-
-      Alert.alert("Success", "Task status and progress updated successfully.");
-      onSubmit();
-      onClose();
-    } catch (error) {
-      console.error("Error updating task status:", error);
-      Alert.alert(
-        "Error",
-        error instanceof Error ? error.message : "Failed to update task status."
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    updateTaskStatusMutation.mutate({
+      status: selectedStatus,
+      percentCompleted: Math.round(progress),
+    });
   };
 
   const handleClose = () => {
@@ -218,7 +206,7 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
               onPress={handleClose}
-              disabled={isLoading}
+              disabled={updateTaskStatusMutation.isPending}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -227,12 +215,12 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
               style={[
                 styles.button,
                 styles.submitButton,
-                isLoading && styles.disabledButton,
+                updateTaskStatusMutation.isPending && styles.disabledButton,
               ]}
               onPress={handleSubmit}
-              disabled={isLoading}
+              disabled={updateTaskStatusMutation.isPending}
             >
-              {isLoading ? (
+              {updateTaskStatusMutation.isPending ? (
                 <Text style={styles.submitButtonText}>Updating...</Text>
               ) : (
                 <Text style={styles.submitButtonText}>Update Task</Text>

@@ -15,6 +15,16 @@ export type TUpdateExtensionRequestStatusDto = {
   reason?: string;
 };
 
+export type TCreateExtensionRequestDto = {
+  assignee: string;
+  newEndsOn: number;
+  oldEndsOn: number;
+  reason: string;
+  status: "PENDING";
+  taskId: string;
+  title: string;
+};
+
 // Response DTOs
 export type TGetExtensionRequestsResponse = {
   allExtensionRequests: ExtensionRequestDTO[];
@@ -23,3 +33,14 @@ export type TGetExtensionRequestsResponse = {
 
 export type TUpdateExtensionRequestStatusResponse =
   TApiResponse<ExtensionRequestDTO>;
+
+export type TCreateExtensionRequestResponse = TApiResponse<ExtensionRequestDTO>;
+
+export type TGetSelfExtensionRequestsDto = {
+  taskId: string;
+};
+
+export type TGetSelfExtensionRequestsResponse = {
+  allExtensionRequests: ExtensionRequestDTO[];
+  next?: string;
+};

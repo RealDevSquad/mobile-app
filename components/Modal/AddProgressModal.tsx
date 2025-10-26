@@ -1,6 +1,6 @@
-import { TASK_API } from "@/constants/apiConstant/task-api";
+import { TasksApi } from "@/api/tasks/tasks.api";
 import { theme } from "@/constants/theme";
-import { createAuthHeaders } from "@/utils/authHeaders";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -32,56 +32,48 @@ export default function AddProgressModal({
   const [completed, setCompleted] = useState("");
   const [planned, setPlanned] = useState("");
   const [blockers, setBlockers] = useState("");
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async () => {
-    if (!completed.trim() && !planned.trim() && !blockers.trim()) {
-      Alert.alert("Error", "Please fill at least one field");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const response = await fetch(TASK_API.SUBMIT_PROGRESS, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...createAuthHeaders(token),
-        },
-        body: JSON.stringify({
-          type: "task",
-          taskId,
-          completed: completed.trim() || "",
-          planned: planned.trim() || "",
-          blockers: blockers.trim() || "",
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        const baseMessage = `Failed to submit progress: ${response.status} ${response.statusText}`;
-        const errorMessage = errorText
-          ? `${baseMessage} - ${errorText}`
-          : baseMessage;
-        throw new Error(errorMessage);
-      }
-
+  const submitProgressMutation = useMutation({
+    mutationFn: (progressData: {
+      type: string;
+      taskId: string;
+      completed: string;
+      planned: string;
+      blockers: string;
+    }) => TasksApi.submitProgress.fn(progressData, token || undefined),
+    onSuccess: () => {
       Alert.alert("Success", "Progress updated successfully");
       setCompleted("");
       setPlanned("");
       setBlockers("");
+      queryClient.invalidateQueries({ queryKey: ["TasksApi.getSelfTasks"] });
+      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskDetails"] });
       onSubmit();
       onClose();
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("Error submitting progress:", error);
       Alert.alert(
         "Error",
         error instanceof Error ? error.message : "Failed to submit progress"
       );
-    } finally {
-      setLoading(false);
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!completed.trim() && !planned.trim() && !blockers.trim()) {
+      Alert.alert("Error", "Please fill at least one field");
+      return;
     }
+
+    submitProgressMutation.mutate({
+      type: "task",
+      taskId,
+      completed: completed.trim() || "",
+      planned: planned.trim() || "",
+      blockers: blockers.trim() || "",
+    });
   };
 
   const handleClose = () => {
@@ -173,19 +165,19 @@ export default function AddProgressModal({
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={handleClose}
-              disabled={loading}
+              disabled={submitProgressMutation.isPending}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.submitButton,
-                loading && styles.submitButtonDisabled,
+                submitProgressMutation.isPending && styles.submitButtonDisabled,
               ]}
               onPress={handleSubmit}
-              disabled={loading}
+              disabled={submitProgressMutation.isPending}
             >
-              {loading ? (
+              {submitProgressMutation.isPending ? (
                 <ActivityIndicator
                   size="small"
                   color={theme.colors.text.inverted}

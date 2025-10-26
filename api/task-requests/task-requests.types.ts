@@ -26,5 +26,11 @@ export type TGetTaskRequestsResponse = {
   next?: string;
 };
 
+export type TGetTaskRequestByIdDto = {
+  id: string;
+};
+
+export type TGetTaskRequestByIdResponse = TaskRequestDTO;
+
 export type TApproveTaskRequestResponse = TApiResponse<TaskRequestDTO>;
 export type TRejectTaskRequestResponse = TApiResponse<TaskRequestDTO>;

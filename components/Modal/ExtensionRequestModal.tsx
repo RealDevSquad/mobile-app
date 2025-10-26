@@ -1,8 +1,8 @@
-import { EXTENSION_REQUEST_API } from "@/constants/apiConstant/extension-request-api";
+import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
 import { theme } from "@/constants/theme";
-import { createAuthHeaders } from "@/utils/authHeaders";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import React, { useState } from "react";
 import {
@@ -49,7 +49,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
   const [reason, setReason] = useState("");
   const [newDeadline, setNewDeadline] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -82,59 +82,62 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
     return true;
   };
 
-  const handleSubmit = async () => {
-    if (!isFormValid() || !newDeadline) return;
-
-    setIsLoading(true);
-
-    try {
-      const extensionRequestData: ExtensionRequestData = {
-        assignee,
-        newEndsOn: moment(newDeadline).unix(),
-        oldEndsOn,
-        reason: reason.trim(),
-        status: "PENDING",
-        taskId,
-        title: title.trim(),
-      };
-
-      const response = await fetch(
-        EXTENSION_REQUEST_API.CREATE_EXTENSION_REQUEST,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...createAuthHeaders(token),
-          },
-          body: JSON.stringify(extensionRequestData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to create extension request: ${response.statusText}`
-        );
-      }
-
+  const createExtensionRequestMutation = useMutation({
+    mutationFn: (extensionData: {
+      assignee: string;
+      newEndsOn: number;
+      oldEndsOn: number;
+      reason: string;
+      status: "PENDING";
+      taskId: string;
+      title: string;
+    }) =>
+      ExtensionRequestsApi.createExtensionRequest.fn(
+        extensionData,
+        token || undefined
+      ),
+    onSuccess: () => {
       Alert.alert("Success", "Extension request submitted successfully!", [
         {
           text: "OK",
           onPress: () => {
             resetForm();
+            // Invalidate extension request queries
+            queryClient.invalidateQueries({
+              queryKey: ["ExtensionRequestsApi.getExtensionRequests"],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["ExtensionRequestsApi.getSelfExtensionRequests"],
+            });
             onSubmit();
           },
         },
       ]);
-    } catch (error) {
+    },
+    onError: (error) => {
       Alert.alert(
         "Error",
         error instanceof Error
           ? error.message
           : "Failed to submit extension request"
       );
-    } finally {
-      setIsLoading(false);
-    }
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!isFormValid() || !newDeadline) return;
+
+    const extensionRequestData: ExtensionRequestData = {
+      assignee,
+      newEndsOn: moment(newDeadline).unix(),
+      oldEndsOn,
+      reason: reason.trim(),
+      status: "PENDING",
+      taskId,
+      title: title.trim(),
+    };
+
+    createExtensionRequestMutation.mutate(extensionRequestData);
   };
 
   const resetForm = () => {
@@ -164,7 +167,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
           <TouchableOpacity
             style={styles.closeIcon}
             onPress={handleClose}
-            disabled={isLoading}
+            disabled={createExtensionRequestMutation.isPending}
             testID="close-button"
           >
             <Ionicons
@@ -186,11 +189,15 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Title *</Text>
             <TextInput
-              style={[styles.input, isLoading && styles.disabledInput]}
+              style={[
+                styles.input,
+                createExtensionRequestMutation.isPending &&
+                  styles.disabledInput,
+              ]}
               placeholder="Enter extension request title"
               value={title}
               onChangeText={setTitle}
-              editable={!isLoading}
+              editable={!createExtensionRequestMutation.isPending}
             />
           </View>
 
@@ -201,14 +208,15 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
               style={[
                 styles.input,
                 styles.textArea,
-                isLoading && styles.disabledInput,
+                createExtensionRequestMutation.isPending &&
+                  styles.disabledInput,
               ]}
               placeholder="Explain why you need an extension"
               value={reason}
               onChangeText={setReason}
               multiline
               numberOfLines={4}
-              editable={!isLoading}
+              editable={!createExtensionRequestMutation.isPending}
             />
           </View>
 
@@ -216,9 +224,16 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
           <View style={styles.inputContainer}>
             <Text style={styles.label}>New Deadline *</Text>
             <TouchableOpacity
-              style={[styles.dateButton, isLoading && styles.disabledInput]}
-              onPress={() => !isLoading && setShowDatePicker(true)}
-              disabled={isLoading}
+              style={[
+                styles.dateButton,
+                createExtensionRequestMutation.isPending &&
+                  styles.disabledInput,
+              ]}
+              onPress={() =>
+                !createExtensionRequestMutation.isPending &&
+                setShowDatePicker(true)
+              }
+              disabled={createExtensionRequestMutation.isPending}
             >
               <Text style={styles.dateButtonText}>
                 {newDeadline ? formatDate(newDeadline) : "Select new deadline"}
@@ -250,7 +265,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
               onPress={handleClose}
-              disabled={isLoading}
+              disabled={createExtensionRequestMutation.isPending}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -259,13 +274,16 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
               style={[
                 styles.button,
                 styles.submitButton,
-                isLoading && styles.disabledButton,
+                createExtensionRequestMutation.isPending &&
+                  styles.disabledButton,
               ]}
               onPress={handleSubmit}
-              disabled={isLoading}
+              disabled={createExtensionRequestMutation.isPending}
             >
               <Text style={styles.submitButtonText}>
-                {isLoading ? "Submitting..." : "Submit Request"}
+                {createExtensionRequestMutation.isPending
+                  ? "Submitting..."
+                  : "Submit Request"}
               </Text>
             </TouchableOpacity>
           </View>

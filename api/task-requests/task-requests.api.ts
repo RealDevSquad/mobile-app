@@ -3,6 +3,7 @@ import { apiClient } from "../../lib/api-client";
 import {
   TApproveTaskRequestDto,
   TApproveTaskRequestResponse,
+  TGetTaskRequestByIdResponse,
   TGetTaskRequestsDto,
   TGetTaskRequestsResponse,
   TRejectTaskRequestDto,
@@ -47,6 +48,26 @@ export const TaskRequestsApi = {
       }
       const { data } = await apiClient.get<TGetTaskRequestsResponse>(
         url,
+        config
+      );
+      return data;
+    },
+  },
+
+  getTaskRequestById: {
+    key: (id: string) => ["TaskRequestsApi.getTaskRequestById", id],
+    fn: async (
+      id: string,
+      token?: string
+    ): Promise<TGetTaskRequestByIdResponse> => {
+      const config: InternalAxiosRequestConfig = {
+        headers: new AxiosHeaders(),
+      };
+      if (token) {
+        (config as any).token = token;
+      }
+      const { data } = await apiClient.get<TGetTaskRequestByIdResponse>(
+        `/task-requests/${id}`,
         config
       );
       return data;

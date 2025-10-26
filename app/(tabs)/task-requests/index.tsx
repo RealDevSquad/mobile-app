@@ -1,11 +1,11 @@
+import { TaskRequestsApi } from "@/api/task-requests/task-requests.api";
 import TaskRequestCard from "@/components/TaskRequestCard";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Modal,
   RefreshControl,
@@ -16,54 +16,41 @@ import {
 } from "react-native";
 
 export default function TaskRequestsScreen() {
-  const {
-    taskRequests,
-    hasMoreTaskRequests,
-    taskRequestsNext,
-    taskRequestsFilter,
-    loading,
-    error,
-    fetchTaskRequests,
-    setTaskRequestsFilter,
-  } = useUserStore();
   const { token } = useCheckUserSession();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [taskRequestsFilter, setTaskRequestsFilter] = useState("PENDING");
 
-  useEffect(() => {
-    if (token) {
-      fetchTaskRequests(token, taskRequestsFilter);
-    }
-  }, [token, taskRequestsFilter, fetchTaskRequests]);
+  // Fetch task requests with filtering
+  const {
+    data: taskRequestsData,
+    isLoading: loading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: TaskRequestsApi.getTaskRequests.key({
+      status: taskRequestsFilter,
+    }),
+    queryFn: () =>
+      TaskRequestsApi.getTaskRequests.fn(
+        { status: taskRequestsFilter },
+        token || undefined
+      ),
+    enabled: !!token,
+  });
+
+  const taskRequests = taskRequestsData?.data || [];
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    if (token) {
-      await fetchTaskRequests(token, taskRequestsFilter);
-    }
+    await refetch();
     setRefreshing(false);
   };
 
-  const handleLoadMore = async () => {
-    if (!token || !hasMoreTaskRequests || isLoadingMore) return;
-
-    setIsLoadingMore(true);
-    try {
-      await fetchTaskRequests(
-        token,
-        taskRequestsFilter,
-        useUserStore.getState().taskRequestsNext
-      );
-    } catch (error) {
-      console.error("Error loading more task requests:", error);
-      Alert.alert("Error", "Failed to load more task requests.");
-    } finally {
-      setIsLoadingMore(false);
-    }
-  };
+  const handleLoadMore = async () => {};
 
   const handleCardPress = (id: string) => {
     router.push(`/task-requests/${id}`);
@@ -79,21 +66,7 @@ export default function TaskRequestsScreen() {
   );
 
   const renderLoadMoreButton = () => {
-    if (!hasMoreTaskRequests) return null;
-
-    return (
-      <TouchableOpacity
-        style={styles.loadMoreButton}
-        onPress={handleLoadMore}
-        disabled={isLoadingMore}
-      >
-        {isLoadingMore ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.loadMoreText}>Load More</Text>
-        )}
-      </TouchableOpacity>
-    );
+    return null;
   };
 
   const renderEmpty = () => (
@@ -164,17 +137,19 @@ export default function TaskRequestsScreen() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error: {error}</Text>
+        <Text style={styles.errorText}>
+          Error: {error?.message || "Failed to load task requests"}
+        </Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={async () => {
-            if (token && !isRetrying) {
+            if (!isRetrying) {
               setIsRetrying(true);
               try {
-                await fetchTaskRequests(token, taskRequestsFilter);
+                await refetch();
               } catch (error) {
                 console.error("Error retrying:", error);
               } finally {

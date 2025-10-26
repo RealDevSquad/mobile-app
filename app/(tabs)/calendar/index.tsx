@@ -1,12 +1,13 @@
+import { LogsApi } from "@/api/logs/logs.api";
 import ActivityDetailBottomSheet from "@/components/ActivityDetailBottomSheet";
 import UserSearchModal from "@/components/UserSearchModal";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
 import {
   generateDateStatusMessage,
   getActivitiesForDate,
   processLogsToMarkedDates,
 } from "@/utils/calendarUtils";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -19,51 +20,46 @@ import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CalendarScreen() {
-  const {
-    selectedUsername,
-    calendarLogs,
-    loadingLogs,
-    currentMonth,
-    markedDates,
-    selectedDateActivities,
-    fetchUserLogs,
-    setSelectedUsername,
-    setCurrentMonth,
-    setSelectedDateActivities,
-    setMarkedDates,
-    clearCalendarData,
-    cleanupCalendarData,
-  } = useUserStore();
-
   const { token } = useCheckUserSession();
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string>("");
+  const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
+  const [currentMonth, setCurrentMonth] = useState<string>(
+    new Date().toISOString().slice(0, 7)
+  );
+  const [markedDates, setMarkedDates] = useState<any>({});
+  const [selectedDateActivities, setSelectedDateActivities] =
+    useState<any>(null);
 
-  useEffect(() => {
-    if (selectedUsername && token) {
-      // Fetch all logs without date filters
-      fetchUserLogs(selectedUsername, 0, 0, token);
-    }
-  }, [selectedUsername, token, fetchUserLogs]);
+  // Fetch user logs when username is selected
+  const { data: calendarLogsData, isLoading: loadingLogs } = useQuery({
+    queryKey: LogsApi.getUserLogs.key(selectedUsername || ""),
+    queryFn: () =>
+      LogsApi.getUserLogs.fn(
+        { username: selectedUsername! },
+        token || undefined
+      ),
+    enabled: !!token && !!selectedUsername,
+  });
+
+  const calendarLogs = calendarLogsData?.data || [];
 
   useEffect(() => {
     if (calendarLogs.length > 0) {
       try {
-        // Clean up previous marked dates to prevent memory issues
-        cleanupCalendarData();
-
         const processedMarkedDates = processLogsToMarkedDates(calendarLogs);
         setMarkedDates(processedMarkedDates);
       } catch (error) {
         console.error("Error processing calendar logs:", error);
-        // Clear marked dates on error to prevent memory issues
-        cleanupCalendarData();
+        setMarkedDates({});
       }
+    } else {
+      setMarkedDates({});
     }
 
     setStatusMessage("");
-  }, [calendarLogs, loadingLogs, setMarkedDates, cleanupCalendarData]);
+  }, [calendarLogs, loadingLogs]);
 
   const handleUserSelect = (username: string) => {
     setSelectedUsername(username);
@@ -72,7 +68,9 @@ export default function CalendarScreen() {
   };
 
   const handleClearUser = () => {
-    clearCalendarData();
+    setSelectedUsername(null);
+    setMarkedDates({});
+    setSelectedDateActivities(null);
     setStatusMessage("");
   };
 

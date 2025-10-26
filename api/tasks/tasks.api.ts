@@ -104,11 +104,19 @@ export const TasksApi = {
     key: (id: string) => ["TasksApi.updateTaskStatus", id],
     fn: async (
       id: string,
-      statusData: TUpdateTaskStatusDto
+      statusData: TUpdateTaskStatusDto,
+      token?: string
     ): Promise<TUpdateTaskStatusResponse> => {
+      const config: InternalAxiosRequestConfig = {
+        headers: new AxiosHeaders(),
+      };
+      if (token) {
+        (config as any).token = token;
+      }
       const { data } = await apiClient.patch<TUpdateTaskStatusResponse>(
         `/tasks/self/${id}`,
-        statusData
+        statusData,
+        config
       );
       return data;
     },
@@ -117,11 +125,19 @@ export const TasksApi = {
   submitProgress: {
     key: ["TasksApi.submitProgress"],
     fn: async (
-      progress: TSubmitProgressDto
+      progress: TSubmitProgressDto,
+      token?: string
     ): Promise<TSubmitProgressResponse> => {
+      const config: InternalAxiosRequestConfig = {
+        headers: new AxiosHeaders(),
+      };
+      if (token) {
+        (config as any).token = token;
+      }
       const { data } = await apiClient.post<TSubmitProgressResponse>(
         "/progresses",
-        progress
+        progress,
+        config
       );
       return data;
     },

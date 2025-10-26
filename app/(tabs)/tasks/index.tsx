@@ -1,8 +1,9 @@
+import { TasksApi } from "@/api/tasks/tasks.api";
 import Task from "@/components/Task";
 import UserSearchModal from "@/components/UserSearchModal";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -13,44 +14,30 @@ import {
 } from "react-native";
 
 export default function TasksScreen() {
-  const {
-    allTasks,
-    fetchTasks,
-    loadingTasks,
-    error,
-    hasMoreTasks,
-    tasksNext,
-    selectedAssignee,
-    setSelectedAssignee,
-    clearSearchResults,
-  } = useUserStore();
   const { token } = useCheckUserSession();
-  const isLoadingMore = useRef(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (token) {
-      fetchTasks(token, undefined, selectedAssignee ?? undefined);
-    }
-  }, [token, fetchTasks, selectedAssignee]);
+  const {
+    data: tasksData,
+    isLoading: loadingTasks,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: TasksApi.getTasks.key({
+      assignee: selectedAssignee || undefined,
+    }),
+    queryFn: () =>
+      TasksApi.getTasks.fn(
+        { assignee: selectedAssignee || undefined },
+        token || undefined
+      ),
+    enabled: !!token,
+  });
 
-  const handleLoadMore = useCallback(() => {
-    if (hasMoreTasks && !loadingTasks && !isLoadingMore.current && token) {
-      isLoadingMore.current = true;
-      fetchTasks(token, tasksNext, selectedAssignee ?? undefined).finally(
-        () => {
-          isLoadingMore.current = false;
-        }
-      );
-    }
-  }, [
-    hasMoreTasks,
-    loadingTasks,
-    tasksNext,
-    token,
-    fetchTasks,
-    selectedAssignee,
-  ]);
+  const allTasks = tasksData?.tasks || [];
+
+  const handleLoadMore = useCallback(() => {}, []);
 
   const handleUserSelect = (username: string) => {
     setSelectedAssignee(username);
@@ -58,7 +45,6 @@ export default function TasksScreen() {
 
   const handleClearFilter = () => {
     setSelectedAssignee(null);
-    clearSearchResults();
   };
 
   if (!token) {
@@ -77,11 +63,13 @@ export default function TasksScreen() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error: {error}</Text>
+          <Text style={styles.errorText}>
+            Error: {error?.message || "Failed to load tasks"}
+          </Text>
         </View>
       </SafeAreaView>
     );

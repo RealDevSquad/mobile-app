@@ -1,11 +1,9 @@
-import { TASK_REQUEST_API } from "@/constants/apiConstant/task-request-api";
+import { TaskRequestsApi } from "@/api/task-requests/task-requests.api";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
-import { TaskRequestDTO } from "@/types/task-request.dto";
-import { createAuthHeaders } from "@/utils/authHeaders";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -21,50 +19,134 @@ import {
 export default function TaskRequestDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { token } = useCheckUserSession();
-  const { approveTaskRequest, rejectTaskRequest } = useUserStore();
+  const queryClient = useQueryClient();
   const router = useRouter();
-  const [taskRequest, setTaskRequest] = useState<TaskRequestDTO | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
 
-  useEffect(() => {
-    if (token && id) {
-      fetchTaskRequestDetails();
-    }
-  }, [token, id]);
+  const {
+    data: taskRequest,
+    isLoading: loading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+    queryFn: () =>
+      TaskRequestsApi.getTaskRequestById.fn(id!, token || undefined),
+    enabled: !!token && !!id,
+  });
 
-  const fetchTaskRequestDetails = async () => {
-    if (!token || !id) return;
+  const approveMutation = useMutation({
+    mutationFn: ({
+      taskRequestId,
+      userId,
+    }: {
+      taskRequestId: string;
+      userId: string;
+    }) =>
+      TaskRequestsApi.approveTaskRequest.fn(
+        { taskRequestId, userId },
+        token || undefined
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TaskRequestsApi.getTaskRequests.key({ status: "PENDING" }),
+      });
+      Alert.alert("Success", "Task request approved successfully");
+      router.back();
+    },
+    onError: (error) => {
+      Alert.alert("Error", "Failed to approve task request");
+      console.error("Error approving task request:", error);
+    },
+  });
 
-    setLoading(true);
-    setError(null);
+  const rejectMutation = useMutation({
+    mutationFn: ({
+      taskRequestId,
+      userId,
+      reason,
+    }: {
+      taskRequestId: string;
+      userId: string;
+      reason?: string;
+    }) =>
+      TaskRequestsApi.rejectTaskRequest.fn(
+        { taskRequestId, userId, reason },
+        token || undefined
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TaskRequestsApi.getTaskRequests.key({ status: "PENDING" }),
+      });
+      Alert.alert("Success", "Task request rejected successfully");
+      router.back();
+    },
+    onError: (error) => {
+      Alert.alert("Error", "Failed to reject task request");
+      console.error("Error rejecting task request:", error);
+    },
+  });
 
-    try {
-      const response = await fetch(
-        TASK_REQUEST_API.GET_TASK_REQUEST_BY_ID(id),
+  const handleApprove = () => {
+    if (!taskRequest) return;
+
+    Alert.alert(
+      "Approve Task Request",
+      "Are you sure you want to approve this task request?",
+      [
+        { text: "Cancel", style: "cancel" },
         {
-          method: "GET",
-          headers: {
-            ...createAuthHeaders(token),
+          text: "Approve",
+          onPress: () => {
+            setIsApproving(true);
+            approveMutation.mutate(
+              {
+                taskRequestId: taskRequest.id,
+                userId: taskRequest.requestors?.[0] || "",
+              },
+              {
+                onSettled: () => setIsApproving(false),
+              }
+            );
           },
-        }
-      );
+        },
+      ]
+    );
+  };
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch task request: ${response.statusText}`);
-      }
+  const handleReject = () => {
+    if (!taskRequest) return;
 
-      const data = await response.json();
-      setTaskRequest(data.data);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to fetch task request"
-      );
-    } finally {
-      setLoading(false);
-    }
+    Alert.alert(
+      "Reject Task Request",
+      "Are you sure you want to reject this task request?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reject",
+          style: "destructive",
+          onPress: () => {
+            setIsRejecting(true);
+            rejectMutation.mutate(
+              {
+                taskRequestId: taskRequest.id,
+                userId: taskRequest.requestors?.[0] || "",
+              },
+              {
+                onSettled: () => setIsRejecting(false),
+              }
+            );
+          },
+        },
+      ]
+    );
   };
 
   const formatDate = (timestamp: number) => {
@@ -88,72 +170,6 @@ export default function TaskRequestDetailsScreen() {
     }
   };
 
-  const handleApprove = () => {
-    if (!token || !id) return;
-
-    Alert.alert(
-      "Approve Task Request",
-      "Are you sure you want to approve this task request?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Approve",
-          style: "default",
-          onPress: async () => {
-            setIsApproving(true);
-            try {
-              await approveTaskRequest(
-                id,
-                taskRequest?.requestors?.[0] || "",
-                token
-              );
-              Alert.alert("Success", "Task request approved successfully.");
-              router.back();
-            } catch (error) {
-              console.error("Error approving task request:", error);
-              Alert.alert("Error", "Failed to approve task request.");
-            } finally {
-              setIsApproving(false);
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handleReject = () => {
-    if (!token || !id) return;
-
-    Alert.alert(
-      "Reject Task Request",
-      "Are you sure you want to reject this task request?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Reject",
-          style: "destructive",
-          onPress: async () => {
-            setIsRejecting(true);
-            try {
-              await rejectTaskRequest(
-                id,
-                taskRequest?.requestors?.[0] || "",
-                token
-              );
-              Alert.alert("Success", "Task request rejected successfully.");
-              router.back();
-            } catch (error) {
-              console.error("Error rejecting task request:", error);
-              Alert.alert("Error", "Failed to reject task request.");
-            } finally {
-              setIsRejecting(false);
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const handleExternalLink = (url: string) => {
     Linking.openURL(url);
   };
@@ -167,15 +183,19 @@ export default function TaskRequestDetailsScreen() {
     );
   }
 
-  if (error || !taskRequest) {
+  if (isError || !taskRequest) {
     return (
       <SafeAreaView style={styles.errorContainer}>
         <Text style={styles.errorText}>
-          {error || "Task request not found"}
+          {error?.message || "Task request not found"}
         </Text>
         <TouchableOpacity
           style={styles.retryButton}
-          onPress={fetchTaskRequestDetails}
+          onPress={() => {
+            queryClient.invalidateQueries({
+              queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+            });
+          }}
         >
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>

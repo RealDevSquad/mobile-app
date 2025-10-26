@@ -1,6 +1,7 @@
+import { UsersApi } from "@/api/users/users.api";
 import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -24,8 +25,6 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   onClose,
   onUserSelect,
 }) => {
-  const { searchResults, loadingSearch, searchUsers, clearSearchResults } =
-    useUserStore();
   const { token } = useCheckUserSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -40,13 +39,12 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   }, [searchTerm]);
 
   // Search users when debounced term changes
-  useEffect(() => {
-    if (debouncedSearchTerm.length >= 3 && token) {
-      searchUsers(token, debouncedSearchTerm);
-    } else if (debouncedSearchTerm.length < 3) {
-      clearSearchResults();
-    }
-  }, [debouncedSearchTerm, token, searchUsers, clearSearchResults]);
+  const { data: searchResults, isLoading: loadingSearch } = useQuery({
+    queryKey: UsersApi.searchUsers.key(debouncedSearchTerm),
+    queryFn: () =>
+      UsersApi.searchUsers.fn(debouncedSearchTerm, token || undefined),
+    enabled: !!token && debouncedSearchTerm.length >= 3,
+  });
 
   const handleUserSelect = (username: string) => {
     onUserSelect(username);
@@ -55,7 +53,6 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
 
   const handleClose = () => {
     setSearchTerm("");
-    clearSearchResults();
     onClose();
   };
 
@@ -116,15 +113,15 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
 
         {searchTerm.length >= 3 &&
           !loadingSearch &&
-          searchResults.length === 0 && (
+          (!searchResults || searchResults.users?.length === 0) && (
             <View style={styles.messageContainer}>
               <Text style={styles.messageText}>No users found</Text>
             </View>
           )}
 
-        {searchResults.length > 0 && (
+        {searchResults?.users && searchResults.users.length > 0 && (
           <FlatList
-            data={searchResults}
+            data={searchResults.users}
             keyExtractor={(item) => item.id}
             renderItem={renderUserItem}
             style={styles.userList}

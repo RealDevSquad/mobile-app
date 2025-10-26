@@ -1,18 +1,16 @@
+import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
+import { TasksApi } from "@/api/tasks/tasks.api";
 import AddProgressModal from "@/components/Modal/AddProgressModal";
 import ExtensionRequestDetailsModal from "@/components/Modal/ExtensionRequestDetailsModal";
 import ExtensionRequestModal from "@/components/Modal/ExtensionRequestModal";
 import UpdateTaskStatusModal from "@/components/Modal/UpdateTaskStatusModal";
-import { EXTENSION_REQUEST_API } from "@/constants/apiConstant/extension-request-api";
-import { TASK_API } from "@/constants/apiConstant/task-api";
 import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { ExtensionRequestsResponse } from "@/types/extension-request.dto";
-import { ProgressUpdateDTO, TaskDetailsDTO } from "@/types/task.dto";
-import { createAuthHeaders } from "@/utils/authHeaders";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import moment from "moment";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -28,142 +26,64 @@ import {
 export default function TaskDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { token } = useCheckUserSession();
-  const [taskDetails, setTaskDetails] = useState<TaskDetailsDTO | null>(null);
-  const [progressUpdates, setProgressUpdates] = useState<ProgressUpdateDTO[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
-  const [progressLoading, setProgressLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const [expandedUpdate, setExpandedUpdate] = useState<string | null>(null);
   const [showExtensionModal, setShowExtensionModal] = useState(false);
   const [showExtensionDetailsModal, setShowExtensionDetailsModal] =
     useState(false);
-  const [hasPendingExtension, setHasPendingExtension] = useState(false);
-  const [extensionCheckLoading, setExtensionCheckLoading] = useState(false);
-  const [pendingExtensionDetails, setPendingExtensionDetails] =
-    useState<any>(null);
   const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
   const [showAddProgressModal, setShowAddProgressModal] = useState(false);
 
-  const fetchTaskDetails = useCallback(async () => {
-    if (!token || !id) return;
+  const {
+    data: taskDetails,
+    isLoading: loading,
+    isError: taskError,
+    error: taskErrorDetails,
+  } = useQuery({
+    queryKey: TasksApi.getTaskDetails.key(id || ""),
+    queryFn: () => TasksApi.getTaskDetails.fn(id!),
+    enabled: !!token && !!id,
+  });
 
-    setLoading(true);
-    setError(null);
+  const {
+    data: progressUpdatesData,
+    isLoading: progressLoading,
+    isError: progressError,
+    error: progressErrorDetails,
+  } = useQuery({
+    queryKey: TasksApi.getTaskProgress.key(id || ""),
+    queryFn: () => TasksApi.getTaskProgress.fn(id!),
+    enabled: !!token && !!id,
+  });
 
-    try {
-      const response = await fetch(TASK_API.GET_TASK_DETAILS(id), {
-        method: "GET",
-        headers: {
-          ...createAuthHeaders(token),
-        },
-      });
+  const { data: extensionRequestsData, isLoading: extensionRequestsLoading } =
+    useQuery({
+      queryKey: ExtensionRequestsApi.getSelfExtensionRequests.key({
+        taskId: id || "",
+      }),
+      queryFn: () =>
+        ExtensionRequestsApi.getSelfExtensionRequests.fn(
+          { taskId: id! },
+          token || undefined
+        ),
+      enabled: !!token && !!id,
+    });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch task details: ${response.statusText}`);
-      }
+  const progressUpdates = progressUpdatesData?.data || [];
+  const extensionRequests = extensionRequestsData?.allExtensionRequests || [];
+  const hasPendingExtension = extensionRequests.some(
+    (request) => request.status === "PENDING"
+  );
+  const pendingExtensionDetails = extensionRequests.find(
+    (request) => request.status === "PENDING"
+  );
 
-      const data = await response.json();
-      setTaskDetails(data);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to fetch task details"
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [token, id]);
-
-  const fetchProgressUpdates = useCallback(async () => {
-    if (!token || !id) return;
-
-    setProgressLoading(true);
-
-    try {
-      const response = await fetch(TASK_API.GET_TASK_PROGRESS(id), {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...createAuthHeaders(token),
-        },
-      });
-
-      if (response.status === 404) {
-        console.log("No progress updates found for this task");
-        setProgressUpdates([]);
-        return;
-      }
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        const baseMessage = `Failed to fetch progress updates: ${response.status} ${response.statusText}`;
-        const errorMessage = errorText
-          ? `${baseMessage} - ${errorText}`
-          : baseMessage;
-        throw new Error(errorMessage);
-      }
-
-      const data = await response.json();
-      setProgressUpdates(data.data || []);
-    } catch (error) {
-      console.error("Error fetching progress updates:", error);
-      // Set empty array instead of leaving progress updates in undefined state
-      setProgressUpdates([]);
-    } finally {
-      setProgressLoading(false);
-    }
-  }, [token, id]);
-
-  const checkPendingExtensionRequests = useCallback(async () => {
-    if (!token || !id) return;
-
-    setExtensionCheckLoading(true);
-
-    try {
-      const response = await fetch(
-        EXTENSION_REQUEST_API.GET_SELF_EXTENSION_REQUESTS(id),
-        {
-          method: "GET",
-          headers: {
-            ...createAuthHeaders(token),
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to check extension requests: ${response.statusText}`
-        );
-      }
-
-      const data: ExtensionRequestsResponse = await response.json();
-      const pendingRequest = data.allExtensionRequests.find(
-        (request) => request.status === "PENDING"
-      );
-      setHasPendingExtension(!!pendingRequest);
-      setPendingExtensionDetails(pendingRequest || null);
-    } catch (error) {
-      console.error("Error checking extension requests:", error);
-      setHasPendingExtension(false);
-    } finally {
-      setExtensionCheckLoading(false);
-    }
-  }, [token, id]);
-
-  useEffect(() => {
-    if (token && id) {
-      fetchTaskDetails();
-      fetchProgressUpdates();
-      checkPendingExtensionRequests();
-    }
-  }, [
-    token,
-    id,
-    fetchTaskDetails,
-    fetchProgressUpdates,
-    checkPendingExtensionRequests,
-  ]);
+  let error: string | null = null;
+  if (taskError) {
+    error = taskErrorDetails?.message || null;
+  } else if (progressError) {
+    error = progressErrorDetails?.message || null;
+  }
 
   const formatDate = (timestamp: number) => {
     return moment.unix(timestamp).format("MMM DD, YYYY");
@@ -205,8 +125,11 @@ export default function TaskDetailsScreen() {
   const handleExtensionRequestSubmit = () => {
     setShowExtensionModal(false);
 
-    fetchTaskDetails();
-    checkPendingExtensionRequests();
+    queryClient.invalidateQueries({
+      queryKey: ExtensionRequestsApi.getSelfExtensionRequests.key({
+        taskId: id || "",
+      }),
+    });
   };
 
   const handleExtensionRequestClick = () => {
@@ -219,12 +142,10 @@ export default function TaskDetailsScreen() {
 
   const handleUpdateStatusSubmit = () => {
     setShowUpdateStatusModal(false);
-    fetchTaskDetails();
   };
 
   const handleAddProgressSubmit = () => {
     setShowAddProgressModal(false);
-    fetchProgressUpdates();
   };
 
   const renderProgressContent = () => {
@@ -356,7 +277,17 @@ export default function TaskDetailsScreen() {
         <Text style={styles.errorText}>
           {error || "Task details not found"}
         </Text>
-        <TouchableOpacity style={styles.retryButton} onPress={fetchTaskDetails}>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() => {
+            queryClient.invalidateQueries({
+              queryKey: TasksApi.getTaskDetails.key(id || ""),
+            });
+            queryClient.invalidateQueries({
+              queryKey: TasksApi.getTaskProgress.key(id || ""),
+            });
+          }}
+        >
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -422,13 +353,13 @@ export default function TaskDetailsScreen() {
               <TouchableOpacity
                 style={[
                   styles.extensionRequestButton,
-                  extensionCheckLoading &&
+                  extensionRequestsLoading &&
                     styles.extensionRequestButtonDisabled,
                 ]}
                 onPress={handleExtensionRequestClick}
-                disabled={extensionCheckLoading}
+                disabled={extensionRequestsLoading}
               >
-                {extensionCheckLoading ? (
+                {extensionRequestsLoading ? (
                   <ActivityIndicator
                     size="small"
                     color={theme.colors.text.inverted}
@@ -514,7 +445,7 @@ export default function TaskDetailsScreen() {
       <ExtensionRequestDetailsModal
         visible={showExtensionDetailsModal}
         onClose={() => setShowExtensionDetailsModal(false)}
-        extensionDetails={pendingExtensionDetails}
+        extensionDetails={pendingExtensionDetails || null}
       />
 
       <UpdateTaskStatusModal
