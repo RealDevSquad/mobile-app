@@ -16,11 +16,13 @@ const Task = ({
   onEndReached,
   loading = false,
   onTaskPress,
+  showArrow = true,
 }: {
   tasks: any[];
   onEndReached?: () => void;
   loading?: boolean;
   onTaskPress?: (task: any) => void;
+  showArrow?: boolean;
 }) => {
   const formatTimeAgo = (timestamp: number) => {
     const currentDate = moment();
@@ -59,12 +61,14 @@ const Task = ({
               Status: {item.status}
             </Text>
           </View>
-          <FontAwesome
-            name="chevron-right"
-            size={16}
-            color={theme.colors.text.secondary}
-            style={styles.chevron}
-          />
+          {showArrow && (
+            <FontAwesome
+              name="chevron-right"
+              size={16}
+              color={theme.colors.text.secondary}
+              style={styles.chevron}
+            />
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -109,13 +113,14 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   cardText: {
     flex: 1,
   },
   chevron: {
     marginLeft: theme.spacing.sm,
+    marginTop: 2,
   },
   title: {
     fontSize: theme.typography.fontSize.base,

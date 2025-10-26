@@ -122,6 +122,7 @@ export default function TasksScreen() {
         tasks={allTasks}
         onEndReached={handleLoadMore}
         loading={loadingTasks}
+        showArrow={false}
       />
 
       <UserSearchModal
