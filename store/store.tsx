@@ -1,9 +1,11 @@
 import { EXTENSION_REQUEST_API } from "@/constants/apiConstant/extension-request-api";
 import { HomeApi } from "@/constants/apiConstant/home-api";
+import { LOGS_API, buildLogsUrl } from "@/constants/apiConstant/logs-api";
 import { TASK_API } from "@/constants/apiConstant/task-api";
 import { TASK_REQUEST_API } from "@/constants/apiConstant/task-request-api";
 import { USER_API } from "@/constants/apiConstant/user-api";
 import { ExtensionRequestDTO } from "@/types/extension-request.dto";
+import { DateActivities, LogEntry, MarkedDates } from "@/types/logs.dto";
 import { TaskRequestDTO } from "@/types/task-request.dto";
 import { TaskDTO } from "@/types/task.dto";
 import { UserData } from "@/types/user.dto";
@@ -48,6 +50,13 @@ interface UserStore {
   taskRequestsNext: string;
   loading: boolean;
   error: string | null;
+  // Calendar-related state
+  selectedUsername: string | null;
+  calendarLogs: LogEntry[];
+  loadingLogs: boolean;
+  currentMonth: string; // Format: YYYY-MM
+  markedDates: MarkedDates;
+  selectedDateActivities: DateActivities | null;
   fetchUsers: (cookie: string) => Promise<void>;
   fetchActiveTask: (cookie: string) => Promise<void>;
   fetchTasks: (
@@ -93,6 +102,19 @@ interface UserStore {
     token: string
   ) => Promise<any>; // Add submitOOOForm
   cancelOOO: (token: string) => Promise<any>; // Add cancelOOO
+  // Calendar-related actions
+  fetchUserLogs: (
+    username: string,
+    startDate: number,
+    endDate: number,
+    cookie: string
+  ) => Promise<void>;
+  setSelectedUsername: (username: string | null) => void;
+  setCurrentMonth: (month: string) => void;
+  setSelectedDateActivities: (activities: DateActivities | null) => void;
+  setMarkedDates: (markedDates: MarkedDates) => void;
+  clearCalendarData: () => void;
+  cleanupCalendarData: () => void;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -116,6 +138,13 @@ export const useUserStore = create<UserStore>((set) => ({
   taskRequestsNext: "",
   loading: false,
   error: null,
+  // Calendar-related state initialization
+  selectedUsername: null,
+  calendarLogs: [],
+  loadingLogs: false,
+  currentMonth: new Date().toISOString().slice(0, 7), // Current month in YYYY-MM format
+  markedDates: {},
+  selectedDateActivities: null,
 
   fetchUsers: async (cookie: string) => {
     set({ loading: true });
@@ -196,7 +225,6 @@ export const useUserStore = create<UserStore>((set) => ({
   },
 
   fetchTasks: async (cookie: string, next?: string, assignee?: string) => {
-    console.log("fetchTasks called with next:", next, "assignee:", assignee);
     set({ loadingTasks: true });
     try {
       let url = TASK_API.GET_TASKS;
@@ -210,8 +238,6 @@ export const useUserStore = create<UserStore>((set) => ({
           : next;
         url += `&next=${encodeURIComponent(nextParam)}`;
       }
-
-      console.log("Fetching tasks from URL:", url);
 
       const response = await fetch(url, {
         method: "GET",
@@ -229,28 +255,10 @@ export const useUserStore = create<UserStore>((set) => ({
       }
 
       const data = await response.json();
-      console.log("Raw API response:", JSON.stringify(data, null, 2));
-      console.log("Tasks API response:", {
-        tasksCount: data.tasks?.length || 0,
-        hasNext: !!data.next,
-        next: data.next,
-        fullResponse: data,
-      });
 
       const newTasks = data.tasks || [];
-      console.log("New tasks to add:", newTasks.length);
-
-      if (newTasks.length === 0 && next) {
-        console.log(
-          "⚠️ No new tasks returned for pagination - might be end of data"
-        );
-      }
 
       set((state) => {
-        console.log(
-          "Current allTasks length before update:",
-          state.allTasks.length
-        );
         const updatedState = {
           allTasks: next ? [...state.allTasks, ...newTasks] : newTasks,
           hasMoreTasks: !!data.next,
@@ -258,15 +266,9 @@ export const useUserStore = create<UserStore>((set) => ({
           loadingTasks: false,
           error: null,
         };
-        console.log("Updated state:", {
-          totalTasks: updatedState.allTasks.length,
-          hasMoreTasks: updatedState.hasMoreTasks,
-          tasksNext: updatedState.tasksNext,
-        });
         return updatedState;
       });
     } catch (error) {
-      console.error("Error fetching tasks:", error);
       set({
         error: error instanceof Error ? error.message : "Failed to fetch tasks",
         loadingTasks: false,
@@ -275,13 +277,11 @@ export const useUserStore = create<UserStore>((set) => ({
   },
 
   searchUsers: async (cookie: string, searchTerm: string) => {
-    console.log("searchUsers called with searchTerm:", searchTerm);
     set({ loadingSearch: true });
     try {
       const url = `${USER_API.SEARCH_USERS}?search=${encodeURIComponent(
         searchTerm
       )}&size=5`;
-      console.log("Searching users from URL:", url);
 
       const response = await fetch(url, {
         method: "GET",
@@ -299,10 +299,6 @@ export const useUserStore = create<UserStore>((set) => ({
       }
 
       const data = await response.json();
-      console.log("User search response:", {
-        usersCount: data.users?.length || 0,
-        fullResponse: data,
-      });
 
       const users = data.users || [];
       set({
@@ -311,7 +307,6 @@ export const useUserStore = create<UserStore>((set) => ({
         error: null,
       });
     } catch (error) {
-      console.error("Error searching users:", error);
       set({
         error:
           error instanceof Error ? error.message : "Failed to search users",
@@ -321,12 +316,10 @@ export const useUserStore = create<UserStore>((set) => ({
   },
 
   setSelectedAssignee: (assignee: string | null) => {
-    console.log("setSelectedAssignee called with:", assignee);
     set({ selectedAssignee: assignee });
   },
 
   clearSearchResults: () => {
-    console.log("clearSearchResults called");
     set({ searchResults: [], selectedAssignee: null });
   },
 
@@ -368,23 +361,23 @@ export const useUserStore = create<UserStore>((set) => ({
 
   cancelOOO: async (token) => {
     const payload = {
-      cancelOoo: true, // Backend requires this field to cancel OOO
+      cancelOoo: true,
     };
 
     const options = {
-      method: "PATCH", // Use PATCH as per backend requirements
+      method: "PATCH",
       headers: {
         ...createAuthHeaders(token),
       },
-      body: JSON.stringify(payload), // Send the required payload
+      body: JSON.stringify(payload),
     };
 
     try {
-      const response = await fetch(HomeApi.CANCEL_STATUS, options); // Use CANCEL_STATUS API
+      const response = await fetch(HomeApi.CANCEL_STATUS, options);
 
       if (response.ok) {
         const responseData = await response.json();
-        return responseData; // Return the response data
+        return responseData; // Return the response   data
       } else {
         const errorData = await response.json();
         console.error("Error response from server:", errorData);
@@ -543,12 +536,10 @@ export const useUserStore = create<UserStore>((set) => ({
   ) => {
     set({ loading: true });
     try {
-      // Handle "ALL" case - don't add status filter
       let url;
       if (status === "ALL") {
         url = `${TASK_REQUEST_API.GET_TASK_REQUESTS}?size=20&q=sort%3Acreated-desc`;
       } else {
-        // Convert status to lowercase
         const lowercaseStatus = status.toLowerCase();
         url = `${TASK_REQUEST_API.GET_TASK_REQUESTS}?size=20&q=status%3A${lowercaseStatus}++sort%3Acreated-desc`;
       }
@@ -556,7 +547,6 @@ export const useUserStore = create<UserStore>((set) => ({
       if (next) {
         url += `&next=${encodeURIComponent(next)}`;
       }
-      console.log("Task requests API URL:", url);
 
       const response = await fetch(url, {
         method: "GET",
@@ -622,14 +612,10 @@ export const useUserStore = create<UserStore>((set) => ({
     cookie: string
   ) => {
     try {
-      console.log("Approving task request:", { taskRequestId, userId });
-      console.log("API URL:", TASK_REQUEST_API.APPROVE_TASK_REQUEST);
-
       const requestBody = {
         taskRequestId,
         userId,
       };
-      console.log("Request body:", requestBody);
 
       const headers = {
         accept: "*/*",
@@ -648,19 +634,12 @@ export const useUserStore = create<UserStore>((set) => ({
         priority: "u=1, i",
         ...createAuthHeaders(cookie),
       };
-      console.log("Request headers:", headers);
 
       const response = await fetch(TASK_REQUEST_API.APPROVE_TASK_REQUEST, {
         method: "PATCH",
         headers,
         body: JSON.stringify(requestBody),
       });
-
-      console.log("Response status:", response.status);
-      console.log(
-        "Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -669,11 +648,6 @@ export const useUserStore = create<UserStore>((set) => ({
           `Failed to approve task request: ${response.status} ${response.statusText} - ${errorText}`
         );
       }
-
-      const responseData = await response.json();
-      console.log("Success response:", responseData);
-
-      // Update the request status in the store
       set((state) => ({
         taskRequests: state.taskRequests.map((req) =>
           req.id === taskRequestId ? { ...req, status: "APPROVED" } : req
@@ -698,15 +672,11 @@ export const useUserStore = create<UserStore>((set) => ({
     reason?: string
   ) => {
     try {
-      console.log("Rejecting task request:", { taskRequestId, userId, reason });
-      console.log("API URL:", TASK_REQUEST_API.REJECT_TASK_REQUEST);
-
       const requestBody = {
         taskRequestId,
         userId,
         ...(reason && { reason }),
       };
-      console.log("Request body:", requestBody);
 
       const headers = {
         accept: "*/*",
@@ -725,19 +695,12 @@ export const useUserStore = create<UserStore>((set) => ({
         priority: "u=1, i",
         ...createAuthHeaders(cookie),
       };
-      console.log("Request headers:", headers);
 
       const response = await fetch(TASK_REQUEST_API.REJECT_TASK_REQUEST, {
         method: "PATCH",
         headers,
         body: JSON.stringify(requestBody),
       });
-
-      console.log("Response status:", response.status);
-      console.log(
-        "Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -747,10 +710,6 @@ export const useUserStore = create<UserStore>((set) => ({
         );
       }
 
-      const responseData = await response.json();
-      console.log("Success response:", responseData);
-
-      // Update the request status in the store
       set((state) => ({
         taskRequests: state.taskRequests.map((req) =>
           req.id === taskRequestId ? { ...req, status: "REJECTED" } : req
@@ -770,5 +729,101 @@ export const useUserStore = create<UserStore>((set) => ({
 
   setTaskRequestsFilter: (status: string) => {
     set({ taskRequestsFilter: status });
+  },
+
+  // Calendar-related actions
+  fetchUserLogs: async (
+    username: string,
+    startDate: number,
+    endDate: number,
+    cookie: string
+  ) => {
+    set({ loadingLogs: true, error: null });
+    try {
+      const logsUrl = buildLogsUrl(LOGS_API.GET_ALL_LOGS, {
+        username,
+        // Don't pass startDate and endDate to get all logs
+      });
+
+      const authHeaders = createAuthHeaders(cookie);
+
+      const response = await fetch(logsUrl, {
+        method: "GET",
+        headers: {
+          ...authHeaders,
+          accept: "*/*",
+          "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+          Referer: "https://dashboard.realdevsquad.com/",
+          Origin: "https://dashboard.realdevsquad.com",
+          "sec-ch-ua-platform": '"macOS"',
+          "sec-ch-ua":
+            '"Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-site",
+          priority: "u=1, i",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch logs: ${response.status} ${response.statusText}`
+        );
+      }
+
+      // TODO: remove console after testing
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      const allLogs: LogEntry[] = data.data || [];
+
+      set({
+        calendarLogs: allLogs,
+        loadingLogs: false,
+        error: null,
+      });
+    } catch (error) {
+      set({
+        error:
+          error instanceof Error ? error.message : "Failed to fetch user logs",
+        loadingLogs: false,
+      });
+    }
+  },
+
+  setSelectedUsername: (username: string | null) => {
+    set({ selectedUsername: username });
+  },
+
+  setCurrentMonth: (month: string) => {
+    set({ currentMonth: month });
+  },
+
+  setSelectedDateActivities: (activities: DateActivities | null) => {
+    set({ selectedDateActivities: activities });
+  },
+
+  setMarkedDates: (markedDates: MarkedDates) => {
+    set({ markedDates });
+  },
+
+  clearCalendarData: () => {
+    set({
+      selectedUsername: null,
+      calendarLogs: [],
+      markedDates: {},
+      selectedDateActivities: null,
+    });
+  },
+
+  // Memory cleanup function to prevent storage overflow
+  cleanupCalendarData: () => {
+    set({
+      markedDates: {},
+      selectedDateActivities: null,
+    });
   },
 }));

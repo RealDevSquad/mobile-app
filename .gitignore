@@ -42,4 +42,6 @@ app-example
 
 # dev and prod .env's
 .env
+.env.development
+.env.production
 

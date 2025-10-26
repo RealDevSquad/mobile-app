@@ -9,6 +9,20 @@ export interface UserRoles {
   member: boolean;
 }
 
+export interface CurrentStatus {
+  state: string;
+  from: number;
+  until: number;
+  message: string;
+  updatedAt: number;
+}
+
+export interface UserStatus {
+  data: {
+    currentStatus: CurrentStatus;
+  };
+}
+
 export interface UserData {
   github_created_at: number;
   github_display_name: string;

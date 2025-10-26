@@ -1,11 +1,14 @@
 import Avatar from "@/components/Avatar";
+import OOOModal from "@/components/Modal/OOOModal";
 import QuickActionCard from "@/components/QuickActionCard";
+import UserStatusCard from "@/components/UserStatusCard";
 import useCheckUserSession from "@/hooks/getUserToken";
 import { useUserStore } from "@/store/store";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -15,15 +18,26 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
-  const { userData, fetchUsers, loading } = useUserStore();
+  const {
+    userData,
+    userStatus,
+    fetchUsers,
+    fetchUserStatus,
+    submitOOOForm,
+    cancelOOO,
+    loading,
+  } = useUserStore();
   const { token } = useCheckUserSession();
   const router = useRouter();
+  const [isOOOModalVisible, setIsOOOModalVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (token) {
       fetchUsers(token);
+      fetchUserStatus(token);
     }
-  }, [token, fetchUsers]);
+  }, [token, fetchUsers, fetchUserStatus]);
 
   if (!token || loading) {
     return (
@@ -45,6 +59,62 @@ export default function HomeScreen() {
       return userData.username;
     }
     return "User";
+  };
+
+  const handleApplyOOO = () => {
+    setIsOOOModalVisible(true);
+  };
+
+  const handleCancelOOO = async () => {
+    if (!token) return;
+
+    setIsSubmitting(true);
+    try {
+      await cancelOOO(token);
+      await fetchUserStatus(token); // Refresh status
+      Alert.alert("Success", "OOO status cancelled successfully");
+    } catch (error) {
+      Alert.alert("Error", "Failed to cancel OOO status");
+      console.error("Error cancelling OOO:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOOOSubmit = async (
+    fromDate: Date,
+    toDate: Date,
+    reason: string
+  ) => {
+    if (!token) return;
+
+    setIsSubmitting(true);
+    try {
+      const fromDateStr = fromDate.toISOString().split("T")[0];
+      const toDateStr = toDate.toISOString().split("T")[0];
+
+      await submitOOOForm(
+        {
+          fromDate: fromDateStr,
+          toDate: toDateStr,
+          description: reason,
+        },
+        token
+      );
+
+      await fetchUserStatus(token); // Refresh status
+      setIsOOOModalVisible(false);
+      Alert.alert("Success", "OOO request submitted successfully");
+    } catch (error) {
+      Alert.alert("Error", "Failed to submit OOO request");
+      console.error("Error submitting OOO:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseOOOModal = () => {
+    setIsOOOModalVisible(false);
   };
 
   return (
@@ -74,6 +144,14 @@ export default function HomeScreen() {
             Ready to make today awesome, {getUserDisplayName()}?
           </Text>
         </View>
+
+        {/* User Status Card */}
+        <UserStatusCard
+          userStatus={userStatus}
+          onApplyOOO={handleApplyOOO}
+          onCancelOOO={handleCancelOOO}
+          isLoading={isSubmitting}
+        />
 
         {/* Quick Actions Grid */}
         <View style={styles.quickActionsContainer}>
@@ -111,6 +189,14 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {/* OOO Modal */}
+      <OOOModal
+        isVisible={isOOOModalVisible}
+        onSubmit={handleOOOSubmit}
+        onClose={handleCloseOOOModal}
+        isLoading={isSubmitting}
+      />
     </SafeAreaView>
   );
 }

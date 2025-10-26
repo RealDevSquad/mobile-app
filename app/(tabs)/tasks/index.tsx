@@ -35,13 +35,6 @@ export default function TasksScreen() {
   }, [token, fetchTasks, selectedAssignee]);
 
   const handleLoadMore = useCallback(() => {
-    console.log("handleLoadMore called", {
-      hasMoreTasks,
-      loadingTasks,
-      tasksNext,
-      isLoadingMore: isLoadingMore.current,
-    });
-
     if (hasMoreTasks && !loadingTasks && !isLoadingMore.current && token) {
       isLoadingMore.current = true;
       fetchTasks(token, tasksNext, selectedAssignee ?? undefined).finally(
@@ -60,7 +53,6 @@ export default function TasksScreen() {
   ]);
 
   const handleUserSelect = (username: string) => {
-    console.log("User selected:", username);
     setSelectedAssignee(username);
   };
 
