@@ -94,7 +94,7 @@ export default function AddProgressModal({
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType="slide"
       transparent={true}
       onRequestClose={handleClose}
     >

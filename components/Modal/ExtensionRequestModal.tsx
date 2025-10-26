@@ -7,6 +7,7 @@ import moment from "moment";
 import React, { useState } from "react";
 import {
   Alert,
+  Modal,
   Platform,
   StyleSheet,
   Text,
@@ -150,10 +151,13 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
 
   const oldDeadlineDate = moment.unix(oldEndsOn).format("MMM DD, YYYY");
 
-  if (!visible) return null;
-
   return (
-    <>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={handleClose}
+    >
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           {/* Close Icon */}
@@ -267,27 +271,23 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
           </View>
         </View>
       </View>
-    </>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1000,
+    padding: theme.spacing.lg,
   },
   modalContainer: {
-    width: "90%",
+    width: "100%",
     maxWidth: 400,
     backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.radius.md,
+    borderRadius: theme.radius.lg,
     padding: theme.spacing.lg,
     ...theme.shadow.lg,
   },
