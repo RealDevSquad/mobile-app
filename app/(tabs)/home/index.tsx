@@ -1,3 +1,4 @@
+import { UsersApi } from "@/api/users/users.api";
 import Avatar from "@/components/Avatar";
 import OOOModal from "@/components/Modal/OOOModal";
 import MyTasksCard from "@/components/MyTasksCard";
@@ -5,9 +6,9 @@ import QuickActionCard from "@/components/QuickActionCard";
 import UserStatusCard from "@/components/UserStatusCard";
 import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -19,26 +20,51 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
-  const {
-    userData,
-    userStatus,
-    fetchUsers,
-    fetchUserStatus,
-    submitOOOForm,
-    cancelOOO,
-    loading,
-  } = useUserStore();
   const { token } = useCheckUserSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isOOOModalVisible, setIsOOOModalVisible] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      fetchUsers(token);
-      fetchUserStatus(token);
-    }
-  }, [token, fetchUsers, fetchUserStatus]);
+  const { data: userData, isLoading: loadingUserData } = useQuery({
+    queryKey: UsersApi.getUserDetails.key,
+    queryFn: () => UsersApi.getUserDetails.fn(token || undefined),
+    enabled: !!token,
+  });
+
+  const { data: userStatus, isLoading: loadingUserStatus } = useQuery({
+    queryKey: UsersApi.getUserStatus.key,
+    queryFn: () => UsersApi.getUserStatus.fn(token || undefined),
+    enabled: !!token,
+  });
+
+  const loading = loadingUserData || loadingUserStatus;
+
+  const submitOOOMutation = useMutation({
+    mutationFn: (oooData: {
+      fromDate: string;
+      toDate: string;
+      description: string;
+    }) => UsersApi.submitOOOForm.fn(oooData, token || undefined),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: UsersApi.getUserStatus.key });
+      setIsOOOModalVisible(false);
+      Alert.alert("Success", "OOO request submitted successfully");
+    },
+    onError: () => {
+      Alert.alert("Error", "Failed to submit OOO request");
+    },
+  });
+
+  const cancelOOOMutation = useMutation({
+    mutationFn: () => UsersApi.cancelOOO.fn(token || undefined),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: UsersApi.getUserStatus.key });
+      Alert.alert("Success", "OOO status cancelled successfully");
+    },
+    onError: () => {
+      Alert.alert("Error", "Failed to cancel OOO status");
+    },
+  });
 
   if (!token || loading) {
     return (
@@ -62,52 +88,19 @@ export default function HomeScreen() {
     setIsOOOModalVisible(true);
   };
 
-  const handleCancelOOO = async () => {
-    if (!token) return;
-
-    setIsSubmitting(true);
-    try {
-      await cancelOOO(token);
-      await fetchUserStatus(token);
-      Alert.alert("Success", "OOO status cancelled successfully");
-    } catch (error) {
-      Alert.alert("Error", "Failed to cancel OOO status");
-      console.error("Error cancelling OOO:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleCancelOOO = () => {
+    cancelOOOMutation.mutate();
   };
 
-  const handleOOOSubmit = async (
-    fromDate: Date,
-    toDate: Date,
-    reason: string
-  ) => {
-    if (!token) return;
+  const handleOOOSubmit = (fromDate: Date, toDate: Date, reason: string) => {
+    const fromDateStr = fromDate.toISOString().split("T")[0];
+    const toDateStr = toDate.toISOString().split("T")[0];
 
-    setIsSubmitting(true);
-    try {
-      const fromDateStr = fromDate.toISOString().split("T")[0];
-      const toDateStr = toDate.toISOString().split("T")[0];
-
-      await submitOOOForm(
-        {
-          fromDate: fromDateStr,
-          toDate: toDateStr,
-          description: reason,
-        },
-        token
-      );
-
-      await fetchUserStatus(token);
-      setIsOOOModalVisible(false);
-      Alert.alert("Success", "OOO request submitted successfully");
-    } catch (error) {
-      Alert.alert("Error", "Failed to submit OOO request");
-      console.error("Error submitting OOO:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    submitOOOMutation.mutate({
+      fromDate: fromDateStr,
+      toDate: toDateStr,
+      description: reason,
+    });
   };
 
   const handleCloseOOOModal = () => {
@@ -156,10 +149,12 @@ export default function HomeScreen() {
         {/* User Status Card */}
         <View style={styles.userStatusContainer}>
           <UserStatusCard
-            userStatus={userStatus}
+            userStatus={userStatus || null}
             onApplyOOO={handleApplyOOO}
             onCancelOOO={handleCancelOOO}
-            isLoading={isSubmitting}
+            isLoading={
+              submitOOOMutation.isPending || cancelOOOMutation.isPending
+            }
           />
         </View>
 
@@ -210,7 +205,7 @@ export default function HomeScreen() {
         isVisible={isOOOModalVisible}
         onSubmit={handleOOOSubmit}
         onClose={handleCloseOOOModal}
-        isLoading={isSubmitting}
+        isLoading={submitOOOMutation.isPending}
       />
     </SafeAreaView>
   );

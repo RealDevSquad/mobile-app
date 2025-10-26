@@ -1,4 +1,4 @@
-// import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -16,13 +16,22 @@ export const unstable_settings = {
 // Prevent splash screen from auto-hiding until fonts are loaded.
 SplashScreen.preventAutoHideAsync();
 
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime in v5)
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 export default function RootLayout() {
   // Load custom fonts
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    // "Inter-Regular": require("../assets/fonts/Inter-Regular.ttf"),
-    // "Inter-Medium": require("../assets/fonts/Inter-Medium.ttf"),
-    // "Inter-Bold": require("../assets/fonts/Inter-Bold.ttf"),
   });
 
   useEffect(() => {
@@ -35,7 +44,11 @@ export default function RootLayout() {
 
   if (!loaded) return null;
 
-  return <RootLayoutNav />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootLayoutNav />
+    </QueryClientProvider>
+  );
 }
 
 function RootLayoutNav() {

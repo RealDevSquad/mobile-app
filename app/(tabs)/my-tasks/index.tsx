@@ -1,8 +1,9 @@
+import { TasksApi } from "@/api/tasks/tasks.api";
 import Task from "@/components/Task";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useUserStore } from "@/store/store";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -12,15 +13,21 @@ import {
 } from "react-native";
 
 export default function MyTasksScreen() {
-  const { selfTasks, fetchSelfTasks, loadingSelfTasks, error } = useUserStore();
   const { token } = useCheckUserSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (token) {
-      fetchSelfTasks(token);
-    }
-  }, [token, fetchSelfTasks]);
+  const {
+    data: selfTasksData,
+    isLoading: loadingSelfTasks,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: TasksApi.getSelfTasks.key,
+    queryFn: () => TasksApi.getSelfTasks.fn(token || undefined),
+    enabled: !!token,
+  });
+
+  const selfTasks = selfTasksData || [];
 
   const handleTaskPress = (task: any) => {
     router.push(`/my-tasks/${task.id}`);
@@ -42,11 +49,13 @@ export default function MyTasksScreen() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error: {error}</Text>
+          <Text style={styles.errorText}>
+            Error: {error?.message || "Failed to load tasks"}
+          </Text>
         </View>
       </SafeAreaView>
     );
