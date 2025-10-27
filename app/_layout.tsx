@@ -1,4 +1,5 @@
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { useAuthActions } from '@/store/authStore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -35,13 +36,25 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  const { initialize } = useAuthActions();
+
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) SplashScreen.hideAsync();
-  }, [loaded]);
+    const initializeApp = async () => {
+      // Initialize auth store first
+      await initialize();
+
+      // Hide splash screen after fonts and auth are loaded
+      if (loaded) {
+        SplashScreen.hideAsync();
+      }
+    };
+
+    initializeApp();
+  }, [loaded, initialize]);
 
   if (!loaded) return null;
 

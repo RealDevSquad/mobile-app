@@ -3,7 +3,8 @@ import { TaskCardSkeleton } from '@/components/SkeletonLoader';
 import Task from '@/components/Task';
 import UserSearchModal from '@/components/UserSearchModal';
 import { theme } from '@/constants/theme';
-import useCheckUserSession from '@/hooks/getUserToken';
+import { useAuthToken } from '@/store/authStore';
+import { useSearchModal } from '@/store/uiStore';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React, { useCallback, useState } from 'react';
 import {
@@ -17,8 +18,12 @@ import {
 } from 'react-native';
 
 export default function TasksScreen() {
-  const { token } = useCheckUserSession();
-  const [showSearchModal, setShowSearchModal] = useState(false);
+  const token = useAuthToken();
+  const {
+    isOpen: showSearchModal,
+    open: openSearchModal,
+    close: closeSearchModal,
+  } = useSearchModal();
   const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
 
   const {
@@ -106,10 +111,7 @@ export default function TasksScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Tasks</Text>
-        <TouchableOpacity
-          style={styles.searchButton}
-          onPress={() => setShowSearchModal(true)}
-        >
+        <TouchableOpacity style={styles.searchButton} onPress={openSearchModal}>
           <Text style={styles.searchButtonText}>
             {selectedAssignee
               ? `Filter: ${selectedAssignee}`
@@ -150,7 +152,7 @@ export default function TasksScreen() {
 
       <UserSearchModal
         visible={showSearchModal}
-        onClose={() => setShowSearchModal(false)}
+        onClose={closeSearchModal}
         onUserSelect={handleUserSelect}
       />
     </SafeAreaView>

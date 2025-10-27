@@ -51,6 +51,7 @@
     "react-native-calendars": "^1.1313.0",
     "react-native-collapsible-tab-view": "^8.0.1",
     "react-native-date-picker": "^5.0.12",
+    "react-native-encrypted-storage": "^4.0.3",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
@@ -59,7 +60,8 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "toastify-react-native": "^7.2.0",
-    "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

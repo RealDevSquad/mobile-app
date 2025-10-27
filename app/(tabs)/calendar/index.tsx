@@ -1,7 +1,8 @@
 import { LogsApi } from '@/api/logs/logs.api';
 import ActivityDetailBottomSheet from '@/components/ActivityDetailBottomSheet';
 import UserSearchModal from '@/components/UserSearchModal';
-import useCheckUserSession from '@/hooks/getUserToken';
+import { useAuthToken } from '@/store/authStore';
+import { useSearchModal } from '@/store/uiStore';
 import {
   generateDateStatusMessage,
   getActivitiesForDate,
@@ -20,8 +21,12 @@ import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CalendarScreen() {
-  const { token } = useCheckUserSession();
-  const [showSearchModal, setShowSearchModal] = useState(false);
+  const token = useAuthToken();
+  const {
+    isOpen: showSearchModal,
+    open: openSearchModal,
+    close: closeSearchModal,
+  } = useSearchModal();
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
@@ -66,7 +71,7 @@ export default function CalendarScreen() {
 
   const handleUserSelect = (username: string) => {
     setSelectedUsername(username);
-    setShowSearchModal(false);
+    closeSearchModal();
     setStatusMessage('');
   };
 
@@ -87,7 +92,6 @@ export default function CalendarScreen() {
       const activities = getActivitiesForDate(calendarLogs, day.dateString);
       setSelectedDateActivities(activities);
 
-      // Generate status message for the selected date
       const message = generateDateStatusMessage(
         day.dateString,
         selectedUsername,
@@ -113,10 +117,7 @@ export default function CalendarScreen() {
       <Text style={styles.emptyDescription}>
         Select a user to view their activity calendar
       </Text>
-      <TouchableOpacity
-        style={styles.searchButton}
-        onPress={() => setShowSearchModal(true)}
-      >
+      <TouchableOpacity style={styles.searchButton} onPress={openSearchModal}>
         <Text style={styles.searchButtonText}>Search Users</Text>
       </TouchableOpacity>
     </View>
@@ -191,7 +192,7 @@ export default function CalendarScreen() {
 
       <UserSearchModal
         visible={showSearchModal}
-        onClose={() => setShowSearchModal(false)}
+        onClose={closeSearchModal}
         onUserSelect={handleUserSelect}
       />
 

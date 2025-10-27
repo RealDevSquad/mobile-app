@@ -2,9 +2,97 @@ import '@testing-library/jest-native/extend-expect';
 import { Alert as ReactNativeAlert } from 'react-native';
 import 'react-native-gesture-handler/jestSetup';
 
+// ---- Mock react-native-encrypted-storage ----
+jest.mock('react-native-encrypted-storage', () => ({
+  setItem: jest.fn(() => Promise.resolve()),
+  getItem: jest.fn(() => Promise.resolve(null)),
+  removeItem: jest.fn(() => Promise.resolve()),
+  clear: jest.fn(() => Promise.resolve()),
+}));
+
+// ---- Mock Zustand stores ----
+jest.mock('@/store/authStore', () => ({
+  useAuthStore: jest.fn(() => ({
+    token: null,
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    setToken: jest.fn(),
+    setUser: jest.fn(),
+    login: jest.fn(),
+    logout: jest.fn(),
+    initialize: jest.fn(() => Promise.resolve()),
+    clearLoading: jest.fn(),
+  })),
+  useAuthToken: jest.fn(() => null),
+  useAuthUser: jest.fn(() => null),
+  useIsAuthenticated: jest.fn(() => false),
+  useAuthLoading: jest.fn(() => false),
+  useAuthActions: jest.fn(() => ({
+    setToken: jest.fn(),
+    setUser: jest.fn(),
+    login: jest.fn(),
+    logout: jest.fn(),
+    initialize: jest.fn(() => Promise.resolve()),
+    clearLoading: jest.fn(),
+  })),
+}));
+
+jest.mock('@/store/uiStore', () => ({
+  useUIStore: jest.fn(() => ({
+    oooModal: false,
+    searchModal: false,
+    extensionModal: false,
+    extensionDetailsModal: false,
+    updateStatusModal: false,
+    addProgressModal: false,
+    taskRequestModal: false,
+    profileModal: false,
+    isAnyModalOpen: false,
+    setModal: jest.fn(),
+    closeAllModals: jest.fn(),
+    openModal: jest.fn(),
+    closeModal: jest.fn(),
+  })),
+  useModalState: jest.fn(() => false),
+  useIsAnyModalOpen: jest.fn(() => false),
+  useUIActions: jest.fn(() => ({
+    setModal: jest.fn(),
+    openModal: jest.fn(),
+    closeModal: jest.fn(),
+    closeAllModals: jest.fn(),
+  })),
+  useOOOModal: jest.fn(() => ({
+    isOpen: false,
+    open: jest.fn(),
+    close: jest.fn(),
+  })),
+  useSearchModal: jest.fn(() => ({
+    isOpen: false,
+    open: jest.fn(),
+    close: jest.fn(),
+  })),
+  useExtensionModal: jest.fn(() => ({
+    isOpen: false,
+    open: jest.fn(),
+    close: jest.fn(),
+  })),
+  useUpdateStatusModal: jest.fn(() => ({
+    isOpen: false,
+    open: jest.fn(),
+    close: jest.fn(),
+  })),
+  useAddProgressModal: jest.fn(() => ({
+    isOpen: false,
+    open: jest.fn(),
+    close: jest.fn(),
+  })),
+}));
+
 jest.mock('@react-native-async-storage/async-storage', () =>
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+  jest.requireActual(
+    '@react-native-async-storage/async-storage/jest/async-storage-mock'
+  )
 );
 
 // ---- Mock for @expo/vector-icons ----
@@ -18,10 +106,8 @@ interface IoniconsProps {
 }
 
 jest.mock('@expo/vector-icons', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const React = require('react');
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { View } = require('react-native');
+  const React = jest.requireActual('react');
+  const { View } = jest.requireActual('react-native');
 
   const MockIonicons: React.FC<IoniconsProps> = (props) =>
     React.createElement(View, { ...props, testID: props.testID || 'icon' });
@@ -53,7 +139,6 @@ interface MockDatePickerModule extends React.FC<MockDatePickerComponentProps> {
 jest.mock('react-native-date-picker', (): MockDatePickerModule => {
   const MockDatePickerComponent: MockDatePickerModule = (props) => {
     mockDatePickerOpen = props.open;
-    mockDatePickerDate = props.date;
     mockDatePickerOnConfirm = props.onConfirm;
     mockDatePickerOnCancel = props.onCancel;
 

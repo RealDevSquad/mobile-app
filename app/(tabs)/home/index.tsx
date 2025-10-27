@@ -9,10 +9,11 @@ import {
 } from '@/components/SkeletonLoader';
 import UserStatusCard from '@/components/UserStatusCard';
 import { theme } from '@/constants/theme';
-import useCheckUserSession from '@/hooks/getUserToken';
+import { useAuthToken } from '@/store/authStore';
+import { useOOOModal } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -25,10 +26,14 @@ import {
 } from 'react-native';
 
 export default function HomeScreen() {
-  const { token } = useCheckUserSession();
+  const token = useAuthToken();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [isOOOModalVisible, setIsOOOModalVisible] = useState(false);
+  const {
+    isOpen: isOOOModalVisible,
+    open: openOOOModal,
+    close: closeOOOModal,
+  } = useOOOModal();
 
   const {
     data: userData,
@@ -64,7 +69,7 @@ export default function HomeScreen() {
     }) => UsersApi.submitOOOForm.fn(oooData, token || undefined),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: UsersApi.getUserStatus.key });
-      setIsOOOModalVisible(false);
+      closeOOOModal();
       Alert.alert('Success', 'OOO request submitted successfully');
     },
     onError: () => {
@@ -121,7 +126,7 @@ export default function HomeScreen() {
   };
 
   const handleApplyOOO = () => {
-    setIsOOOModalVisible(true);
+    openOOOModal();
   };
 
   const handleCancelOOO = () => {
@@ -140,7 +145,7 @@ export default function HomeScreen() {
   };
 
   const handleCloseOOOModal = () => {
-    setIsOOOModalVisible(false);
+    closeOOOModal();
   };
 
   const handleMyTasksPress = () => {

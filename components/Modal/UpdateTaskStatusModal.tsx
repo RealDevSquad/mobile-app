@@ -1,9 +1,15 @@
 import { TasksApi } from '@/api/tasks/tasks.api';
+import {
+  TUpdateTaskStatusFormData,
+  updateTaskStatusSchema,
+} from '@/api/tasks/tasks.schema';
 import { theme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Slider from '@react-native-community/slider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Modal,
@@ -52,10 +58,24 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
   currentProgress,
   token,
 }) => {
-  const [selectedStatus, setSelectedStatus] = useState(currentStatus);
-  const [progress, setProgress] = useState(currentProgress);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const queryClient = useQueryClient();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm<TUpdateTaskStatusFormData>({
+    resolver: zodResolver(updateTaskStatusSchema),
+    defaultValues: {
+      status: currentStatus,
+      percentCompleted: currentProgress,
+    },
+  });
+
+  const watchedProgress = watch('percentCompleted');
 
   const updateTaskStatusMutation = useMutation({
     mutationFn: (statusData: { status: string; percentCompleted: number }) =>
@@ -77,24 +97,15 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
     },
   });
 
-  const handleSubmit = () => {
-    if (!selectedStatus || progress < 0 || progress > 100) {
-      Alert.alert(
-        'Error',
-        'Please select a valid status and progress (0-100%).'
-      );
-      return;
-    }
-
+  const handleFormSubmit = (data: TUpdateTaskStatusFormData) => {
     updateTaskStatusMutation.mutate({
-      status: selectedStatus,
-      percentCompleted: Math.round(progress),
+      status: data.status,
+      percentCompleted: Math.round(data.percentCompleted || 0),
     });
   };
 
   const handleClose = () => {
-    setSelectedStatus(currentStatus);
-    setProgress(currentProgress);
+    reset();
     setShowStatusDropdown(false);
     onClose();
   };
@@ -123,73 +134,99 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
             {/* Status Selection */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Status</Text>
-              <TouchableOpacity
-                style={styles.dropdown}
-                onPress={() => setShowStatusDropdown(!showStatusDropdown)}
-              >
-                <Text style={styles.dropdownText}>{selectedStatus}</Text>
-                <Ionicons
-                  name={showStatusDropdown ? 'chevron-up' : 'chevron-down'}
-                  size={20}
-                  color={theme.colors.text.secondary}
-                />
-              </TouchableOpacity>
+              <Controller
+                control={control}
+                name="status"
+                render={({ field: { onChange, value } }) => (
+                  <>
+                    <TouchableOpacity
+                      style={[
+                        styles.dropdown,
+                        errors.status && styles.dropdownError,
+                      ]}
+                      onPress={() => setShowStatusDropdown(!showStatusDropdown)}
+                    >
+                      <Text style={styles.dropdownText}>{value}</Text>
+                      <Ionicons
+                        name={
+                          showStatusDropdown ? 'chevron-up' : 'chevron-down'
+                        }
+                        size={20}
+                        color={theme.colors.text.secondary}
+                      />
+                    </TouchableOpacity>
 
-              {showStatusDropdown && (
-                <View style={styles.dropdownList}>
-                  <ScrollView
-                    showsVerticalScrollIndicator={true}
-                    nestedScrollEnabled={true}
-                  >
-                    {STATUS_OPTIONS.map((status) => (
-                      <TouchableOpacity
-                        key={status}
-                        style={[
-                          styles.dropdownItem,
-                          selectedStatus === status &&
-                            styles.dropdownItemSelected,
-                        ]}
-                        onPress={() => {
-                          setSelectedStatus(status);
-                          setShowStatusDropdown(false);
-                        }}
-                      >
-                        <Text
-                          style={[
-                            styles.dropdownItemText,
-                            selectedStatus === status &&
-                              styles.dropdownItemTextSelected,
-                          ]}
+                    {showStatusDropdown && (
+                      <View style={styles.dropdownList}>
+                        <ScrollView
+                          showsVerticalScrollIndicator={true}
+                          nestedScrollEnabled={true}
                         >
-                          {status}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
+                          {STATUS_OPTIONS.map((status) => (
+                            <TouchableOpacity
+                              key={status}
+                              style={[
+                                styles.dropdownItem,
+                                value === status && styles.dropdownItemSelected,
+                              ]}
+                              onPress={() => {
+                                onChange(status);
+                                setShowStatusDropdown(false);
+                              }}
+                            >
+                              <Text
+                                style={[
+                                  styles.dropdownItemText,
+                                  value === status &&
+                                    styles.dropdownItemTextSelected,
+                                ]}
+                              >
+                                {status}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </ScrollView>
+                      </View>
+                    )}
+                  </>
+                )}
+              />
+              {errors.status && (
+                <Text style={styles.errorText}>{errors.status.message}</Text>
               )}
             </View>
 
             {/* Progress Slider */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>
-                Progress: {Math.round(progress)}%
+                Progress: {Math.round(watchedProgress || 0)}%
               </Text>
-              <View style={styles.sliderContainer}>
-                <Text style={styles.sliderLabel}>0%</Text>
-                <Slider
-                  style={styles.slider}
-                  minimumValue={0}
-                  maximumValue={100}
-                  value={progress}
-                  onValueChange={setProgress}
-                  step={1}
-                  minimumTrackTintColor={theme.colors.primary[600]}
-                  maximumTrackTintColor={theme.colors.border.secondary}
-                  thumbTintColor={theme.colors.primary[600]}
-                />
-                <Text style={styles.sliderLabel}>100%</Text>
-              </View>
+              <Controller
+                control={control}
+                name="percentCompleted"
+                render={({ field: { onChange, value } }) => (
+                  <View style={styles.sliderContainer}>
+                    <Text style={styles.sliderLabel}>0%</Text>
+                    <Slider
+                      style={styles.slider}
+                      minimumValue={0}
+                      maximumValue={100}
+                      value={value || 0}
+                      onValueChange={onChange}
+                      step={1}
+                      minimumTrackTintColor={theme.colors.primary[600]}
+                      maximumTrackTintColor={theme.colors.border.secondary}
+                      thumbTintColor={theme.colors.primary[600]}
+                    />
+                    <Text style={styles.sliderLabel}>100%</Text>
+                  </View>
+                )}
+              />
+              {errors.percentCompleted && (
+                <Text style={styles.errorText}>
+                  {errors.percentCompleted.message}
+                </Text>
+              )}
             </View>
 
             {/* Current Values Display */}
@@ -217,7 +254,7 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
                 styles.submitButton,
                 updateTaskStatusMutation.isPending && styles.disabledButton,
               ]}
-              onPress={handleSubmit}
+              onPress={handleSubmit(handleFormSubmit)}
               disabled={updateTaskStatusMutation.isPending}
             >
               {updateTaskStatusMutation.isPending ? (
@@ -393,6 +430,14 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.6,
+  },
+  dropdownError: {
+    borderColor: theme.colors.error[500],
+  },
+  errorText: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.error[500],
+    marginTop: theme.spacing.xs,
   },
 });
 

@@ -113,6 +113,9 @@ importers:
       react-native-date-picker:
         specifier: ^5.0.12
         version: 5.0.13(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react-native-encrypted-storage:
+        specifier: ^4.0.3
+        version: 4.0.3(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-gesture-handler:
         specifier: ~2.24.0
         version: 2.24.0(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -140,6 +143,9 @@ importers:
       zod:
         specifier: ^3.24.4
         version: 3.25.76
+      zustand:
+        specifier: ^5.0.8
+        version: 5.0.8(@types/react@19.0.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0))
     devDependencies:
       '@babel/core':
         specifier: ^7.25.2
@@ -4118,6 +4124,12 @@ packages:
       react: '*'
       react-native: '*'
 
+  react-native-encrypted-storage@4.0.3:
+    resolution: {integrity: sha512-0pJA4Aj2S1PIJEbU7pN/Qvf7JIJx3hFywx+i+bLHtgK0/6Zryf1V2xVsWcrD50dfiu3jY1eN2gesQ5osGxE7jA==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   react-native-gesture-handler@2.24.0:
     resolution: {integrity: sha512-ZdWyOd1C8axKJHIfYxjJKCcxjWEpUtUWgTOVY2wynbiveSQDm8X/PDyAKXSer/GOtIpjudUbACOndZXCN3vHsw==}
     peerDependencies:
@@ -5138,6 +5150,24 @@ packages:
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
+  zustand@5.0.8:
+    resolution: {integrity: sha512-gyPKpIaxY9XcO2vSMrLbiER7QMAMGOQZVRdJ6Zi782jkbzZygq5GI9nG8g+sMgitRtndwaBSl7uiqC49o1SSiw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
 
 snapshots:
 
@@ -10108,6 +10138,11 @@ snapshots:
       react: 19.0.0
       react-native: 0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0)
 
+  react-native-encrypted-storage@4.0.3(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+      react-native: 0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0)
+
   react-native-gesture-handler@2.24.0(react-native@0.79.2(@babel/core@7.28.5)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
       '@egjs/hammerjs': 2.0.17
@@ -11258,3 +11293,9 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.25.76: {}
+
+  zustand@5.0.8(@types/react@19.0.14)(react@19.0.0)(use-sync-external-store@1.6.0(react@19.0.0)):
+    optionalDependencies:
+      '@types/react': 19.0.14
+      react: 19.0.0
+      use-sync-external-store: 1.6.0(react@19.0.0)

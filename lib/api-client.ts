@@ -1,4 +1,5 @@
 import { appConfig } from '@/config/app-config';
+import { useAuthStore } from '@/store/authStore';
 import { createAuthHeaders } from '@/utils/authHeaders';
 import axios, { InternalAxiosRequestConfig } from 'axios';
 import { router } from 'expo-router';
@@ -54,6 +55,8 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response && error.response.status === 401) {
+      // Use Zustand auth store logout instead of router.replace
+      useAuthStore.getState().logout();
       router.replace('/');
     }
 

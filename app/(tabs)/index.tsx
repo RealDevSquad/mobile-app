@@ -1,10 +1,9 @@
 import { AuthApi } from '@/api/auth/auth.api';
-import { setLocalStorageItem } from '@/common/utils/common';
 import CameraModal from '@/components/Modal/CameraModal';
 import GitHubLoginModal from '@/components/Modal/GithubLoginModal';
-import { TOKEN_KEY } from '@/constants/constants';
 import { theme } from '@/constants/theme';
-import useCheckUserSession from '@/hooks/getUserToken';
+import { useAuthActions, useAuthToken } from '@/store/authStore';
+import { secureStorage } from '@/utils/secureStorage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Camera } from 'expo-camera';
 import * as Device from 'expo-device';
@@ -47,7 +46,8 @@ const AuthScreen = () => {
     new Animated.Value(Dimensions.get('window').height)
   );
 
-  const { token: storedToken } = useCheckUserSession();
+  const token = useAuthToken();
+  const { setToken } = useAuthActions();
 
   const [githubLogin, setGithubLogin] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -101,8 +101,9 @@ const AuthScreen = () => {
         const urlObj = new URL(navState.url);
         const token = urlObj.searchParams.get('token');
         if (token) {
-          // Await token storage before navigation
-          await setLocalStorageItem(TOKEN_KEY, token);
+          // Store token securely and update auth store
+          await secureStorage.setItem('auth_token', token);
+          setToken(token);
           setGithubLogin(false);
           router.replace('/home');
         }
@@ -133,8 +134,9 @@ const AuthScreen = () => {
     try {
       const userInfoJson = await AuthApi.qrCodeAuth.fn(deviceId || '');
       if (userInfoJson.data.token) {
-        // Await token storage before navigation
-        await setLocalStorageItem(TOKEN_KEY, userInfoJson.data.token);
+        // Store token securely and update auth store
+        await secureStorage.setItem('auth_token', userInfoJson.data.token);
+        setToken(userInfoJson.data.token);
         setCameraVisible(false);
         router.replace('/home');
       } else {
@@ -200,10 +202,10 @@ const AuthScreen = () => {
   }, [scannedUserId, getAuthStatus]);
 
   useEffect(() => {
-    if (storedToken) {
+    if (token) {
       router.replace('/home');
     }
-  }, [storedToken, router]);
+  }, [token, router]);
 
   if (cameraVisible) {
     if (!hasPermission) {
