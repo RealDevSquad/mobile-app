@@ -1,10 +1,10 @@
+import { PaginatedResponse, TApiResponse } from '../common/common.types';
 import {
   ProgressUpdateDTO,
   ProgressUpdatesResponseDTO,
   TaskDTO,
   TaskDetailsDTO,
-} from '@/types/task.dto';
-import { PaginatedResponse, TApiResponse } from '../common/common.types';
+} from './task.dto';
 
 // Request DTOs
 export type TGetTaskReqDto = {

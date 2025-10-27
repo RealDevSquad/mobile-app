@@ -1,12 +1,10 @@
 import { apiClient } from '../../lib/api-client';
 import {
-  TApproveTaskRequestDto,
-  TApproveTaskRequestResponse,
   TGetTaskRequestByIdResponse,
   TGetTaskRequestsDto,
   TGetTaskRequestsResponse,
-  TRejectTaskRequestDto,
-  TRejectTaskRequestResponse,
+  TTaskRequestActionDto,
+  TTaskRequestActionResponse,
 } from './task-requests.types';
 
 export const TaskRequestsApi = {
@@ -28,7 +26,7 @@ export const TaskRequestsApi = {
         const status = params?.status || 'PENDING';
         queryParts.push(
           'size=5',
-          `q=status%3A${status.toLowerCase()}+sort%3Acreated-asc`
+          `q=status%3A${status.toLowerCase()}+sort%3Acreated-desc`
         );
       }
 
@@ -74,50 +72,32 @@ export const TaskRequestsApi = {
     },
   },
 
-  approveTaskRequest: {
-    key: (taskRequestId: string, userId: string) => [
-      'TaskRequestsApi.approveTaskRequest',
+  updateTaskRequestStatus: {
+    key: (
+      taskRequestId: string,
+      userId: string,
+      action: 'approve' | 'reject'
+    ) => [
+      'TaskRequestsApi.updateTaskRequestStatus',
       taskRequestId,
       userId,
+      action,
     ],
     fn: async ({
       taskRequestId,
       userId,
-    }: TApproveTaskRequestDto): Promise<TApproveTaskRequestResponse> => {
-      const url = '/taskRequests/approve';
-      const payload = { taskRequestId, userId };
+      action,
+    }: TTaskRequestActionDto): Promise<TTaskRequestActionResponse> => {
+      const url = `/taskRequests?action=${action}`;
+      const payload =
+        action === 'reject' ? { taskRequestId } : { taskRequestId, userId };
 
       try {
-        const { data } = await apiClient.patch<TApproveTaskRequestResponse>(
+        const { data } = await apiClient.patch<TTaskRequestActionResponse>(
           url,
           payload
         );
-        return data;
-      } catch (error: any) {
-        throw error;
-      }
-    },
-  },
 
-  rejectTaskRequest: {
-    key: (taskRequestId: string, userId: string) => [
-      'TaskRequestsApi.rejectTaskRequest',
-      taskRequestId,
-      userId,
-    ],
-    fn: async ({
-      taskRequestId,
-      userId,
-      reason,
-    }: TRejectTaskRequestDto): Promise<TRejectTaskRequestResponse> => {
-      const url = '/taskRequests/reject';
-      const payload = { taskRequestId, userId, reason };
-
-      try {
-        const { data } = await apiClient.patch<TRejectTaskRequestResponse>(
-          url,
-          payload
-        );
         return data;
       } catch (error: any) {
         throw error;

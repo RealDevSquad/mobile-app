@@ -1,5 +1,5 @@
-import { TaskRequestDTO } from '@/types/task-request.dto';
 import { PaginatedResponse, TApiResponse } from '../common/common.types';
+import { TaskRequestDTO } from './task-request.dto';
 
 // Request DTOs
 export type TGetTaskRequestsDto = {
@@ -9,15 +9,10 @@ export type TGetTaskRequestsDto = {
   q?: string;
 };
 
-export type TApproveTaskRequestDto = {
+export type TTaskRequestActionDto = {
   taskRequestId: string;
-  userId: string;
-};
-
-export type TRejectTaskRequestDto = {
-  taskRequestId: string;
-  userId: string;
-  reason?: string;
+  userId?: string;
+  action: 'approve' | 'reject';
 };
 
 // Response DTOs
@@ -31,5 +26,4 @@ export type TGetTaskRequestByIdDto = {
 
 export type TGetTaskRequestByIdResponse = TaskRequestDTO;
 
-export type TApproveTaskRequestResponse = TApiResponse<TaskRequestDTO>;
-export type TRejectTaskRequestResponse = TApiResponse<TaskRequestDTO>;
+export type TTaskRequestActionResponse = TApiResponse<TaskRequestDTO>;

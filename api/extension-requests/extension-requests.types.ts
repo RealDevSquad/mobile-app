@@ -1,5 +1,5 @@
-import { ExtensionRequestDTO } from '@/types/extension-request.dto';
 import { TApiResponse } from '../common/common.types';
+import { ExtensionRequestDTO } from './extension-request.dto';
 
 // Request DTOs
 export type TGetExtensionRequestsDto = {

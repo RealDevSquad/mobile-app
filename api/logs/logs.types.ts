@@ -1,4 +1,4 @@
-import { LogEntry } from '@/types/logs.dto';
+import { LogEntry } from './logs.dto';
 
 // Request DTOs
 export type TGetUserLogsDto = {

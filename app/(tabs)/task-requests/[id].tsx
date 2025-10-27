@@ -51,59 +51,51 @@ export default function TaskRequestDetailsScreen() {
     enabled: !!taskRequest?.users?.[0]?.userId,
   });
 
-  const approveMutation = useMutation({
+  const updateTaskRequestMutation = useMutation({
     mutationFn: ({
       taskRequestId,
       userId,
+      action,
     }: {
       taskRequestId: string;
-      userId: string;
-    }) => TaskRequestsApi.approveTaskRequest.fn({ taskRequestId, userId }),
-    onSuccess: () => {
+      userId?: string;
+      action: 'approve' | 'reject';
+    }) => {
+      return TaskRequestsApi.updateTaskRequestStatus.fn({
+        taskRequestId,
+        userId,
+        action,
+      });
+    },
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
       });
       queryClient.invalidateQueries({
         queryKey: TaskRequestsApi.getTaskRequests.key({ status: 'PENDING' }),
       });
-      Alert.alert('Success', 'Task request approved successfully');
-      router.back();
-    },
-    onError: (error) => {
-      Alert.alert('Error', 'Failed to approve task request');
-      console.error('Error approving task request:', error);
-    },
-  });
 
-  const rejectMutation = useMutation({
-    mutationFn: ({
-      taskRequestId,
-      userId,
-      reason,
-    }: {
-      taskRequestId: string;
-      userId: string;
-      reason?: string;
-    }) =>
-      TaskRequestsApi.rejectTaskRequest.fn({ taskRequestId, userId, reason }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
-      });
-      queryClient.invalidateQueries({
-        queryKey: TaskRequestsApi.getTaskRequests.key({ status: 'PENDING' }),
-      });
-      Alert.alert('Success', 'Task request rejected successfully');
+      const actionText =
+        variables.action === 'approve' ? 'approved' : 'rejected';
+      Alert.alert('Success', `Task request ${actionText} successfully`);
       router.back();
     },
-    onError: (error) => {
-      Alert.alert('Error', 'Failed to reject task request');
-      console.error('Error rejecting task request:', error);
+    onError: (error: any, variables) => {
+      const actionText = variables.action === 'approve' ? 'approve' : 'reject';
+      Alert.alert('Error', `Failed to ${actionText} task request`);
     },
   });
 
   const handleApprove = () => {
     if (!taskRequest) return;
+
+    const userId =
+      taskRequest.users?.[0]?.userId || taskRequest.requestors?.[0] || '';
+
+    if (!userId) {
+      Alert.alert('Error', 'Unable to identify the user for this request');
+      return;
+    }
 
     Alert.alert(
       'Approve Task Request',
@@ -113,9 +105,10 @@ export default function TaskRequestDetailsScreen() {
         {
           text: 'Approve',
           onPress: () => {
-            approveMutation.mutate({
+            updateTaskRequestMutation.mutate({
               taskRequestId: taskRequest.id,
-              userId: taskRequest.requestors?.[0] || '',
+              userId,
+              action: 'approve',
             });
           },
         },
@@ -135,9 +128,9 @@ export default function TaskRequestDetailsScreen() {
           text: 'Reject',
           style: 'destructive',
           onPress: () => {
-            rejectMutation.mutate({
+            updateTaskRequestMutation.mutate({
               taskRequestId: taskRequest.id,
-              userId: taskRequest.requestors?.[0] || '',
+              action: 'reject',
             });
           },
         },
@@ -279,13 +272,6 @@ export default function TaskRequestDetailsScreen() {
           )}
 
           {/* Additional Users */}
-          {taskRequest.usersCount > 1 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                Additional Users ({taskRequest.usersCount - 1})
-              </Text>
-            </View>
-          )}
         </View>
       </ScrollView>
 
@@ -296,13 +282,12 @@ export default function TaskRequestDetailsScreen() {
             style={[
               styles.actionButton,
               styles.rejectButton,
-              (approveMutation.isPending || rejectMutation.isPending) &&
-                styles.disabledButton,
+              updateTaskRequestMutation.isPending && styles.disabledButton,
             ]}
             onPress={handleReject}
-            disabled={approveMutation.isPending || rejectMutation.isPending}
+            disabled={updateTaskRequestMutation.isPending}
           >
-            {rejectMutation.isPending ? (
+            {updateTaskRequestMutation.isPending ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Text style={styles.actionButtonText}>Reject</Text>
@@ -313,13 +298,12 @@ export default function TaskRequestDetailsScreen() {
             style={[
               styles.actionButton,
               styles.approveButton,
-              (approveMutation.isPending || rejectMutation.isPending) &&
-                styles.disabledButton,
+              updateTaskRequestMutation.isPending && styles.disabledButton,
             ]}
             onPress={handleApprove}
-            disabled={approveMutation.isPending || rejectMutation.isPending}
+            disabled={updateTaskRequestMutation.isPending}
           >
-            {approveMutation.isPending ? (
+            {updateTaskRequestMutation.isPending ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Text style={styles.actionButtonText}>Approve</Text>

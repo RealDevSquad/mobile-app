@@ -1,11 +1,11 @@
-import { theme } from '@/constants/theme';
 import {
   ActivityGroup,
   ActivityType,
   DateActivities,
   LogEntry,
   MarkedDates,
-} from '@/types/logs.dto';
+} from '@/api/logs/logs.dto';
+import { theme } from '@/constants/theme';
 
 // Color mapping for different activity types
 export const ACTIVITY_COLORS = {

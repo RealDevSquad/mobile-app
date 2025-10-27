@@ -126,11 +126,11 @@ const ExtensionRequestsScreen: React.FC = () => {
   });
 
   const handleApprove = async (id: string) => {
-    approveMutation.mutate({ id });
+    return approveMutation.mutateAsync({ id });
   };
 
   const handleReject = async (id: string) => {
-    rejectMutation.mutate({ id });
+    return rejectMutation.mutateAsync({ id });
   };
 
   const handleFilterChange = (filter: string) => {

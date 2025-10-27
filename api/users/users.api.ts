@@ -1,5 +1,5 @@
-import { TGetUserByIdResponse } from '@/types/user.dto';
 import { apiClient } from '../../lib/api-client';
+import { TGetUserByIdResponse } from './user.dto';
 import {
   TCancelOOOResponse,
   TGetActiveTaskResponse,

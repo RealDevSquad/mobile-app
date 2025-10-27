@@ -1,5 +1,5 @@
+import { DateActivities, LogEntry } from '@/api/logs/logs.dto';
 import { theme } from '@/constants/theme';
-import { DateActivities, LogEntry } from '@/types/logs.dto';
 import { createActivitySummary, formatTimestamp } from '@/utils/calendarUtils';
 import React from 'react';
 import {

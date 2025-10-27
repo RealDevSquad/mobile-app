@@ -1,5 +1,5 @@
+import { TaskRequestDTO } from '@/api/task-requests/task-request.dto';
 import { theme } from '@/constants/theme';
-import { TaskRequestDTO } from '@/types/task-request.dto';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import moment from 'moment';
 import React from 'react';

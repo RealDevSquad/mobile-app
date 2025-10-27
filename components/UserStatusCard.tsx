@@ -1,5 +1,5 @@
+import { UserStatus } from '@/api/users/user.dto';
 import { theme } from '@/constants/theme';
-import { UserStatus } from '@/types/user.dto';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
