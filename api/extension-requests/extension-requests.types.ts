@@ -1,5 +1,5 @@
-import { ExtensionRequestDTO } from "@/types/extension-request.dto";
-import { TApiResponse } from "../common/common.types";
+import { ExtensionRequestDTO } from '@/types/extension-request.dto';
+import { TApiResponse } from '../common/common.types';
 
 // Request DTOs
 export type TGetExtensionRequestsDto = {
@@ -11,7 +11,7 @@ export type TGetExtensionRequestsDto = {
 };
 
 export type TUpdateExtensionRequestStatusDto = {
-  status: "APPROVED" | "DENIED";
+  status: 'APPROVED' | 'DENIED';
   reason?: string;
 };
 
@@ -20,7 +20,7 @@ export type TCreateExtensionRequestDto = {
   newEndsOn: number;
   oldEndsOn: number;
   reason: string;
-  status: "PENDING";
+  status: 'PENDING';
   taskId: string;
   title: string;
 };

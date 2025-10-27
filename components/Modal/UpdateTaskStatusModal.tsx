@@ -1,9 +1,9 @@
-import { TasksApi } from "@/api/tasks/tasks.api";
-import { theme } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import Slider from "@react-native-community/slider";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { TasksApi } from '@/api/tasks/tasks.api';
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import Slider from '@react-native-community/slider';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import {
   Alert,
   Modal,
@@ -12,7 +12,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface UpdateTaskStatusModalProps {
   visible: boolean;
@@ -25,22 +25,22 @@ interface UpdateTaskStatusModalProps {
 }
 
 const STATUS_OPTIONS = [
-  "ASSIGNED",
-  "IN_PROGRESS",
-  "BLOCKED",
-  "SMOKE_TESTING",
-  "NEEDS_REVIEW",
-  "IN_REVIEW",
-  "APPROVED",
-  "MERGED",
-  "SANITY_CHECK",
-  "REGRESSION_CHECK",
-  "RELEASED",
-  "VERIFIED",
-  "DONE",
-  "COMPLETED",
-  "BACKLOG",
-  "OVERDUE",
+  'ASSIGNED',
+  'IN_PROGRESS',
+  'BLOCKED',
+  'SMOKE_TESTING',
+  'NEEDS_REVIEW',
+  'IN_REVIEW',
+  'APPROVED',
+  'MERGED',
+  'SANITY_CHECK',
+  'REGRESSION_CHECK',
+  'RELEASED',
+  'VERIFIED',
+  'DONE',
+  'COMPLETED',
+  'BACKLOG',
+  'OVERDUE',
 ];
 
 const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
@@ -61,18 +61,18 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
     mutationFn: (statusData: { status: string; percentCompleted: number }) =>
       TasksApi.updateTaskStatus.fn(taskId, statusData, token || undefined),
     onSuccess: () => {
-      Alert.alert("Success", "Task status and progress updated successfully.");
-      queryClient.invalidateQueries({ queryKey: ["TasksApi.getSelfTasks"] });
-      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskDetails"] });
-      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskProgress"] });
+      Alert.alert('Success', 'Task status and progress updated successfully.');
+      queryClient.invalidateQueries({ queryKey: ['TasksApi.getSelfTasks'] });
+      queryClient.invalidateQueries({ queryKey: ['TasksApi.getTaskDetails'] });
+      queryClient.invalidateQueries({ queryKey: ['TasksApi.getTaskProgress'] });
       onSubmit();
       onClose();
     },
     onError: (error) => {
-      console.error("Error updating task status:", error);
+      console.error('Error updating task status:', error);
       Alert.alert(
-        "Error",
-        error instanceof Error ? error.message : "Failed to update task status."
+        'Error',
+        error instanceof Error ? error.message : 'Failed to update task status.'
       );
     },
   });
@@ -80,8 +80,8 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
   const handleSubmit = () => {
     if (!selectedStatus || progress < 0 || progress > 100) {
       Alert.alert(
-        "Error",
-        "Please select a valid status and progress (0-100%)."
+        'Error',
+        'Please select a valid status and progress (0-100%).'
       );
       return;
     }
@@ -129,7 +129,7 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
               >
                 <Text style={styles.dropdownText}>{selectedStatus}</Text>
                 <Ionicons
-                  name={showStatusDropdown ? "chevron-up" : "chevron-down"}
+                  name={showStatusDropdown ? 'chevron-up' : 'chevron-down'}
                   size={20}
                   color={theme.colors.text.secondary}
                 />
@@ -236,23 +236,23 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: theme.spacing.lg,
   },
   modalContainer: {
     backgroundColor: theme.colors.surface.primary,
     borderRadius: theme.radius.lg,
-    width: "100%",
+    width: '100%',
     maxWidth: 400,
-    maxHeight: "80%",
+    maxHeight: '80%',
     ...theme.shadow.lg,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.md,
     borderBottomWidth: 1,
@@ -279,9 +279,9 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   dropdown: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: theme.colors.background.tertiary,
     borderWidth: 1,
     borderColor: theme.colors.border.secondary,
@@ -294,8 +294,8 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
   dropdownList: {
-    position: "absolute",
-    top: "100%",
+    position: 'absolute',
+    top: '100%',
     left: 0,
     right: 0,
     backgroundColor: theme.colors.surface.primary,
@@ -324,8 +324,8 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
   sliderContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: theme.spacing.sm,
   },
   slider: {
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   actions: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: theme.spacing.lg,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.primary,
@@ -370,8 +370,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cancelButton: {
     backgroundColor: theme.colors.background.tertiary,

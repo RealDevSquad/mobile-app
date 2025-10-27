@@ -1,6 +1,6 @@
-import { getLocalStorageItem } from "@/common/utils/common";
-import { TOKEN_KEY } from "@/constants/constants";
-import { useEffect, useState } from "react";
+import { getLocalStorageItem } from '@/common/utils/common';
+import { TOKEN_KEY } from '@/constants/constants';
+import { useEffect, useState } from 'react';
 
 export default function useCheckUserSession() {
   const [token, setToken] = useState<string | null>(null);
@@ -11,7 +11,7 @@ export default function useCheckUserSession() {
       setToken(storedToken);
       return storedToken;
     } catch (error) {
-      console.error("Error getting token:", error);
+      console.error('Error getting token:', error);
       return null;
     }
   };

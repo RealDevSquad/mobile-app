@@ -1,5 +1,5 @@
-import { Stack } from "expo-router";
-import React from "react";
+import { Stack } from 'expo-router';
+import React from 'react';
 
 export default function TasksLayout() {
   return (
@@ -7,7 +7,7 @@ export default function TasksLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Tasks",
+          title: 'Tasks',
           headerShown: true,
         }}
       />

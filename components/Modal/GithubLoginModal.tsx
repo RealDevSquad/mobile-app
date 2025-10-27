@@ -1,8 +1,8 @@
-import { theme } from "@/constants/theme";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import React from "react";
-import { Animated, StyleSheet, TouchableOpacity } from "react-native";
-import WebView from "react-native-webview";
+import { theme } from '@/constants/theme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import React from 'react';
+import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
+import WebView from 'react-native-webview';
 
 type GitHubLoginModalProps = {
   visible: boolean;
@@ -53,14 +53,14 @@ export default GitHubLoginModal;
 
 const styles = StyleSheet.create({
   modal: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     backgroundColor: theme.colors.background.primary,
   },
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 10,
     right: 10,
     zIndex: 1,

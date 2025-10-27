@@ -1,6 +1,6 @@
-import { theme } from "@/constants/theme";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View, ViewStyle } from "react-native";
+import { theme } from '@/constants/theme';
+import React, { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
 
 interface SkeletonLoaderProps {
   width?: number | string;
@@ -11,7 +11,7 @@ interface SkeletonLoaderProps {
 }
 
 const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
-  width = "100%",
+  width = '100%',
   height = 20,
   borderRadius = 4,
   style,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xs,
   },
   profileHeader: {
-    alignItems: "center",
+    alignItems: 'center',
     padding: theme.spacing.lg,
     backgroundColor: theme.colors.background.primary,
   },
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
     ...theme.shadow.sm,
   },
   listItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: theme.spacing.md,
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,

@@ -1,8 +1,8 @@
-import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
-import ExtensionRequestCard from "@/components/ExtensionRequestCard";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
+import ExtensionRequestCard from '@/components/ExtensionRequestCard';
+import useCheckUserSession from '@/hooks/getUserToken';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,7 +12,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 const ExtensionRequestsScreen: React.FC = () => {
   const { token } = useCheckUserSession();
@@ -20,12 +20,12 @@ const ExtensionRequestsScreen: React.FC = () => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [extensionRequestsFilter, setExtensionRequestsFilter] =
-    useState("PENDING");
+    useState('PENDING');
 
   const filterOptions = [
-    { label: "Pending", value: "PENDING" },
-    { label: "Approved", value: "APPROVED" },
-    { label: "Denied", value: "DENIED" },
+    { label: 'Pending', value: 'PENDING' },
+    { label: 'Approved', value: 'APPROVED' },
+    { label: 'Denied', value: 'DENIED' },
   ];
 
   // Fetch extension requests with filtering
@@ -54,7 +54,7 @@ const ExtensionRequestsScreen: React.FC = () => {
     // Note: For now, we'll handle pagination in a future update
     // This would require implementing infinite queries
     console.log(
-      "Load more functionality needs to be implemented with infinite queries"
+      'Load more functionality needs to be implemented with infinite queries'
     );
   };
 
@@ -63,7 +63,7 @@ const ExtensionRequestsScreen: React.FC = () => {
     mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
       ExtensionRequestsApi.updateExtensionRequestStatus.fn(
         id,
-        { status: "APPROVED", reason },
+        { status: 'APPROVED', reason },
         token || undefined
       ),
     onSuccess: () => {
@@ -72,11 +72,11 @@ const ExtensionRequestsScreen: React.FC = () => {
           status: extensionRequestsFilter,
         }),
       });
-      Alert.alert("Success", "Extension request approved successfully");
+      Alert.alert('Success', 'Extension request approved successfully');
     },
     onError: (error) => {
-      console.error("Error approving extension request:", error);
-      Alert.alert("Error", "Failed to approve extension request");
+      console.error('Error approving extension request:', error);
+      Alert.alert('Error', 'Failed to approve extension request');
     },
   });
 
@@ -85,7 +85,7 @@ const ExtensionRequestsScreen: React.FC = () => {
     mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
       ExtensionRequestsApi.updateExtensionRequestStatus.fn(
         id,
-        { status: "DENIED", reason },
+        { status: 'DENIED', reason },
         token || undefined
       ),
     onSuccess: () => {
@@ -94,11 +94,11 @@ const ExtensionRequestsScreen: React.FC = () => {
           status: extensionRequestsFilter,
         }),
       });
-      Alert.alert("Success", "Extension request rejected successfully");
+      Alert.alert('Success', 'Extension request rejected successfully');
     },
     onError: (error) => {
-      console.error("Error rejecting extension request:", error);
-      Alert.alert("Error", "Failed to reject extension request");
+      console.error('Error rejecting extension request:', error);
+      Alert.alert('Error', 'Failed to reject extension request');
     },
   });
 
@@ -195,7 +195,7 @@ const ExtensionRequestsScreen: React.FC = () => {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>
-          Error: {error?.message || "Failed to load extension requests"}
+          Error: {error?.message || 'Failed to load extension requests'}
         </Text>
         <TouchableOpacity
           style={styles.retryButton}
@@ -205,7 +205,7 @@ const ExtensionRequestsScreen: React.FC = () => {
               try {
                 await refetch();
               } catch (error) {
-                console.error("Error retrying:", error);
+                console.error('Error retrying:', error);
               } finally {
                 setIsRetrying(false);
               }
@@ -231,7 +231,7 @@ const ExtensionRequestsScreen: React.FC = () => {
           onPress={() => setShowFilterModal(true)}
         >
           <Text style={styles.filterButtonText}>
-            Filter:{" "}
+            Filter:{' '}
             {
               filterOptions.find((opt) => opt.value === extensionRequestsFilter)
                 ?.label
@@ -265,108 +265,108 @@ const ExtensionRequestsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 32,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     padding: 16,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: '#eee',
   },
   filterButton: {
-    backgroundColor: "#1D1283",
+    backgroundColor: '#1D1283',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
   },
   filterButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 14,
   },
   loadMoreButton: {
-    backgroundColor: "#1D1283",
+    backgroundColor: '#1D1283',
     margin: 16,
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
   loadMoreText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 32,
   },
   emptyText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#666",
+    fontWeight: 'bold',
+    color: '#666',
     marginBottom: 8,
   },
   emptySubtext: {
     fontSize: 14,
-    color: "#999",
-    textAlign: "center",
+    color: '#999',
+    textAlign: 'center',
   },
   errorText: {
     fontSize: 16,
-    color: "#F44336",
-    textAlign: "center",
+    color: '#F44336',
+    textAlign: 'center',
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: "#1D1283",
+    backgroundColor: '#1D1283',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
-    alignSelf: "center",
+    alignSelf: 'center',
     minWidth: 100,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   retryButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 12,
     padding: 24,
-    width: "80%",
+    width: '80%',
     maxWidth: 300,
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 16,
-    textAlign: "center",
+    textAlign: 'center',
   },
   filterOption: {
     paddingVertical: 12,
@@ -374,31 +374,31 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
   },
   selectedFilterOption: {
-    backgroundColor: "#1D1283",
-    borderColor: "#1D1283",
+    backgroundColor: '#1D1283',
+    borderColor: '#1D1283',
   },
   filterOptionText: {
     fontSize: 16,
-    color: "#333",
+    color: '#333',
   },
   selectedFilterOptionText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
   },
   closeButton: {
-    backgroundColor: "#666",
+    backgroundColor: '#666',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     marginTop: 16,
-    alignItems: "center",
+    alignItems: 'center',
   },
   closeButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });

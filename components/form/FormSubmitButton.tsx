@@ -1,27 +1,27 @@
-import { theme } from "@/constants/theme";
-import React from "react";
+import { theme } from '@/constants/theme';
+import React from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
-} from "react-native";
+} from 'react-native';
 
 type FormSubmitButtonProps = {
   text: string;
   isLoading?: boolean;
   isDisabled?: boolean;
   onPress: () => void;
-  variant?: "primary" | "secondary";
-} & Omit<TouchableOpacityProps, "onPress">;
+  variant?: 'primary' | 'secondary';
+} & Omit<TouchableOpacityProps, 'onPress'>;
 
 const FormSubmitButton = ({
   text,
   isLoading = false,
   isDisabled = false,
   onPress,
-  variant = "primary",
+  variant = 'primary',
   style,
   ...props
 }: FormSubmitButtonProps) => {
@@ -29,14 +29,14 @@ const FormSubmitButton = ({
 
   const buttonStyle = [
     styles.button,
-    variant === "primary" ? styles.primaryButton : styles.secondaryButton,
+    variant === 'primary' ? styles.primaryButton : styles.secondaryButton,
     isButtonDisabled && styles.disabledButton,
     style,
   ];
 
   const textStyle = [
     styles.buttonText,
-    variant === "primary"
+    variant === 'primary'
       ? styles.primaryButtonText
       : styles.secondaryButtonText,
     isButtonDisabled && styles.disabledButtonText,
@@ -53,7 +53,7 @@ const FormSubmitButton = ({
         <ActivityIndicator
           size="small"
           color={
-            variant === "primary"
+            variant === 'primary'
               ? theme.colors.text.inverted
               : theme.colors.text.primary
           }
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.lg,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     minHeight: 44,
     ...theme.shadow.sm,
   },
@@ -103,5 +103,3 @@ const styles = StyleSheet.create({
 });
 
 export default FormSubmitButton;
-
-

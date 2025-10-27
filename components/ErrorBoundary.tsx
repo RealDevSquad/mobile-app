@@ -1,6 +1,6 @@
-import { theme } from "@/constants/theme";
-import React, { Component, ErrorInfo, ReactNode } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { theme } from '@/constants/theme';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface Props {
   children: ReactNode;
@@ -24,7 +24,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
     this.setState({
       error,
       errorInfo,
@@ -72,13 +72,13 @@ class ErrorBoundary extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: theme.colors.background.primary,
     padding: theme.spacing.lg,
   },
   errorContainer: {
-    alignItems: "center",
+    alignItems: 'center',
     maxWidth: 300,
   },
   title: {
@@ -86,14 +86,14 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
-    textAlign: "center",
+    textAlign: 'center',
   },
   message: {
     fontSize: theme.typography.fontSize.base,
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.secondary,
     marginBottom: theme.spacing.lg,
-    textAlign: "center",
+    textAlign: 'center',
     lineHeight: 20,
   },
   errorDetails: {
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.error[500],
     marginBottom: theme.spacing.lg,
-    textAlign: "center",
+    textAlign: 'center',
   },
   retryButton: {
     backgroundColor: theme.colors.primary[500],

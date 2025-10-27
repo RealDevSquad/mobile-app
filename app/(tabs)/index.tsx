@@ -1,17 +1,17 @@
-import { AuthApi } from "@/api/auth/auth.api";
-import { setLocalStorageItem } from "@/common/utils/common";
-import CameraModal from "@/components/Modal/CameraModal";
-import GitHubLoginModal from "@/components/Modal/GithubLoginModal";
-import { TOKEN_KEY } from "@/constants/constants";
-import { theme } from "@/constants/theme";
-import useCheckUserSession from "@/hooks/getUserToken";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Camera } from "expo-camera";
-import * as Device from "expo-device";
-import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import { AuthApi } from '@/api/auth/auth.api';
+import { setLocalStorageItem } from '@/common/utils/common';
+import CameraModal from '@/components/Modal/CameraModal';
+import GitHubLoginModal from '@/components/Modal/GithubLoginModal';
+import { TOKEN_KEY } from '@/constants/constants';
+import { theme } from '@/constants/theme';
+import useCheckUserSession from '@/hooks/getUserToken';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Camera } from 'expo-camera';
+import * as Device from 'expo-device';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { Image } from "expo-image";
+import { Image } from 'expo-image';
 import {
   Alert,
   Animated,
@@ -21,14 +21,14 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import ToastManager, { Toast } from "toastify-react-native";
+} from 'react-native';
+import ToastManager, { Toast } from 'toastify-react-native';
 
 const toastConfig = {
   success: (props: { text1: string; text2?: string }) => (
-    <View style={{ backgroundColor: "#4CAF50", padding: 16, borderRadius: 10 }}>
-      <Text style={{ color: "white", fontWeight: "bold" }}>{props.text1}</Text>
-      {props.text2 && <Text style={{ color: "white" }}>{props.text2}</Text>}
+    <View style={{ backgroundColor: '#4CAF50', padding: 16, borderRadius: 10 }}>
+      <Text style={{ color: 'white', fontWeight: 'bold' }}>{props.text1}</Text>
+      {props.text2 && <Text style={{ color: 'white' }}>{props.text2}</Text>}
     </View>
   ),
   // Override other toast types as needed
@@ -37,14 +37,14 @@ const toastConfig = {
 function buildUrl(url: string, params: { [key: string]: string }) {
   const queryString = Object.keys(params)
     .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-    .join("&");
+    .join('&');
   return `${url}?${queryString}`;
 }
 
 const AuthScreen = () => {
   const router = useRouter();
   const [modalAnimation] = useState(
-    new Animated.Value(Dimensions.get("window").height)
+    new Animated.Value(Dimensions.get('window').height)
   );
 
   const { token: storedToken } = useCheckUserSession();
@@ -52,12 +52,12 @@ const AuthScreen = () => {
   const [githubLogin, setGithubLogin] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
-  const [scannedUserId, setScannedUserId] = useState("");
+  const [scannedUserId, setScannedUserId] = useState('');
   const [showModal, setShowModal] = useState(false);
 
   const openModal = useCallback(() => {
     Animated.timing(modalAnimation, {
-      toValue: Dimensions.get("window").height * 0.2, // Adjust the final position
+      toValue: Dimensions.get('window').height * 0.2, // Adjust the final position
       duration: 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
@@ -66,7 +66,7 @@ const AuthScreen = () => {
 
   const closeModal = () => {
     Animated.timing(modalAnimation, {
-      toValue: Dimensions.get("window").height, // Move back off-screen
+      toValue: Dimensions.get('window').height, // Move back off-screen
       duration: 300,
       easing: Easing.in(Easing.ease),
       useNativeDriver: false,
@@ -82,38 +82,38 @@ const AuthScreen = () => {
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
+      setHasPermission(status === 'granted');
     })();
   }, []);
 
   const queryParams = {
-    sourceUtm: "rds-mobile-app",
-    redirectURL: "rdsapp://auth",
+    sourceUtm: 'rds-mobile-app',
+    redirectURL: 'rdsapp://auth',
   };
 
   const githubAuthUrl = buildUrl(
-    "https://staging-api.realdevsquad.com/auth/github/login",
+    'https://staging-api.realdevsquad.com/auth/github/login',
     queryParams
   );
   const handleNavigationStateChange = async (navState: any) => {
-    if (navState.url.includes("token=")) {
+    if (navState.url.includes('token=')) {
       try {
         const urlObj = new URL(navState.url);
-        const token = urlObj.searchParams.get("token");
+        const token = urlObj.searchParams.get('token');
         if (token) {
           // Await token storage before navigation
           await setLocalStorageItem(TOKEN_KEY, token);
           setGithubLogin(false);
-          router.replace("/home");
+          router.replace('/home');
         }
       } catch (error) {
-        console.error("Error parsing URL or saving token:", error);
+        console.error('Error parsing URL or saving token:', error);
         // Show error to user
         Toast.show({
-          type: "error",
-          text1: "Login failed",
-          text2: "Unable to save authentication token",
-          position: "bottom",
+          type: 'error',
+          text1: 'Login failed',
+          text2: 'Unable to save authentication token',
+          position: 'bottom',
           bottomOffset: 80,
         });
       }
@@ -131,27 +131,27 @@ const AuthScreen = () => {
   const qrCodeLogin = async () => {
     const deviceId = Device.osBuildId;
     try {
-      const userInfoJson = await AuthApi.qrCodeAuth.fn(deviceId || "");
+      const userInfoJson = await AuthApi.qrCodeAuth.fn(deviceId || '');
       if (userInfoJson.data.token) {
         // Await token storage before navigation
         await setLocalStorageItem(TOKEN_KEY, userInfoJson.data.token);
         setCameraVisible(false);
-        router.replace("/home");
+        router.replace('/home');
       } else {
         Toast.show({
-          type: "error",
-          text1: "Please authorize from my-site by giving confirmations",
-          position: "bottom",
+          type: 'error',
+          text1: 'Please authorize from my-site by giving confirmations',
+          position: 'bottom',
           bottomOffset: 80,
         });
-        setScannedUserId("");
+        setScannedUserId('');
       }
     } catch (err) {
-      console.error("Error during QR code login:", err);
+      console.error('Error during QR code login:', err);
       Toast.show({
-        type: "error",
-        text1: "Something went wrong, please try again later",
-        position: "bottom",
+        type: 'error',
+        text1: 'Something went wrong, please try again later',
+        position: 'bottom',
         bottomOffset: 80,
       });
     }
@@ -162,21 +162,21 @@ const AuthScreen = () => {
     const deviceId = Device.osBuildId;
     try {
       const dataJson = await AuthApi.qrCodeAuthPost.fn({
-        device_info: deviceInfo || "",
+        device_info: deviceInfo || '',
         user_id: scannedUserId,
-        device_id: deviceId || "",
+        device_id: deviceId || '',
       });
 
-      Alert.alert("Please Confirm", dataJson.message, [
+      Alert.alert('Please Confirm', dataJson.message, [
         {
-          text: "Cancel",
+          text: 'Cancel',
           onPress: () => {
             setCameraVisible(false);
-            setScannedUserId("");
+            setScannedUserId('');
           },
         },
         {
-          text: "OK",
+          text: 'OK',
           onPress: () => {
             setShowModal(true);
           },
@@ -184,24 +184,24 @@ const AuthScreen = () => {
       ]);
     } catch (err) {
       Toast.show({
-        type: "error",
+        type: 'error',
         text1:
-          (err as Error).message || "Something went wrong, please try again",
-        position: "bottom",
+          (err as Error).message || 'Something went wrong, please try again',
+        position: 'bottom',
         bottomOffset: 80,
       });
     }
   }, [scannedUserId]);
 
   useEffect(() => {
-    if (scannedUserId !== "") {
+    if (scannedUserId !== '') {
       getAuthStatus();
     }
   }, [scannedUserId, getAuthStatus]);
 
   useEffect(() => {
     if (storedToken) {
-      router.replace("/home");
+      router.replace('/home');
     }
   }, [storedToken, router]);
 
@@ -243,7 +243,7 @@ const AuthScreen = () => {
       ) : (
         <View style={styles.content}>
           <Image
-            source={require("../../assets/images/rdsLogo.png")}
+            source={require('../../assets/images/rdsLogo.png')}
             style={styles.logo}
             contentFit="contain"
             placeholder="blurhash"
@@ -278,13 +278,13 @@ export default AuthScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: theme.colors.gray[900],
   },
   content: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logo: {
     width: 200,
@@ -292,21 +292,21 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
   },
   title: {
-    fontSize: theme.typography.fontSize["3xl"],
+    fontSize: theme.typography.fontSize['3xl'],
     fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.primary[500],
     marginBottom: 5,
   },
   title1: {
-    fontSize: theme.typography.fontSize["4xl"],
+    fontSize: theme.typography.fontSize['4xl'],
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.inverted,
-    marginBottom: theme.spacing["2xl"],
+    marginBottom: theme.spacing['2xl'],
   },
   button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.lg,
     borderRadius: theme.radius.sm,
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.inverted,
     fontSize: theme.typography.fontSize.base,
     fontFamily: theme.typography.fontFamily.regular,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: theme.spacing.sm,
   },
 });

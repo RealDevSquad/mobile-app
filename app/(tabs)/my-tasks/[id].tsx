@@ -1,13 +1,13 @@
-import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
-import { TasksApi } from "@/api/tasks/tasks.api";
-import { theme } from "@/constants/theme";
-import useCheckUserSession from "@/hooks/getUserToken";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
-import moment from "moment";
-import React, { lazy, Suspense, useState } from "react";
+import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
+import { TasksApi } from '@/api/tasks/tasks.api';
+import { theme } from '@/constants/theme';
+import useCheckUserSession from '@/hooks/getUserToken';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Image } from 'expo-image';
+import { useLocalSearchParams } from 'expo-router';
+import moment from 'moment';
+import React, { lazy, Suspense, useState } from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -17,19 +17,19 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 const AddProgressModal = lazy(
-  () => import("@/components/Modal/AddProgressModal")
+  () => import('@/components/Modal/AddProgressModal')
 );
 const ExtensionRequestDetailsModal = lazy(
-  () => import("@/components/Modal/ExtensionRequestDetailsModal")
+  () => import('@/components/Modal/ExtensionRequestDetailsModal')
 );
 const ExtensionRequestModal = lazy(
-  () => import("@/components/Modal/ExtensionRequestModal")
+  () => import('@/components/Modal/ExtensionRequestModal')
 );
 const UpdateTaskStatusModal = lazy(
-  () => import("@/components/Modal/UpdateTaskStatusModal")
+  () => import('@/components/Modal/UpdateTaskStatusModal')
 );
 
 export default function TaskDetailsScreen() {
@@ -49,7 +49,7 @@ export default function TaskDetailsScreen() {
     isError: taskError,
     error: taskErrorDetails,
   } = useQuery({
-    queryKey: TasksApi.getTaskDetails.key(id || ""),
+    queryKey: TasksApi.getTaskDetails.key(id || ''),
     queryFn: () => TasksApi.getTaskDetails.fn(id!),
     enabled: !!token && !!id,
   });
@@ -60,7 +60,7 @@ export default function TaskDetailsScreen() {
     isError: progressError,
     error: progressErrorDetails,
   } = useQuery({
-    queryKey: TasksApi.getTaskProgress.key(id || ""),
+    queryKey: TasksApi.getTaskProgress.key(id || ''),
     queryFn: () => TasksApi.getTaskProgress.fn(id!),
     enabled: !!token && !!id,
   });
@@ -68,7 +68,7 @@ export default function TaskDetailsScreen() {
   const { data: extensionRequestsData, isLoading: extensionRequestsLoading } =
     useQuery({
       queryKey: ExtensionRequestsApi.getSelfExtensionRequests.key({
-        taskId: id || "",
+        taskId: id || '',
       }),
       queryFn: () =>
         ExtensionRequestsApi.getSelfExtensionRequests.fn(
@@ -81,10 +81,10 @@ export default function TaskDetailsScreen() {
   const progressUpdates = progressUpdatesData?.data || [];
   const extensionRequests = extensionRequestsData?.allExtensionRequests || [];
   const hasPendingExtension = extensionRequests.some(
-    (request) => request.status === "PENDING"
+    (request) => request.status === 'PENDING'
   );
   const pendingExtensionDetails = extensionRequests.find(
-    (request) => request.status === "PENDING"
+    (request) => request.status === 'PENDING'
   );
 
   let error: string | null = null;
@@ -95,11 +95,11 @@ export default function TaskDetailsScreen() {
   }
 
   const formatDate = (timestamp: number) => {
-    return moment.unix(timestamp).format("MMM DD, YYYY");
+    return moment.unix(timestamp).format('MMM DD, YYYY');
   };
 
   const formatDateTime = (timestamp: number) => {
-    return moment.unix(timestamp).format("MMM DD, YYYY [at] h:mm A");
+    return moment.unix(timestamp).format('MMM DD, YYYY [at] h:mm A');
   };
 
   const formatTimeAgo = (timestamp: number) => {
@@ -108,15 +108,15 @@ export default function TaskDetailsScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "ASSIGNED":
+      case 'ASSIGNED':
         return theme.colors.warning[500];
-      case "IN_PROGRESS":
+      case 'IN_PROGRESS':
         return theme.colors.info[500];
-      case "VERIFIED":
+      case 'VERIFIED':
         return theme.colors.success[500];
-      case "COMPLETED":
+      case 'COMPLETED':
         return theme.colors.success[500];
-      case "BLOCKED":
+      case 'BLOCKED':
         return theme.colors.error[500];
       default:
         return theme.colors.gray[500];
@@ -136,7 +136,7 @@ export default function TaskDetailsScreen() {
 
     queryClient.invalidateQueries({
       queryKey: ExtensionRequestsApi.getSelfExtensionRequests.key({
-        taskId: id || "",
+        taskId: id || '',
       }),
     });
   };
@@ -188,7 +188,7 @@ export default function TaskDetailsScreen() {
                 Progress Update {progressUpdates.length - index}
               </Text>
               <Text style={styles.progressCardSubtitle}>
-                {formatTimeAgo(update.createdAt)} • {update.userData.first_name}{" "}
+                {formatTimeAgo(update.createdAt)} • {update.userData.first_name}{' '}
                 {update.userData.last_name}
               </Text>
             </View>
@@ -200,7 +200,7 @@ export default function TaskDetailsScreen() {
                 contentFit="cover"
               />
               <FontAwesome
-                name={isExpanded ? "chevron-up" : "chevron-down"}
+                name={isExpanded ? 'chevron-up' : 'chevron-down'}
                 size={16}
                 color={theme.colors.text.secondary}
                 style={styles.progressCardChevron}
@@ -285,16 +285,16 @@ export default function TaskDetailsScreen() {
     return (
       <SafeAreaView style={styles.errorContainer}>
         <Text style={styles.errorText}>
-          {error || "Task details not found"}
+          {error || 'Task details not found'}
         </Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={() => {
             queryClient.invalidateQueries({
-              queryKey: TasksApi.getTaskDetails.key(id || ""),
+              queryKey: TasksApi.getTaskDetails.key(id || ''),
             });
             queryClient.invalidateQueries({
-              queryKey: TasksApi.getTaskProgress.key(id || ""),
+              queryKey: TasksApi.getTaskProgress.key(id || ''),
             });
           }}
         >
@@ -376,7 +376,7 @@ export default function TaskDetailsScreen() {
                   />
                 ) : (
                   <Text style={styles.extensionRequestButtonText}>
-                    {hasPendingExtension ? "ER Pending" : "Raise an ER"}
+                    {hasPendingExtension ? 'ER Pending' : 'Raise an ER'}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -446,10 +446,10 @@ export default function TaskDetailsScreen() {
             visible={showExtensionModal}
             onClose={() => setShowExtensionModal(false)}
             onSubmit={handleExtensionRequestSubmit}
-            taskId={id || ""}
+            taskId={id || ''}
             oldEndsOn={task.endsOn}
             assignee={task.assignee}
-            token={token || ""}
+            token={token || ''}
           />
         </Suspense>
       )}
@@ -467,10 +467,10 @@ export default function TaskDetailsScreen() {
           visible={showUpdateStatusModal}
           onClose={() => setShowUpdateStatusModal(false)}
           onSubmit={handleUpdateStatusSubmit}
-          taskId={id || ""}
+          taskId={id || ''}
           currentStatus={task.status}
           currentProgress={task.percentCompleted}
-          token={token || ""}
+          token={token || ''}
         />
       </Suspense>
 
@@ -479,8 +479,8 @@ export default function TaskDetailsScreen() {
           visible={showAddProgressModal}
           onClose={() => setShowAddProgressModal(false)}
           onSubmit={handleAddProgressSubmit}
-          taskId={id || ""}
-          token={token || ""}
+          taskId={id || ''}
+          token={token || ''}
         />
       </Suspense>
     </SafeAreaView>
@@ -495,8 +495,8 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     backgroundColor: theme.colors.background.secondary,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: theme.spacing.md,
@@ -506,14 +506,14 @@ const styles = StyleSheet.create({
   errorContainer: {
     flex: 1,
     backgroundColor: theme.colors.background.secondary,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: theme.spacing.lg,
   },
   errorText: {
     fontSize: theme.typography.fontSize.base,
     color: theme.colors.error[500],
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: theme.spacing.lg,
   },
   retryButton: {
@@ -534,9 +534,9 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: theme.spacing.lg,
     paddingBottom: theme.spacing.md,
     borderBottomWidth: 1,
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
     borderRadius: theme.radius.lg,
     minWidth: 80,
-    alignItems: "center",
+    alignItems: 'center',
   },
   statusText: {
     color: theme.colors.text.inverted,
@@ -575,21 +575,21 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   taskDetailsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.sm,
   },
   timelineHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.sm,
   },
   infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.xs,
   },
   label: {
@@ -602,16 +602,16 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.primary,
     flex: 2,
-    textAlign: "right",
+    textAlign: 'right',
   },
   progressText: {
     color: theme.colors.success[500],
     fontWeight: theme.typography.fontWeight.semibold,
   },
   githubLinkRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   githubLinkLabel: {
     fontSize: theme.typography.fontSize.sm,
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
     minWidth: 60,
-    alignItems: "center",
+    alignItems: 'center',
   },
   githubLinkButtonText: {
     color: theme.colors.text.inverted,
@@ -643,9 +643,9 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
   progressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.sm,
   },
   addProgressButton: {
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
+    alignItems: 'center',
   },
   addProgressButtonText: {
     fontSize: theme.typography.fontSize.sm,
@@ -661,9 +661,9 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
   progressLoading: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: theme.spacing.lg,
   },
   progressLoadingText: {
@@ -678,9 +678,9 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   progressCardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: theme.spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
@@ -700,8 +700,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   progressCardActions: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   progressCardAvatar: {
     width: 32,
@@ -720,8 +720,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   progressDetailHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: theme.spacing.xs,
   },
   progressDetailLabel: {
@@ -739,16 +739,16 @@ const styles = StyleSheet.create({
   noProgressText: {
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.secondary,
-    textAlign: "center",
+    textAlign: 'center',
     paddingVertical: theme.spacing.lg,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   extensionRequestButton: {
-    backgroundColor: "#FF6B35", // Orange color
+    backgroundColor: '#FF6B35', // Orange color
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
+    alignItems: 'center',
   },
   extensionRequestButtonText: {
     color: theme.colors.text.inverted,
@@ -756,7 +756,7 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
   extensionRequestButtonDisabled: {
-    backgroundColor: "#CC5529", // Darker orange for disabled state
+    backgroundColor: '#CC5529', // Darker orange for disabled state
     opacity: 0.7,
   },
   updateStatusButton: {
@@ -764,7 +764,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
+    alignItems: 'center',
   },
   updateStatusButtonText: {
     color: theme.colors.text.inverted,

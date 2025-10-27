@@ -1,16 +1,16 @@
-import { TasksApi } from "@/api/tasks/tasks.api";
-import Task from "@/components/Task";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
-import React from "react";
+import { TasksApi } from '@/api/tasks/tasks.api';
+import Task from '@/components/Task';
+import useCheckUserSession from '@/hooks/getUserToken';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
+import React from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
   StyleSheet,
   Text,
   View,
-} from "react-native";
+} from 'react-native';
 
 export default function MyTasksScreen() {
   const { token } = useCheckUserSession();
@@ -54,7 +54,7 @@ export default function MyTasksScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
-            Error: {error?.message || "Failed to load tasks"}
+            Error: {error?.message || 'Failed to load tasks'}
           </Text>
         </View>
       </SafeAreaView>
@@ -76,40 +76,40 @@ export default function MyTasksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: '#E0E0E0',
   },
   title: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333333",
+    fontWeight: '600',
+    color: '#333333',
   },
   subtitle: {
     fontSize: 12,
-    color: "#666666",
+    color: '#666666',
     marginTop: 2,
   },
   errorContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   errorText: {
     fontSize: 14,
-    color: "#e74c3c",
-    textAlign: "center",
+    color: '#e74c3c',
+    textAlign: 'center',
   },
 });

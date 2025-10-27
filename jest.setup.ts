@@ -1,9 +1,11 @@
-import "@testing-library/jest-native/extend-expect";
-import { Alert as ReactNativeAlert } from "react-native";
-import "react-native-gesture-handler/jestSetup";
+import '@testing-library/jest-native/extend-expect';
+import { Alert as ReactNativeAlert } from 'react-native';
+import 'react-native-gesture-handler/jestSetup';
 
-jest.mock("@react-native-async-storage/async-storage", () =>
-  require("@react-native-async-storage/async-storage/jest/async-storage-mock")
+jest.mock(
+  '@react-native-async-storage/async-storage',
+  () =>
+    import('@react-native-async-storage/async-storage/jest/async-storage-mock')
 );
 
 // ---- Mock for @expo/vector-icons ----
@@ -16,12 +18,12 @@ interface IoniconsProps {
   [key: string]: any;
 }
 
-jest.mock("@expo/vector-icons", () => {
-  const React = require("react");
-  const { View } = require("react-native");
+jest.mock('@expo/vector-icons', () => {
+  const React = import('react');
+  const { View } = import('react-native');
 
   const MockIonicons: React.FC<IoniconsProps> = (props) =>
-    React.createElement(View, { ...props, testID: props.testID || "icon" });
+    React.createElement(View, { ...props, testID: props.testID || 'icon' });
   return {
     Ionicons: MockIonicons,
   };
@@ -35,7 +37,7 @@ interface MockDatePickerComponentProps {
   onConfirm: (date: Date) => void;
   onCancel: () => void;
   modal?: boolean;
-  mode?: "date" | "datetime" | "time";
+  mode?: 'date' | 'datetime' | 'time';
 }
 
 let mockDatePickerOpen = false;
@@ -47,7 +49,7 @@ interface MockDatePickerModule extends React.FC<MockDatePickerComponentProps> {
   simulateCancel: () => void;
 }
 
-jest.mock("react-native-date-picker", (): MockDatePickerModule => {
+jest.mock('react-native-date-picker', (): MockDatePickerModule => {
   const MockDatePickerComponent: MockDatePickerModule = (props) => {
     mockDatePickerOpen = props.open;
     mockDatePickerDate = props.date;
@@ -76,7 +78,7 @@ jest.mock("react-native-date-picker", (): MockDatePickerModule => {
 });
 
 // ---- Mock React Native Alert ----
-jest.spyOn(ReactNativeAlert, "alert");
+jest.spyOn(ReactNativeAlert, 'alert');
 
 // ---- Mock React Native Linking ----
 export const mockLinkingOpenURL = jest.fn();

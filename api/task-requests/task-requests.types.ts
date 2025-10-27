@@ -1,5 +1,5 @@
-import { TaskRequestDTO } from "@/types/task-request.dto";
-import { TApiResponse } from "../common/common.types";
+import { TaskRequestDTO } from '@/types/task-request.dto';
+import { TApiResponse } from '../common/common.types';
 
 // Request DTOs
 export type TGetTaskRequestsDto = {

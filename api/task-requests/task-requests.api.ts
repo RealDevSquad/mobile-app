@@ -1,5 +1,5 @@
-import { AxiosHeaders, InternalAxiosRequestConfig } from "axios";
-import { apiClient } from "../../lib/api-client";
+import { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
+import { apiClient } from '../../lib/api-client';
 import {
   TApproveTaskRequestDto,
   TApproveTaskRequestResponse,
@@ -8,35 +8,35 @@ import {
   TGetTaskRequestsResponse,
   TRejectTaskRequestDto,
   TRejectTaskRequestResponse,
-} from "./task-requests.types";
+} from './task-requests.types';
 
 export const TaskRequestsApi = {
   getTaskRequests: {
     key: (params?: TGetTaskRequestsDto) => [
-      "TaskRequestsApi.getTaskRequests",
+      'TaskRequestsApi.getTaskRequests',
       JSON.stringify(params),
     ],
     fn: async (
       params?: TGetTaskRequestsDto,
       token?: string
     ): Promise<TGetTaskRequestsResponse> => {
-      let url = "/task-requests";
+      let url = '/task-requests';
       const queryParams = new URLSearchParams();
 
-      if (params?.status === "ALL") {
-        queryParams.append("size", "20");
-        queryParams.append("q", "sort:created-desc");
+      if (params?.status === 'ALL') {
+        queryParams.append('size', '20');
+        queryParams.append('q', 'sort:created-desc');
       } else {
-        const status = params?.status || "PENDING";
-        queryParams.append("size", "20");
+        const status = params?.status || 'PENDING';
+        queryParams.append('size', '20');
         queryParams.append(
-          "q",
+          'q',
           `status:${status.toLowerCase()}++sort:created-desc`
         );
       }
 
       if (params?.next) {
-        queryParams.append("next", params.next);
+        queryParams.append('next', params.next);
       }
 
       const config: InternalAxiosRequestConfig = {
@@ -55,7 +55,7 @@ export const TaskRequestsApi = {
   },
 
   getTaskRequestById: {
-    key: (id: string) => ["TaskRequestsApi.getTaskRequestById", id],
+    key: (id: string) => ['TaskRequestsApi.getTaskRequestById', id],
     fn: async (
       id: string,
       token?: string
@@ -76,7 +76,7 @@ export const TaskRequestsApi = {
 
   approveTaskRequest: {
     key: (taskRequestId: string, userId: string) => [
-      "TaskRequestsApi.approveTaskRequest",
+      'TaskRequestsApi.approveTaskRequest',
       taskRequestId,
       userId,
     ],
@@ -91,7 +91,7 @@ export const TaskRequestsApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.patch<TApproveTaskRequestResponse>(
-        "/task-requests/approve",
+        '/task-requests/approve',
         { taskRequestId, userId },
         config
       );
@@ -101,7 +101,7 @@ export const TaskRequestsApi = {
 
   rejectTaskRequest: {
     key: (taskRequestId: string, userId: string) => [
-      "TaskRequestsApi.rejectTaskRequest",
+      'TaskRequestsApi.rejectTaskRequest',
       taskRequestId,
       userId,
     ],
@@ -116,7 +116,7 @@ export const TaskRequestsApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.patch<TRejectTaskRequestResponse>(
-        "/task-requests/reject",
+        '/task-requests/reject',
         { taskRequestId, userId, reason },
         config
       );

@@ -1,18 +1,18 @@
-import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
+import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
 import {
   extensionRequestSchema,
   TExtensionRequestFormData,
-} from "@/api/extension-requests/extension-requests.schema";
-import FormDatePicker from "@/components/form/FormDatePicker";
-import FormInput from "@/components/form/FormInput";
-import FormSubmitButton from "@/components/form/FormSubmitButton";
-import { theme } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import moment from "moment";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
+} from '@/api/extension-requests/extension-requests.schema';
+import FormDatePicker from '@/components/form/FormDatePicker';
+import FormInput from '@/components/form/FormInput';
+import FormSubmitButton from '@/components/form/FormSubmitButton';
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import moment from 'moment';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Modal,
@@ -20,7 +20,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface ExtensionRequestModalProps {
   visible: boolean;
@@ -37,7 +37,7 @@ interface ExtensionRequestData {
   newEndsOn: number;
   oldEndsOn: number;
   reason: string;
-  status: "PENDING";
+  status: 'PENDING';
   taskId: string;
   title: string;
 }
@@ -61,8 +61,8 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
   } = useForm<TExtensionRequestFormData>({
     resolver: zodResolver(extensionRequestSchema),
     defaultValues: {
-      title: "",
-      reason: "",
+      title: '',
+      reason: '',
       newDeadline: undefined,
       taskId,
       assignee,
@@ -76,7 +76,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
       newEndsOn: number;
       oldEndsOn: number;
       reason: string;
-      status: "PENDING";
+      status: 'PENDING';
       taskId: string;
       title: string;
     }) =>
@@ -85,17 +85,17 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
         token || undefined
       ),
     onSuccess: () => {
-      Alert.alert("Success", "Extension request submitted successfully!", [
+      Alert.alert('Success', 'Extension request submitted successfully!', [
         {
-          text: "OK",
+          text: 'OK',
           onPress: () => {
             reset();
             // Invalidate extension request queries
             queryClient.invalidateQueries({
-              queryKey: ["ExtensionRequestsApi.getExtensionRequests"],
+              queryKey: ['ExtensionRequestsApi.getExtensionRequests'],
             });
             queryClient.invalidateQueries({
-              queryKey: ["ExtensionRequestsApi.getSelfExtensionRequests"],
+              queryKey: ['ExtensionRequestsApi.getSelfExtensionRequests'],
             });
             onSubmit();
           },
@@ -104,10 +104,10 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
     },
     onError: (error) => {
       Alert.alert(
-        "Error",
+        'Error',
         error instanceof Error
           ? error.message
-          : "Failed to submit extension request"
+          : 'Failed to submit extension request'
       );
     },
   });
@@ -118,7 +118,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
       newEndsOn: moment(data.newDeadline).unix(),
       oldEndsOn: data.oldEndsOn,
       reason: data.reason.trim(),
-      status: "PENDING",
+      status: 'PENDING',
       taskId: data.taskId,
       title: data.title.trim(),
     };
@@ -131,7 +131,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
     onClose();
   };
 
-  const oldDeadlineDate = moment.unix(oldEndsOn).format("MMM DD, YYYY");
+  const oldDeadlineDate = moment.unix(oldEndsOn).format('MMM DD, YYYY');
 
   return (
     <Modal
@@ -217,7 +217,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
                   required
                   errorMessage={errors.newDeadline?.message}
                   icon="calendar-outline"
-                  minimumDate={moment.unix(oldEndsOn).add(1, "day").toDate()}
+                  minimumDate={moment.unix(oldEndsOn).add(1, 'day').toDate()}
                   disabled={createExtensionRequestMutation.isPending}
                 />
               )}
@@ -249,13 +249,13 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: theme.spacing.lg,
   },
   modalContainer: {
-    width: "100%",
+    width: '100%',
     maxWidth: 400,
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.radius.lg,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     ...theme.shadow.lg,
   },
   closeIcon: {
-    position: "absolute",
+    position: 'absolute',
     top: theme.spacing.md,
     right: theme.spacing.md,
     zIndex: 1,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
     marginTop: theme.spacing.sm,
     marginRight: theme.spacing.xl,
-    textAlign: "center",
+    textAlign: 'center',
   },
   infoSection: {
     backgroundColor: theme.colors.background.secondary,
@@ -300,11 +300,11 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: theme.spacing.lg,
     gap: theme.spacing.sm,
   },
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
+    alignItems: 'center',
   },
   cancelButton: {
     backgroundColor: theme.colors.background.secondary,

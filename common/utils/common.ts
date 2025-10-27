@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const formatDateTime = (timestamp: string | number): string => {
-  if (!timestamp) return "Invalid date";
+  if (!timestamp) return 'Invalid date';
 
   // Convert the timestamp to a number if it's a string
   let numericTimestamp = Number(timestamp);
@@ -14,10 +14,10 @@ export const formatDateTime = (timestamp: string | number): string => {
   const date = new Date(numericTimestamp);
 
   // Format the date only
-  const formattedDate = date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  const formattedDate = date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
   return formattedDate;
@@ -62,6 +62,6 @@ export function buildUrl(
 ): string {
   const queryString = Object.keys(params)
     .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-    .join("&");
+    .join('&');
   return `${url}?${queryString}`;
 }

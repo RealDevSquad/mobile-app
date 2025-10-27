@@ -1,11 +1,11 @@
-import { theme } from "@/constants/theme";
+import { theme } from '@/constants/theme';
 import {
   ActivityGroup,
   ActivityType,
   DateActivities,
   LogEntry,
   MarkedDates,
-} from "@/types/logs.dto";
+} from '@/types/logs.dto';
 
 // Color mapping for different activity types
 export const ACTIVITY_COLORS = {
@@ -16,10 +16,10 @@ export const ACTIVITY_COLORS = {
 } as const;
 
 export const ACTIVITY_LABELS = {
-  task: "Tasks",
-  oooRequests: "OOO",
-  taskRequests: "Task Requests",
-  extensionRequests: "Extensions",
+  task: 'Tasks',
+  oooRequests: 'OOO',
+  taskRequests: 'Task Requests',
+  extensionRequests: 'Extensions',
 } as const;
 
 /**
@@ -28,7 +28,7 @@ export const ACTIVITY_LABELS = {
  */
 export const timestampToDateString = (timestamp: number): string => {
   const date = new Date(timestamp * 1000);
-  return date.toISOString().split("T")[0];
+  return date.toISOString().split('T')[0];
 };
 
 /**
@@ -38,7 +38,7 @@ export const timestampToDateString = (timestamp: number): string => {
 export const getMonthDateRange = (
   month: string
 ): { startDate: number; endDate: number } => {
-  const [year, monthNum] = month.split("-").map(Number);
+  const [year, monthNum] = month.split('-').map(Number);
   const startDate = new Date(year, monthNum - 1, 1);
   const endDate = new Date(year, monthNum, 0); // Last day of the month
 
@@ -121,7 +121,7 @@ export const processLogsToMarkedDates = (logs: LogEntry[]): MarkedDates => {
     // Process status-based dates
     for (const [timestamp, status] of Object.entries(statusByDate)) {
       const date = new Date(Number.parseInt(timestamp, 10));
-      const dateString = date.toISOString().split("T")[0];
+      const dateString = date.toISOString().split('T')[0];
 
       if (!markedDates[dateString]) {
         markedDates[dateString] = { dots: [] };
@@ -209,28 +209,28 @@ export const formatTimestamp = (timestamp: number): string => {
   // Calculate relative time
   let relativeTime: string;
   if (diffInSeconds < 60) {
-    relativeTime = "just now";
+    relativeTime = 'just now';
   } else if (diffInSeconds < 3600) {
     const minutes = Math.floor(diffInSeconds / 60);
-    relativeTime = `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+    relativeTime = `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
   } else if (diffInSeconds < 86400) {
     const hours = Math.floor(diffInSeconds / 3600);
-    relativeTime = `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    relativeTime = `${hours} hour${hours > 1 ? 's' : ''} ago`;
   } else if (diffInSeconds < 2592000) {
     const days = Math.floor(diffInSeconds / 86400);
-    relativeTime = `${days} day${days > 1 ? "s" : ""} ago`;
+    relativeTime = `${days} day${days > 1 ? 's' : ''} ago`;
   } else {
     const months = Math.floor(diffInSeconds / 2592000);
-    relativeTime = `${months} month${months > 1 ? "s" : ""} ago`;
+    relativeTime = `${months} month${months > 1 ? 's' : ''} ago`;
   }
 
   // Format full date
-  const fullDate = date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  const fullDate = date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 
   return `${relativeTime} • ${fullDate}`;
@@ -249,7 +249,7 @@ const getTaskSummary = (log: LogEntry): string => {
   if (log.subType) {
     return `Task ${log.subType}`;
   }
-  return "Task activity";
+  return 'Task activity';
 };
 
 /**
@@ -257,22 +257,22 @@ const getTaskSummary = (log: LogEntry): string => {
  */
 export const getLogStatus = (log: LogEntry): string => {
   switch (log.type) {
-    case "task":
-      if (log.status === "COMPLETED" || log.percentCompleted === 100) {
-        return "COMPLETED";
+    case 'task':
+      if (log.status === 'COMPLETED' || log.percentCompleted === 100) {
+        return 'COMPLETED';
       }
-      if (log.status === "IN_PROGRESS" || log.status === "ACTIVE") {
-        return "ACTIVE";
+      if (log.status === 'IN_PROGRESS' || log.status === 'ACTIVE') {
+        return 'ACTIVE';
       }
-      return "TASK";
-    case "oooRequests":
-      return "OOO";
-    case "taskRequests":
-      return "REQUEST";
-    case "extensionRequests":
-      return "EXTENSION";
+      return 'TASK';
+    case 'oooRequests':
+      return 'OOO';
+    case 'taskRequests':
+      return 'REQUEST';
+    case 'extensionRequests':
+      return 'EXTENSION';
     default:
-      return "ACTIVITY";
+      return 'ACTIVITY';
   }
 };
 
@@ -281,16 +281,16 @@ export const getLogStatus = (log: LogEntry): string => {
  */
 export const getStatusColor = (status: string): string => {
   switch (status) {
-    case "ACTIVE":
-    case "COMPLETED":
+    case 'ACTIVE':
+    case 'COMPLETED':
       return theme.colors.success[500]; // Green
-    case "OOO":
+    case 'OOO':
       return theme.colors.error[500]; // Red
-    case "REQUEST":
+    case 'REQUEST':
       return theme.colors.info[500]; // Blue
-    case "EXTENSION":
+    case 'EXTENSION':
       return theme.colors.warning[500]; // Yellow
-    case "TASK":
+    case 'TASK':
       return theme.colors.info[500]; // Blue
     default:
       return theme.colors.gray[500]; // Gray
@@ -359,7 +359,7 @@ export const processTaskDateRanges = (
   const currentTime = Date.now();
 
   for (const log of logs) {
-    if (log.type === "task" && log.taskId && log.taskTitle) {
+    if (log.type === 'task' && log.taskId && log.taskTitle) {
       const timestamp = log.timestamp * 1000;
       const logDate = new Date(timestamp);
       const logDayKey = getStartOfDay(logDate).getTime();
@@ -404,13 +404,13 @@ export const processTaskDateRanges = (
           }
         }
       }
-    } else if (log.type === "oooRequests") {
+    } else if (log.type === 'oooRequests') {
       // Handle OOO requests
       const timestamp = log.timestamp * 1000;
       const logDate = new Date(timestamp);
       const logDayKey = getStartOfDay(logDate).getTime();
 
-      statusByDate[logDayKey] = "OOO";
+      statusByDate[logDayKey] = 'OOO';
 
       // If OOO has start and end dates, populate the range (with limits)
       if (log.startDate && log.endDate) {
@@ -431,7 +431,7 @@ export const processTaskDateRanges = (
           const limitedDates = dates.slice(0, maxDateRange);
 
           for (const dateTimestamp of limitedDates) {
-            statusByDate[dateTimestamp] = "OOO";
+            statusByDate[dateTimestamp] = 'OOO';
           }
         }
       }
@@ -468,17 +468,17 @@ export const generateDateStatusMessage = (
   }
 
   // Check for OOO status
-  const oooLog = dateLogs.find((log) => log.type === "oooRequests");
+  const oooLog = dateLogs.find((log) => log.type === 'oooRequests');
   if (oooLog) {
-    return `${username} - Out of Office (${oooLog.status || "OOO"})`;
+    return `${username} - Out of Office (${oooLog.status || 'OOO'})`;
   }
 
   // Check for active tasks
   const activeTasks = dateLogs.filter(
     (log) =>
-      log.type === "task" &&
-      (log.status === "IN_PROGRESS" ||
-        log.status === "ACTIVE" ||
+      log.type === 'task' &&
+      (log.status === 'IN_PROGRESS' ||
+        log.status === 'ACTIVE' ||
         log.percentCompleted !== undefined)
   );
 
@@ -486,42 +486,42 @@ export const generateDateStatusMessage = (
     const taskTitles = activeTasks
       .map((task) => task.taskTitle)
       .filter(Boolean);
-    const taskList = taskTitles.length > 0 ? `: ${taskTitles.join(", ")}` : "";
+    const taskList = taskTitles.length > 0 ? `: ${taskTitles.join(', ')}` : '';
     return `${username} - Active on ${date}${taskList}`;
   }
 
   // Check for completed tasks
   const completedTasks = dateLogs.filter(
     (log) =>
-      log.type === "task" &&
-      (log.status === "COMPLETED" || log.percentCompleted === 100)
+      log.type === 'task' &&
+      (log.status === 'COMPLETED' || log.percentCompleted === 100)
   );
 
   if (completedTasks.length > 0) {
     const taskTitles = completedTasks
       .map((task) => task.taskTitle)
       .filter(Boolean);
-    const taskList = taskTitles.length > 0 ? `: ${taskTitles.join(", ")}` : "";
+    const taskList = taskTitles.length > 0 ? `: ${taskTitles.join(', ')}` : '';
     return `${username} - Completed tasks on ${date}${taskList}`;
   }
 
   // Check for requests
   const requests = dateLogs.filter(
-    (log) => log.type === "taskRequests" || log.type === "extensionRequests"
+    (log) => log.type === 'taskRequests' || log.type === 'extensionRequests'
   );
   if (requests.length > 0) {
     const requestTypes = requests.map((req) =>
-      req.type === "taskRequests" ? "Task Request" : "Extension Request"
+      req.type === 'taskRequests' ? 'Task Request' : 'Extension Request'
     );
-    return `${username} - ${requestTypes.join(", ")} activity on ${date}`;
+    return `${username} - ${requestTypes.join(', ')} activity on ${date}`;
   }
 
   return `${username} - Activity on ${date}`;
 };
 
 const getTaskRequestSummary = (log: LogEntry): string => {
-  const action = log.subAction || log.action || "updated";
-  const status = log.status ? ` (${log.status})` : "";
+  const action = log.subAction || log.action || 'updated';
+  const status = log.status ? ` (${log.status})` : '';
   return `Task request ${action}${status}`;
 };
 
@@ -534,28 +534,28 @@ const getExtensionRequestSummary = (log: LogEntry): string => {
     const newDate = new Date(log.newEndsOn * 1000).toLocaleDateString();
     return `Extension request: ${oldDate} → ${newDate}`;
   }
-  return "Extension request activity";
+  return 'Extension request activity';
 };
 
 const getOOORequestSummary = (log: LogEntry): string => {
   if (log.status) {
     return `Out of office request ${log.status}`;
   }
-  return "Out of office request";
+  return 'Out of office request';
 };
 
 export const createActivitySummary = (log: LogEntry): string => {
   switch (log.type) {
-    case "task":
+    case 'task':
       return getTaskSummary(log);
-    case "taskRequests":
+    case 'taskRequests':
       return getTaskRequestSummary(log);
-    case "extensionRequests":
+    case 'extensionRequests':
       return getExtensionRequestSummary(log);
-    case "oooRequests":
+    case 'oooRequests':
       return getOOORequestSummary(log);
     default:
-      return "Activity";
+      return 'Activity';
   }
 };
 
@@ -564,18 +564,18 @@ export const createActivitySummary = (log: LogEntry): string => {
  */
 export const getCurrentMonth = (): string => {
   const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 };
 
 /**
  * Gets the next month in YYYY-MM format
  */
 export const getNextMonth = (month: string): string => {
-  const [year, monthNum] = month.split("-").map(Number);
+  const [year, monthNum] = month.split('-').map(Number);
   const nextDate = new Date(year, monthNum, 1);
   return `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(
     2,
-    "0"
+    '0'
   )}`;
 };
 
@@ -583,10 +583,10 @@ export const getNextMonth = (month: string): string => {
  * Gets the previous month in YYYY-MM format
  */
 export const getPreviousMonth = (month: string): string => {
-  const [year, monthNum] = month.split("-").map(Number);
+  const [year, monthNum] = month.split('-').map(Number);
   const prevDate = new Date(year, monthNum - 2, 1);
   return `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(
     2,
-    "0"
+    '0'
   )}`;
 };

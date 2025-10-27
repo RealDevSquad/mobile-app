@@ -1,6 +1,6 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Stack, useRouter } from "expo-router";
-import React from "react";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Stack, useRouter } from 'expo-router';
+import React from 'react';
 
 export default function ProfileLayout() {
   const router = useRouter();
@@ -8,12 +8,12 @@ export default function ProfileLayout() {
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: '#fff',
         },
-        headerTintColor: "#fff",
+        headerTintColor: '#fff',
         headerTitleStyle: {
           //   fontWeight: 'bold',
-          color: "black",
+          color: 'black',
         },
       }}
     >
@@ -21,7 +21,7 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="details"
         options={{
-          title: "Details",
+          title: 'Details',
           headerLeft: () => (
             <FontAwesome
               testID="icon-arrow-left"

@@ -1,13 +1,13 @@
-import { oooFormSchema, TOOOFormData } from "@/api/users/users.schema";
-import FormDatePicker from "@/components/form/FormDatePicker";
-import FormInput from "@/components/form/FormInput";
-import FormSubmitButton from "@/components/form/FormSubmitButton";
-import { theme } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { oooFormSchema, TOOOFormData } from '@/api/users/users.schema';
+import FormDatePicker from '@/components/form/FormDatePicker';
+import FormInput from '@/components/form/FormInput';
+import FormSubmitButton from '@/components/form/FormSubmitButton';
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface OOOModalProps {
   onSubmit: (fromDate: Date, toDate: Date, reason: string) => void;
@@ -33,7 +33,7 @@ const OOOModal: React.FC<OOOModalProps> = ({
     defaultValues: {
       fromDate: new Date(),
       toDate: undefined,
-      reason: "",
+      reason: '',
     },
   });
 
@@ -96,7 +96,7 @@ const OOOModal: React.FC<OOOModalProps> = ({
                 required
                 errorMessage={errors.toDate?.message}
                 icon="calendar-outline"
-                minimumDate={watch("fromDate") || new Date()}
+                minimumDate={watch('fromDate') || new Date()}
                 disabled={isLoading}
               />
             )}
@@ -138,18 +138,18 @@ const OOOModal: React.FC<OOOModalProps> = ({
 
 const styles = StyleSheet.create({
   overlay: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 1000,
   },
   modalContainer: {
-    width: "90%",
+    width: '90%',
     maxWidth: 400,
     padding: theme.spacing.lg,
     backgroundColor: theme.colors.background.primary,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     ...theme.shadow.lg,
   },
   closeIcon: {
-    position: "absolute",
+    position: 'absolute',
     top: 14,
     right: 18,
     zIndex: 4,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.xl,
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: theme.spacing.lg,
   },
   form: {
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
   },
 });
 

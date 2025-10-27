@@ -1,8 +1,8 @@
-import { UsersApi } from "@/api/users/users.api";
-import { theme } from "@/constants/theme";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { useQuery } from "@tanstack/react-query";
-import React, { useCallback, useEffect, useState } from "react";
+import { UsersApi } from '@/api/users/users.api';
+import { theme } from '@/constants/theme';
+import useCheckUserSession from '@/hooks/getUserToken';
+import { useQuery } from '@tanstack/react-query';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -12,7 +12,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface UserSearchModalProps {
   visible: boolean;
@@ -26,8 +26,8 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   onUserSelect,
 }) => {
   const { token } = useCheckUserSession();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Debounce search term
   useEffect(() => {
@@ -55,7 +55,7 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   );
 
   const handleClose = useCallback(() => {
-    setSearchTerm("");
+    setSearchTerm('');
     onClose();
   }, [onClose]);
 
@@ -142,9 +142,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface.secondary,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.background.primary,
@@ -184,9 +184,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.primary,
   },
   loadingContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingVertical: theme.spacing.lg,
   },
   loadingText: {
@@ -197,13 +197,13 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     padding: theme.spacing.lg,
-    alignItems: "center",
+    alignItems: 'center',
   },
   messageText: {
     fontSize: theme.typography.fontSize.base,
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.secondary,
-    textAlign: "center",
+    textAlign: 'center',
   },
   userList: {
     flex: 1,

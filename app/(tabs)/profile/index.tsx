@@ -1,19 +1,19 @@
-import { TasksApi } from "@/api/tasks/tasks.api";
-import { UsersApi } from "@/api/users/users.api";
-import Header from "@/components/ProfileHeader";
-import Task from "@/components/Task";
-import { theme } from "@/constants/theme";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import { TasksApi } from '@/api/tasks/tasks.api';
+import { UsersApi } from '@/api/users/users.api';
+import Header from '@/components/ProfileHeader';
+import Task from '@/components/Task';
+import { theme } from '@/constants/theme';
+import useCheckUserSession from '@/hooks/getUserToken';
+import { useQuery } from '@tanstack/react-query';
+import React from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import { Tabs } from "react-native-collapsible-tab-view";
+} from 'react-native';
+import { Tabs } from 'react-native-collapsible-tab-view';
 
 export default function ProfileScreen() {
   const HEADER_HEIGHT = 250;
@@ -100,7 +100,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

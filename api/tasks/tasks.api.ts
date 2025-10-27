@@ -1,5 +1,5 @@
-import { AxiosHeaders, InternalAxiosRequestConfig } from "axios";
-import { apiClient } from "../../lib/api-client";
+import { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
+import { apiClient } from '../../lib/api-client';
 import {
   TCreateTaskReqDto,
   TCreateTaskResponse,
@@ -14,12 +14,12 @@ import {
   TUpdateTaskResponse,
   TUpdateTaskStatusDto,
   TUpdateTaskStatusResponse,
-} from "./tasks.types";
+} from './tasks.types';
 
 export const TasksApi = {
   getTasks: {
     key: (params?: TGetTaskReqDto) => [
-      "TasksApi.getTasks",
+      'TasksApi.getTasks',
       JSON.stringify(params),
     ],
     fn: async (
@@ -33,13 +33,13 @@ export const TasksApi = {
       if (token) {
         (config as any).token = token;
       }
-      const { data } = await apiClient.get<TGetTasksDto>("/tasks", config);
+      const { data } = await apiClient.get<TGetTasksDto>('/tasks', config);
       return data;
     },
   },
 
   getSelfTasks: {
-    key: ["TasksApi.getSelfTasks"],
+    key: ['TasksApi.getSelfTasks'],
     fn: async (token?: string): Promise<TGetSelfTasksDto> => {
       const config: InternalAxiosRequestConfig = {
         headers: new AxiosHeaders(),
@@ -48,7 +48,7 @@ export const TasksApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TGetSelfTasksDto>(
-        "/tasks/self",
+        '/tasks/self',
         config
       );
       return data;
@@ -56,7 +56,7 @@ export const TasksApi = {
   },
 
   getTaskDetails: {
-    key: (id: string) => ["TasksApi.getTaskDetails", id],
+    key: (id: string) => ['TasksApi.getTaskDetails', id],
     fn: async (id: string): Promise<TGetTaskDetailsDto> => {
       const { data } = await apiClient.get<TGetTaskDetailsDto>(
         `/tasks/${id}/details`
@@ -66,7 +66,7 @@ export const TasksApi = {
   },
 
   getTaskProgress: {
-    key: (id: string) => ["TasksApi.getTaskProgress", id],
+    key: (id: string) => ['TasksApi.getTaskProgress', id],
     fn: async (id: string): Promise<TGetTaskProgressDto> => {
       try {
         const { data } = await apiClient.get<TGetTaskProgressDto>(
@@ -79,7 +79,7 @@ export const TasksApi = {
       } catch (error: any) {
         if (error.response?.status === 404) {
           return {
-            message: "No progress updates found",
+            message: 'No progress updates found',
             count: 0,
             data: [],
           };
@@ -90,10 +90,10 @@ export const TasksApi = {
   },
 
   createTask: {
-    key: ["TasksApi.createTask"],
+    key: ['TasksApi.createTask'],
     fn: async (task: TCreateTaskReqDto): Promise<TCreateTaskResponse> => {
       const { data } = await apiClient.post<TCreateTaskResponse>(
-        "/tasks",
+        '/tasks',
         task
       );
       return data;
@@ -101,7 +101,7 @@ export const TasksApi = {
   },
 
   updateTask: {
-    key: ["TasksApi.updateTask"],
+    key: ['TasksApi.updateTask'],
     fn: async ({
       id,
       ...task
@@ -115,7 +115,7 @@ export const TasksApi = {
   },
 
   updateTaskStatus: {
-    key: (id: string) => ["TasksApi.updateTaskStatus", id],
+    key: (id: string) => ['TasksApi.updateTaskStatus', id],
     fn: async (
       id: string,
       statusData: TUpdateTaskStatusDto,
@@ -137,7 +137,7 @@ export const TasksApi = {
   },
 
   submitProgress: {
-    key: ["TasksApi.submitProgress"],
+    key: ['TasksApi.submitProgress'],
     fn: async (
       progress: TSubmitProgressDto,
       token?: string
@@ -149,7 +149,7 @@ export const TasksApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.post<TSubmitProgressResponse>(
-        "/progresses",
+        '/progresses',
         progress,
         config
       );

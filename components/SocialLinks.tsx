@@ -1,9 +1,9 @@
-import GithubSvg from "@/assets/svgs/github_logo";
-import LinkedInSvg from "@/assets/svgs/linkedIn";
-import TwitterSvg from "@/assets/svgs/twitter";
-import { theme } from "@/constants/theme";
-import React from "react";
-import { Linking, Pressable, StyleSheet, View } from "react-native";
+import GithubSvg from '@/assets/svgs/github_logo';
+import LinkedInSvg from '@/assets/svgs/linkedIn';
+import TwitterSvg from '@/assets/svgs/twitter';
+import { theme } from '@/constants/theme';
+import React from 'react';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
 interface SocialLinksProps {
   github_id: string;
@@ -50,8 +50,8 @@ const SocialLinks = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: theme.spacing.lg,
   },
 });

@@ -1,5 +1,5 @@
-import * as dotenv from "dotenv";
-import { z } from "zod";
+import * as dotenv from 'dotenv';
+import { z } from 'zod';
 
 dotenv.config();
 
@@ -7,8 +7,8 @@ const configSchema = z.object({
   EXPO_PUBLIC_API_URL: z.string().url(),
   EXPO_PUBLIC_API_KEY: z.string().optional(),
   APP_ENV: z
-    .enum(["development", "staging", "production"])
-    .default("development"),
+    .enum(['development', 'staging', 'production'])
+    .default('development'),
 });
 
 export const validateEnv = () => {
@@ -19,7 +19,7 @@ export const validateEnv = () => {
     throw new Error(
       JSON.stringify(
         {
-          message: "Error loading config",
+          message: 'Error loading config',
           errors,
         },
         null,
@@ -36,10 +36,10 @@ export const ENV = validatedEnv.APP_ENV;
 
 export default {
   expo: {
-    name: "RDSApp",
-    slug: "rds-app",
-    scheme: "rdsapp",
-    version: "1.0.0",
+    name: 'RDSApp',
+    slug: 'rds-app',
+    scheme: 'rdsapp',
+    version: '1.0.0',
     apiUrl: validatedEnv.EXPO_PUBLIC_API_URL,
     apiKey: validatedEnv.EXPO_PUBLIC_API_KEY,
     environment: ENV,

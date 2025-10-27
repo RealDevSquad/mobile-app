@@ -1,15 +1,15 @@
-import { TasksApi } from "@/api/tasks/tasks.api";
+import { TasksApi } from '@/api/tasks/tasks.api';
 import {
   addProgressSchema,
   TAddProgressFormData,
-} from "@/api/tasks/tasks.schema";
-import FormInput from "@/components/form/FormInput";
-import FormSubmitButton from "@/components/form/FormSubmitButton";
-import { theme } from "@/constants/theme";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
+} from '@/api/tasks/tasks.schema';
+import FormInput from '@/components/form/FormInput';
+import FormSubmitButton from '@/components/form/FormSubmitButton';
+import { theme } from '@/constants/theme';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Alert,
   Modal,
@@ -18,7 +18,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface AddProgressModalProps {
   visible: boolean;
@@ -45,9 +45,9 @@ export default function AddProgressModal({
   } = useForm<TAddProgressFormData>({
     resolver: zodResolver(addProgressSchema),
     defaultValues: {
-      completed: "",
-      planned: "",
-      blockers: "",
+      completed: '',
+      planned: '',
+      blockers: '',
     },
   });
 
@@ -60,30 +60,30 @@ export default function AddProgressModal({
       blockers: string;
     }) => TasksApi.submitProgress.fn(progressData, token || undefined),
     onSuccess: () => {
-      Alert.alert("Success", "Progress updated successfully");
+      Alert.alert('Success', 'Progress updated successfully');
       reset();
-      queryClient.invalidateQueries({ queryKey: ["TasksApi.getSelfTasks"] });
-      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskDetails"] });
-      queryClient.invalidateQueries({ queryKey: ["TasksApi.getTaskProgress"] });
+      queryClient.invalidateQueries({ queryKey: ['TasksApi.getSelfTasks'] });
+      queryClient.invalidateQueries({ queryKey: ['TasksApi.getTaskDetails'] });
+      queryClient.invalidateQueries({ queryKey: ['TasksApi.getTaskProgress'] });
       onSubmit();
       onClose();
     },
     onError: (error) => {
-      console.error("Error submitting progress:", error);
+      console.error('Error submitting progress:', error);
       Alert.alert(
-        "Error",
-        error instanceof Error ? error.message : "Failed to submit progress"
+        'Error',
+        error instanceof Error ? error.message : 'Failed to submit progress'
       );
     },
   });
 
   const handleFormSubmit = (data: TAddProgressFormData) => {
     submitProgressMutation.mutate({
-      type: "task",
+      type: 'task',
       taskId,
-      completed: data.completed?.trim() || "",
-      planned: data.planned?.trim() || "",
-      blockers: data.blockers?.trim() || "",
+      completed: data.completed?.trim() || '',
+      planned: data.planned?.trim() || '',
+      blockers: data.blockers?.trim() || '',
     });
   };
 
@@ -117,12 +117,12 @@ export default function AddProgressModal({
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Add Task Update</Text>
               <Text style={styles.sectionSubtitle}>
-                On{" "}
-                {new Date().toLocaleDateString("en-US", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
+                On{' '}
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
                 })}
               </Text>
             </View>
@@ -207,29 +207,29 @@ export default function AddProgressModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: theme.spacing.lg,
   },
   overlayTouchable: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.radius.lg,
-    width: "100%",
-    maxHeight: "90%",
+    width: '100%',
+    maxHeight: '90%',
     ...theme.shadow.lg,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.sm,
     borderBottomWidth: 1,
@@ -275,11 +275,11 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.primary,
     minHeight: 70,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
     ...theme.shadow.sm,
   },
   footer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: theme.spacing.sm,
     paddingBottom: theme.spacing.md,
     borderTopWidth: 1,
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.tertiary,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.border.secondary,
   },
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary[600],
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
+    alignItems: 'center',
   },
   submitButtonDisabled: {
     opacity: 0.7,

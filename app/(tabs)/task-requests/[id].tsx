@@ -1,9 +1,9 @@
-import { TaskRequestsApi } from "@/api/task-requests/task-requests.api";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import moment from "moment";
-import React, { useState } from "react";
+import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
+import useCheckUserSession from '@/hooks/getUserToken';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import moment from 'moment';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,7 +14,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 export default function TaskRequestDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -30,7 +30,7 @@ export default function TaskRequestDetailsScreen() {
     isError,
     error,
   } = useQuery({
-    queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+    queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
     queryFn: () =>
       TaskRequestsApi.getTaskRequestById.fn(id!, token || undefined),
     enabled: !!token && !!id,
@@ -50,17 +50,17 @@ export default function TaskRequestDetailsScreen() {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+        queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
       });
       queryClient.invalidateQueries({
-        queryKey: TaskRequestsApi.getTaskRequests.key({ status: "PENDING" }),
+        queryKey: TaskRequestsApi.getTaskRequests.key({ status: 'PENDING' }),
       });
-      Alert.alert("Success", "Task request approved successfully");
+      Alert.alert('Success', 'Task request approved successfully');
       router.back();
     },
     onError: (error) => {
-      Alert.alert("Error", "Failed to approve task request");
-      console.error("Error approving task request:", error);
+      Alert.alert('Error', 'Failed to approve task request');
+      console.error('Error approving task request:', error);
     },
   });
 
@@ -80,17 +80,17 @@ export default function TaskRequestDetailsScreen() {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+        queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
       });
       queryClient.invalidateQueries({
-        queryKey: TaskRequestsApi.getTaskRequests.key({ status: "PENDING" }),
+        queryKey: TaskRequestsApi.getTaskRequests.key({ status: 'PENDING' }),
       });
-      Alert.alert("Success", "Task request rejected successfully");
+      Alert.alert('Success', 'Task request rejected successfully');
       router.back();
     },
     onError: (error) => {
-      Alert.alert("Error", "Failed to reject task request");
-      console.error("Error rejecting task request:", error);
+      Alert.alert('Error', 'Failed to reject task request');
+      console.error('Error rejecting task request:', error);
     },
   });
 
@@ -98,18 +98,18 @@ export default function TaskRequestDetailsScreen() {
     if (!taskRequest) return;
 
     Alert.alert(
-      "Approve Task Request",
-      "Are you sure you want to approve this task request?",
+      'Approve Task Request',
+      'Are you sure you want to approve this task request?',
       [
-        { text: "Cancel", style: "cancel" },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: "Approve",
+          text: 'Approve',
           onPress: () => {
             setIsApproving(true);
             approveMutation.mutate(
               {
                 taskRequestId: taskRequest.id,
-                userId: taskRequest.requestors?.[0] || "",
+                userId: taskRequest.requestors?.[0] || '',
               },
               {
                 onSettled: () => setIsApproving(false),
@@ -125,19 +125,19 @@ export default function TaskRequestDetailsScreen() {
     if (!taskRequest) return;
 
     Alert.alert(
-      "Reject Task Request",
-      "Are you sure you want to reject this task request?",
+      'Reject Task Request',
+      'Are you sure you want to reject this task request?',
       [
-        { text: "Cancel", style: "cancel" },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: "Reject",
-          style: "destructive",
+          text: 'Reject',
+          style: 'destructive',
           onPress: () => {
             setIsRejecting(true);
             rejectMutation.mutate(
               {
                 taskRequestId: taskRequest.id,
-                userId: taskRequest.requestors?.[0] || "",
+                userId: taskRequest.requestors?.[0] || '',
               },
               {
                 onSettled: () => setIsRejecting(false),
@@ -150,23 +150,23 @@ export default function TaskRequestDetailsScreen() {
   };
 
   const formatDate = (timestamp: number) => {
-    return moment(timestamp).format("MMM DD, YYYY");
+    return moment(timestamp).format('MMM DD, YYYY');
   };
 
   const formatDateTime = (timestamp: number) => {
-    return moment(timestamp).format("MMM DD, YYYY [at] h:mm A");
+    return moment(timestamp).format('MMM DD, YYYY [at] h:mm A');
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PENDING":
-        return "#FFA500";
-      case "APPROVED":
-        return "#4CAF50";
-      case "REJECTED":
-        return "#F44336";
+      case 'PENDING':
+        return '#FFA500';
+      case 'APPROVED':
+        return '#4CAF50';
+      case 'REJECTED':
+        return '#F44336';
       default:
-        return "#666";
+        return '#666';
     }
   };
 
@@ -187,13 +187,13 @@ export default function TaskRequestDetailsScreen() {
     return (
       <SafeAreaView style={styles.errorContainer}>
         <Text style={styles.errorText}>
-          {error?.message || "Task request not found"}
+          {error?.message || 'Task request not found'}
         </Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={() => {
             queryClient.invalidateQueries({
-              queryKey: TaskRequestsApi.getTaskRequestById.key(id || ""),
+              queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
             });
           }}
         >
@@ -326,7 +326,7 @@ export default function TaskRequestDetailsScreen() {
       </ScrollView>
 
       {/* Action Buttons */}
-      {taskRequest.status === "PENDING" && (
+      {taskRequest.status === 'PENDING' && (
         <View style={styles.actionContainer}>
           <TouchableOpacity
             style={[
@@ -368,42 +368,42 @@ export default function TaskRequestDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "#666",
+    color: '#666',
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   errorText: {
     fontSize: 16,
-    color: "#F44336",
-    textAlign: "center",
+    color: '#F44336',
+    textAlign: 'center',
     marginBottom: 20,
   },
   retryButton: {
-    backgroundColor: "#1D1283",
+    backgroundColor: '#1D1283',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   retryButtonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   scrollView: {
     flex: 1,
@@ -412,18 +412,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 24,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: '#E0E0E0',
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
     flex: 1,
     marginRight: 12,
   },
@@ -432,109 +432,109 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     minWidth: 80,
-    alignItems: "center",
+    alignItems: 'center',
   },
   statusText: {
-    color: "white",
+    color: 'white',
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   section: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
     marginBottom: 12,
   },
   infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
   },
   label: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
+    fontWeight: '600',
+    color: '#666',
     flex: 1,
   },
   value: {
     fontSize: 14,
-    color: "#333",
+    color: '#333',
     flex: 2,
-    textAlign: "right",
+    textAlign: 'right',
   },
   description: {
     fontSize: 14,
-    color: "#333",
+    color: '#333',
     lineHeight: 20,
   },
   linkButton: {
-    backgroundColor: "#1D1283",
+    backgroundColor: '#1D1283',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
     marginBottom: 8,
   },
   linkText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: "600",
-    textAlign: "center",
+    fontWeight: '600',
+    textAlign: 'center',
   },
   userItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: '#E0E0E0',
   },
   userName: {
     fontSize: 14,
-    color: "#333",
-    fontWeight: "500",
+    color: '#333',
+    fontWeight: '500',
   },
   userStatus: {
     fontSize: 12,
-    color: "#666",
-    textTransform: "uppercase",
+    color: '#666',
+    textTransform: 'uppercase',
   },
   actionContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
+    borderTopColor: '#E0E0E0',
     gap: 12,
   },
   actionButton: {
     flex: 1,
     paddingVertical: 16,
     borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   approveButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#4CAF50',
   },
   rejectButton: {
-    backgroundColor: "#F44336",
+    backgroundColor: '#F44336',
   },
   actionButtonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   disabledButton: {
     opacity: 0.6,

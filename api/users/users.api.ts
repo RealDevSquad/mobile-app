@@ -1,5 +1,5 @@
-import { AxiosHeaders, InternalAxiosRequestConfig } from "axios";
-import { apiClient } from "../../lib/api-client";
+import { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
+import { apiClient } from '../../lib/api-client';
 import {
   TCancelOOOResponse,
   TGetActiveTaskResponse,
@@ -8,11 +8,11 @@ import {
   TSearchUsersResponse,
   TSubmitOOOFormDto,
   TSubmitOOOResponse,
-} from "./users.types";
+} from './users.types';
 
 export const UsersApi = {
   getUserDetails: {
-    key: ["UsersApi.getUserDetails"],
+    key: ['UsersApi.getUserDetails'],
     fn: async (token?: string): Promise<TGetUserDetailsResponse> => {
       const config: InternalAxiosRequestConfig = {
         headers: new AxiosHeaders(),
@@ -21,7 +21,7 @@ export const UsersApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TGetUserDetailsResponse>(
-        "/users?profile=true",
+        '/users?profile=true',
         config
       );
       return data;
@@ -29,7 +29,7 @@ export const UsersApi = {
   },
 
   getUserStatus: {
-    key: ["UsersApi.getUserStatus"],
+    key: ['UsersApi.getUserStatus'],
     fn: async (token?: string): Promise<TGetUserStatusResponse> => {
       const config: InternalAxiosRequestConfig = {
         headers: new AxiosHeaders(),
@@ -38,7 +38,7 @@ export const UsersApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TGetUserStatusResponse>(
-        "/users/status/self",
+        '/users/status/self',
         config
       );
       return data;
@@ -46,7 +46,7 @@ export const UsersApi = {
   },
 
   searchUsers: {
-    key: (searchTerm: string) => ["UsersApi.searchUsers", searchTerm],
+    key: (searchTerm: string) => ['UsersApi.searchUsers', searchTerm],
     fn: async (
       searchTerm: string,
       token?: string
@@ -59,7 +59,7 @@ export const UsersApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TSearchUsersResponse>(
-        "/users",
+        '/users',
         config
       );
       return data;
@@ -67,7 +67,7 @@ export const UsersApi = {
   },
 
   getActiveTask: {
-    key: ["UsersApi.getActiveTask"],
+    key: ['UsersApi.getActiveTask'],
     fn: async (token?: string): Promise<TGetActiveTaskResponse> => {
       const config: InternalAxiosRequestConfig = {
         headers: new AxiosHeaders(),
@@ -76,7 +76,7 @@ export const UsersApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TGetActiveTaskResponse>(
-        "/users/self/tasks/active",
+        '/users/self/tasks/active',
         config
       );
       return data;
@@ -84,7 +84,7 @@ export const UsersApi = {
   },
 
   submitOOOForm: {
-    key: ["UsersApi.submitOOOForm"],
+    key: ['UsersApi.submitOOOForm'],
     fn: async (
       oooData: TSubmitOOOFormDto,
       token?: string
@@ -94,7 +94,7 @@ export const UsersApi = {
           from: new Date(oooData.fromDate).getTime(),
           until: new Date(oooData.toDate).getTime(),
           message: oooData.description,
-          state: "OOO",
+          state: 'OOO',
           updatedAt: Date.now(),
         },
       };
@@ -106,7 +106,7 @@ export const UsersApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.patch<TSubmitOOOResponse>(
-        "/users/status/self?userStatusFlag=true",
+        '/users/status/self?userStatusFlag=true',
         payload,
         config
       );
@@ -115,7 +115,7 @@ export const UsersApi = {
   },
 
   cancelOOO: {
-    key: ["UsersApi.cancelOOO"],
+    key: ['UsersApi.cancelOOO'],
     fn: async (token?: string): Promise<TCancelOOOResponse> => {
       const payload = {
         cancelOoo: true,
@@ -128,7 +128,7 @@ export const UsersApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.patch<TCancelOOOResponse>(
-        "/users/status/self?userStatusFlag=true",
+        '/users/status/self?userStatusFlag=true',
         payload,
         config
       );

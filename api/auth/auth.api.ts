@@ -1,24 +1,24 @@
-import { apiClient } from "@/lib/api-client";
+import { apiClient } from '@/lib/api-client';
 import {
   TGithubLoginResponse,
   TQRAuthRequest,
   TQRAuthResponse,
-} from "./auth.types";
+} from './auth.types';
 
 export const AuthApi = {
   githubLogin: {
-    key: ["AuthApi.githubLogin"],
+    key: ['AuthApi.githubLogin'],
     fn: async (token?: string): Promise<TGithubLoginResponse> => {
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       };
       if (token) {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TGithubLoginResponse>(
-        "/auth/github/login",
+        '/auth/github/login',
         config
       );
       return data;
@@ -26,11 +26,11 @@ export const AuthApi = {
   },
 
   qrCodeAuth: {
-    key: (deviceId: string) => ["AuthApi.qrCodeAuth", deviceId],
+    key: (deviceId: string) => ['AuthApi.qrCodeAuth', deviceId],
     fn: async (deviceId: string, token?: string): Promise<TQRAuthResponse> => {
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       };
       if (token) {
@@ -46,7 +46,7 @@ export const AuthApi = {
 
   qrCodeAuthPost: {
     key: (deviceId: string, userId: string) => [
-      "AuthApi.qrCodeAuthPost",
+      'AuthApi.qrCodeAuthPost',
       deviceId,
       userId,
     ],
@@ -56,14 +56,14 @@ export const AuthApi = {
     ): Promise<TQRAuthResponse> => {
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       };
       if (token) {
         (config as any).token = token;
       }
       const { data } = await apiClient.post<TQRAuthResponse>(
-        "/auth/qr-code-auth",
+        '/auth/qr-code-auth',
         requestData,
         config
       );

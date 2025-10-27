@@ -1,17 +1,15 @@
-import colors from "@/constants/colors";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Tabs } from "expo-router";
-import React from "react";
-
-const colorScheme: "light" | "dark" = "light";
+import { theme } from '@/constants/theme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Tabs } from 'expo-router';
+import React from 'react';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: colors[colorScheme].tint,
+        tabBarActiveTintColor: theme.colors.primary[500],
         headerShown: false,
-        tabBarStyle: route.name === "index" ? { display: "none" } : undefined,
+        tabBarStyle: route.name === 'index' ? { display: 'none' } : undefined,
       })}
     >
       {/* index screen */}
@@ -27,7 +25,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: "Home",
+          title: 'Home',
           tabBarIcon: ({ color }: { color: string }) => (
             <FontAwesome
               name="home"
@@ -43,7 +41,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="notify"
         options={{
-          title: "Notify",
+          title: 'Notify',
           tabBarIcon: ({ color }: { color: string }) => (
             <FontAwesome
               name="bell-o"
@@ -59,7 +57,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: 'Profile',
           tabBarIcon: ({ color }: { color: string }) => (
             <FontAwesome
               name="user"

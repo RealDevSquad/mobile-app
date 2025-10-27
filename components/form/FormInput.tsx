@@ -1,13 +1,13 @@
-import { theme } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 import {
   StyleSheet,
   Text,
   TextInput,
   TextInputProps,
   View,
-} from "react-native";
+} from 'react-native';
 
 type FormInputProps = {
   label: string;
@@ -16,7 +16,7 @@ type FormInputProps = {
   required?: boolean;
   errorMessage?: string;
   children?: React.ReactNode;
-  direction?: "row" | "column";
+  direction?: 'row' | 'column';
 } & TextInputProps;
 
 const FormInput = ({
@@ -26,7 +26,7 @@ const FormInput = ({
   icon,
   required,
   errorMessage,
-  direction = "column",
+  direction = 'column',
   style,
   ...textInputProps
 }: FormInputProps) => {
@@ -35,7 +35,7 @@ const FormInput = ({
       <View
         style={[
           styles.labelContainer,
-          direction === "row" ? styles.labelRow : styles.labelColumn,
+          direction === 'row' ? styles.labelRow : styles.labelColumn,
         ]}
       >
         {icon && (
@@ -73,13 +73,13 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     width: 120,
   },
   labelColumn: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   icon: {
     marginRight: theme.spacing.xs,
@@ -114,5 +114,3 @@ const styles = StyleSheet.create({
 });
 
 export default FormInput;
-
-

@@ -1,6 +1,6 @@
-import { theme } from "@/constants/theme";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { theme } from '@/constants/theme';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ModalProps {
   visible: boolean;
@@ -41,27 +41,27 @@ export default CustomModal;
 
 const styles = StyleSheet.create({
   modalContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: "80%",
+    width: '80%',
     padding: theme.spacing.lg,
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.radius.md,
-    alignItems: "center",
+    alignItems: 'center',
   },
   modalText: {
     fontSize: theme.typography.fontSize.base,
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.primary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: theme.spacing.lg,
   },
   modalButton: {

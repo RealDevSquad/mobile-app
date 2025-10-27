@@ -1,5 +1,5 @@
-import { AxiosHeaders, InternalAxiosRequestConfig } from "axios";
-import { apiClient } from "../../lib/api-client";
+import { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
+import { apiClient } from '../../lib/api-client';
 import {
   TCreateExtensionRequestDto,
   TCreateExtensionRequestResponse,
@@ -9,12 +9,12 @@ import {
   TGetSelfExtensionRequestsResponse,
   TUpdateExtensionRequestStatusDto,
   TUpdateExtensionRequestStatusResponse,
-} from "./extension-requests.types";
+} from './extension-requests.types';
 
 export const ExtensionRequestsApi = {
   getExtensionRequests: {
     key: (params?: TGetExtensionRequestsDto) => [
-      "ExtensionRequestsApi.getExtensionRequests",
+      'ExtensionRequestsApi.getExtensionRequests',
       JSON.stringify(params),
     ],
     fn: async (
@@ -22,9 +22,9 @@ export const ExtensionRequestsApi = {
       token?: string
     ): Promise<TGetExtensionRequestsResponse> => {
       const queryParams = new URLSearchParams({
-        order: "desc",
-        size: "5",
-        q: `status:${params?.status || "PENDING"}`,
+        order: 'desc',
+        size: '5',
+        q: `status:${params?.status || 'PENDING'}`,
         ...(params?.next && { next: params.next }),
       });
 
@@ -36,7 +36,7 @@ export const ExtensionRequestsApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TGetExtensionRequestsResponse>(
-        "/extension-requests",
+        '/extension-requests',
         config
       );
       return data;
@@ -45,7 +45,7 @@ export const ExtensionRequestsApi = {
 
   getSelfExtensionRequests: {
     key: (params: TGetSelfExtensionRequestsDto) => [
-      "ExtensionRequestsApi.getSelfExtensionRequests",
+      'ExtensionRequestsApi.getSelfExtensionRequests',
       params.taskId,
     ],
     fn: async (
@@ -60,7 +60,7 @@ export const ExtensionRequestsApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.get<TGetSelfExtensionRequestsResponse>(
-        "/extension-requests/self",
+        '/extension-requests/self',
         config
       );
       return data;
@@ -69,7 +69,7 @@ export const ExtensionRequestsApi = {
 
   updateExtensionRequestStatus: {
     key: (id: string) => [
-      "ExtensionRequestsApi.updateExtensionRequestStatus",
+      'ExtensionRequestsApi.updateExtensionRequestStatus',
       id,
     ],
     fn: async (
@@ -94,7 +94,7 @@ export const ExtensionRequestsApi = {
   },
 
   createExtensionRequest: {
-    key: ["ExtensionRequestsApi.createExtensionRequest"],
+    key: ['ExtensionRequestsApi.createExtensionRequest'],
     fn: async (
       extensionData: TCreateExtensionRequestDto,
       token?: string
@@ -106,7 +106,7 @@ export const ExtensionRequestsApi = {
         (config as any).token = token;
       }
       const { data } = await apiClient.post<TCreateExtensionRequestResponse>(
-        "/extension-requests",
+        '/extension-requests',
         extensionData,
         config
       );

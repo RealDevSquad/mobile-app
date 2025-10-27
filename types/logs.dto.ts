@@ -2,7 +2,7 @@
 
 export interface LogEntry {
   // Common fields
-  type: "task" | "taskRequests" | "oooRequests" | "extensionRequests";
+  type: 'task' | 'taskRequests' | 'oooRequests' | 'extensionRequests';
   timestamp: number; // Unix timestamp in seconds
   user?: string;
   userId?: string;
@@ -78,10 +78,10 @@ export interface MarkedDates {
 
 // Activity types for grouping
 export type ActivityType =
-  | "task"
-  | "taskRequests"
-  | "oooRequests"
-  | "extensionRequests";
+  | 'task'
+  | 'taskRequests'
+  | 'oooRequests'
+  | 'extensionRequests';
 
 export interface ActivityGroup {
   type: ActivityType;

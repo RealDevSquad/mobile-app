@@ -1,5 +1,5 @@
-import { UserData, UserStatus } from "@/types/user.dto";
-import { TApiResponse } from "../common/common.types";
+import { UserData, UserStatus } from '@/types/user.dto';
+import { TApiResponse } from '../common/common.types';
 
 // Request DTOs
 export type TGetUserDetailsDto = {

@@ -1,7 +1,7 @@
-import { theme } from "@/constants/theme";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { theme } from '@/constants/theme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface MyTasksCardProps {
   onPress: () => void;
@@ -42,13 +42,13 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
   icon: {

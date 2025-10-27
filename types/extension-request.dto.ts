@@ -7,7 +7,7 @@ export interface ExtensionRequestDTO {
   assigneeId: string;
   oldEndsOn: number;
   newEndsOn: number;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "DENIED";
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'DENIED';
   requestNumber: number;
   timestamp: number;
 }

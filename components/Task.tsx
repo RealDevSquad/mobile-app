@@ -1,7 +1,7 @@
-import { theme } from "@/constants/theme";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import moment from "moment";
-import React, { useMemo } from "react";
+import { theme } from '@/constants/theme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import moment from 'moment';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 const Task = React.memo(
   ({
@@ -53,15 +53,15 @@ const Task = React.memo(
                 Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
               </Text>
               <Text style={styles.text}>
-                Progress:{" "}
+                Progress:{' '}
                 <Text style={styles.progress}>{item.percentCompleted}%</Text>
               </Text>
               <Text style={styles.text}>
-                Ends On:{" "}
+                Ends On:{' '}
                 <Text style={styles.endsOn}>{formatTimeAgo(item.endsOn)}</Text>
               </Text>
               <Text style={styles.text}>
-                Started On:{" "}
+                Started On:{' '}
                 <Text style={styles.startedOn}>
                   {formatTimeAgo(item.startedOn)}
                 </Text>
@@ -112,7 +112,7 @@ const Task = React.memo(
   }
 );
 
-Task.displayName = "Task";
+Task.displayName = 'Task';
 
 const styles = StyleSheet.create({
   card: {
@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   cardContent: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'flex-start',
   },
   cardText: {
     flex: 1,
@@ -167,12 +167,12 @@ const styles = StyleSheet.create({
   emptyView: {
     color: theme.colors.text.primary,
     marginTop: theme.spacing.lg,
-    textAlign: "center",
+    textAlign: 'center',
   },
   footerLoader: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingVertical: theme.spacing.lg,
   },
   loadingText: {

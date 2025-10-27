@@ -1,8 +1,8 @@
-import { theme } from "@/constants/theme";
-import { ExtensionRequestDTO } from "@/types/extension-request.dto";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import moment from "moment";
-import React, { useState } from "react";
+import { theme } from '@/constants/theme';
+import { ExtensionRequestDTO } from '@/types/extension-request.dto';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import moment from 'moment';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,7 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface ExtensionRequestCardProps {
   request: ExtensionRequestDTO;
@@ -31,28 +31,28 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
     };
 
     const formatDate = (timestamp: number) => {
-      return moment.unix(timestamp).format("MMM DD, YYYY");
+      return moment.unix(timestamp).format('MMM DD, YYYY');
     };
 
     const handleApprove = async () => {
       Alert.alert(
-        "Approve Extension Request",
-        "Are you sure you want to approve this extension request?",
+        'Approve Extension Request',
+        'Are you sure you want to approve this extension request?',
         [
-          { text: "Cancel", style: "cancel" },
+          { text: 'Cancel', style: 'cancel' },
           {
-            text: "Approve",
-            style: "default",
+            text: 'Approve',
+            style: 'default',
             onPress: async () => {
               setIsApproving(true);
               try {
                 await onApprove(request.id);
                 Alert.alert(
-                  "Success",
-                  "Extension request approved successfully."
+                  'Success',
+                  'Extension request approved successfully.'
                 );
               } catch {
-                Alert.alert("Error", "Failed to approve extension request.");
+                Alert.alert('Error', 'Failed to approve extension request.');
               } finally {
                 setIsApproving(false);
               }
@@ -64,23 +64,23 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
 
     const handleReject = async () => {
       Alert.alert(
-        "Reject Extension Request",
-        "Are you sure you want to reject this extension request?",
+        'Reject Extension Request',
+        'Are you sure you want to reject this extension request?',
         [
-          { text: "Cancel", style: "cancel" },
+          { text: 'Cancel', style: 'cancel' },
           {
-            text: "Reject",
-            style: "destructive",
+            text: 'Reject',
+            style: 'destructive',
             onPress: async () => {
               setIsRejecting(true);
               try {
                 await onReject(request.id);
                 Alert.alert(
-                  "Success",
-                  "Extension request rejected successfully."
+                  'Success',
+                  'Extension request rejected successfully.'
                 );
               } catch {
-                Alert.alert("Error", "Failed to reject extension request.");
+                Alert.alert('Error', 'Failed to reject extension request.');
               } finally {
                 setIsRejecting(false);
               }
@@ -92,21 +92,21 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
 
     const getStatusColor = (status: string) => {
       switch (status) {
-        case "PENDING":
-          return "#FFA500";
-        case "APPROVED":
-          return "#4CAF50";
-        case "REJECTED":
-        case "DENIED":
-          return "#F44336";
+        case 'PENDING':
+          return '#FFA500';
+        case 'APPROVED':
+          return '#4CAF50';
+        case 'REJECTED':
+        case 'DENIED':
+          return '#F44336';
         default:
-          return "#666";
+          return '#666';
       }
     };
 
     const truncateText = (text: string, maxLength: number) => {
       if (text.length <= maxLength) return text;
-      return text.substring(0, maxLength) + "...";
+      return text.substring(0, maxLength) + '...';
     };
 
     return (
@@ -133,7 +133,7 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
             color="#666"
             style={[
               styles.arrowIcon,
-              { transform: [{ rotate: isExpanded ? "180deg" : "0deg" }] },
+              { transform: [{ rotate: isExpanded ? '180deg' : '0deg' }] },
             ]}
           />
         </View>
@@ -145,17 +145,17 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
         <Text style={styles.text}>Request #{request.requestNumber}</Text>
 
         <Text style={styles.text}>
-          Old End Date:{" "}
+          Old End Date:{' '}
           <Text style={styles.date}>{formatDate(request.oldEndsOn)}</Text>
         </Text>
 
         <Text style={styles.text}>
-          New End Date:{" "}
+          New End Date:{' '}
           <Text style={styles.date}>{formatDate(request.newEndsOn)}</Text>
         </Text>
 
         <Text style={styles.text}>
-          Reason:{" "}
+          Reason:{' '}
           <Text style={styles.reason}>
             {isExpanded ? request.reason : truncateText(request.reason, 100)}
           </Text>
@@ -168,13 +168,13 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
             </Text>
 
             <Text style={styles.text}>
-              Submitted:{" "}
+              Submitted:{' '}
               <Text style={styles.timestamp}>
                 {formatTimeAgo(request.timestamp)}
               </Text>
             </Text>
 
-            {request.status === "PENDING" && (
+            {request.status === 'PENDING' && (
               <View style={styles.actionButtons}>
                 <TouchableOpacity
                   style={[
@@ -216,7 +216,7 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
   }
 );
 
-ExtensionRequestCard.displayName = "ExtensionRequestCard";
+ExtensionRequestCard.displayName = 'ExtensionRequestCard';
 
 const styles = StyleSheet.create({
   card: {
@@ -229,15 +229,15 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.sm,
     paddingVertical: 4,
   },
   headerContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
     marginRight: theme.spacing.sm,
   },
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: theme.radius.xl,
     minWidth: 80,
-    alignItems: "center",
+    alignItems: 'center',
   },
   statusText: {
     color: theme.colors.text.inverted,
@@ -297,8 +297,8 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.regular,
   },
   actionButtons: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginTop: theme.spacing.md,
     gap: theme.spacing.md,
   },
@@ -307,8 +307,8 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.sm,
     paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.md,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   approveButton: {
     backgroundColor: theme.colors.success[500],

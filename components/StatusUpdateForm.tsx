@@ -1,16 +1,16 @@
 import {
   statusUpdateSchema,
   TStatusUpdateFormData,
-} from "@/api/users/users.schema";
-import FormDatePicker from "@/components/form/FormDatePicker";
-import FormInput from "@/components/form/FormInput";
-import FormSubmitButton from "@/components/form/FormSubmitButton";
-import { theme } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+} from '@/api/users/users.schema';
+import FormDatePicker from '@/components/form/FormDatePicker';
+import FormInput from '@/components/form/FormInput';
+import FormSubmitButton from '@/components/form/FormSubmitButton';
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface StatusUpdateFormProps {
   onSubmit: (fromDate: Date, toDate: Date, description: string) => void;
@@ -31,7 +31,7 @@ const StatusUpdateForm: React.FC<StatusUpdateFormProps> = ({
     defaultValues: {
       fromDate: undefined,
       toDate: undefined,
-      description: "",
+      description: '',
     },
   });
 
@@ -117,17 +117,17 @@ const StatusUpdateForm: React.FC<StatusUpdateFormProps> = ({
 const styles = StyleSheet.create({
   wrapper: {
     marginTop: theme.spacing.lg,
-    width: "90%",
+    width: '90%',
     padding: theme.spacing.lg,
     borderWidth: 1,
     borderColor: theme.colors.border.primary,
     borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.background.primary,
     ...theme.shadow.lg,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   closeIcon: {
-    position: "absolute",
+    position: 'absolute',
     top: 14,
     right: 18,
     zIndex: 4,
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.xl,
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: theme.spacing.lg,
   },
   form: {
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
   },
 });
 

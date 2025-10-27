@@ -1,14 +1,14 @@
-import { theme } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import moment from "moment";
-import React from "react";
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
+import React from 'react';
 import {
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface ExtensionRequestDetailsModalProps {
   visible: boolean;
@@ -30,17 +30,17 @@ const ExtensionRequestDetailsModal: React.FC<
   if (!visible || !extensionDetails) return null;
 
   const formatDate = (timestamp: number) => {
-    return moment.unix(timestamp).format("MMM DD, YYYY");
+    return moment.unix(timestamp).format('MMM DD, YYYY');
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PENDING":
+      case 'PENDING':
         return theme.colors.warning[500];
-      case "APPROVED":
+      case 'APPROVED':
         return theme.colors.success[500];
-      case "REJECTED":
-      case "DENIED":
+      case 'REJECTED':
+      case 'DENIED':
         return theme.colors.error[500];
       default:
         return theme.colors.gray[500];
@@ -112,7 +112,7 @@ const ExtensionRequestDetailsModal: React.FC<
                 {Math.ceil(
                   (extensionDetails.newEndsOn - extensionDetails.oldEndsOn) /
                     (24 * 60 * 60)
-                )}{" "}
+                )}{' '}
                 days
               </Text>
             </View>
@@ -135,29 +135,29 @@ const ExtensionRequestDetailsModal: React.FC<
 
 const styles = StyleSheet.create({
   overlay: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 1000,
   },
   modalContainer: {
-    width: "90%",
+    width: '90%',
     maxWidth: 450,
-    maxHeight: "75%",
+    maxHeight: '75%',
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.radius.md,
     padding: theme.spacing.lg,
     ...theme.shadow.lg,
   },
   headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.lg,
     paddingBottom: theme.spacing.sm,
   },
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.primary,
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   closeIcon: {
     padding: theme.spacing.xs,
@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
     maxHeight: 350,
   },
   rowContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: theme.spacing.md,
     gap: theme.spacing.md,
   },
@@ -185,9 +185,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statusContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.md,
     paddingBottom: theme.spacing.sm,
     borderBottomWidth: 1,
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
     borderRadius: theme.radius.lg,
     minWidth: 80,
-    alignItems: "center",
+    alignItems: 'center',
   },
   statusText: {
     color: theme.colors.text.inverted,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.lg,
     borderRadius: theme.radius.sm,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: theme.spacing.md,
   },
   closeButtonText: {

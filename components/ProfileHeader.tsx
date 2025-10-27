@@ -1,13 +1,13 @@
-import { removeLocalStorageItem } from "@/common/utils/common";
-import Avatar from "@/components/Avatar";
-import SocialLinks from "@/components/SocialLinks";
-import UserDetails from "@/components/UserDetails";
-import { TOKEN_KEY } from "@/constants/constants";
-import { theme } from "@/constants/theme";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { reloadAppAsync } from "expo";
-import { router } from "expo-router";
-import React, { useState } from "react";
+import { removeLocalStorageItem } from '@/common/utils/common';
+import Avatar from '@/components/Avatar';
+import SocialLinks from '@/components/SocialLinks';
+import UserDetails from '@/components/UserDetails';
+import { TOKEN_KEY } from '@/constants/constants';
+import { theme } from '@/constants/theme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { reloadAppAsync } from 'expo';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -15,7 +15,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-} from "react-native";
+} from 'react-native';
 
 const Header: React.FC<any> = (props) => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -23,10 +23,10 @@ const Header: React.FC<any> = (props) => {
   const handleLogout = async () => {
     try {
       await removeLocalStorageItem(TOKEN_KEY);
-      router.navigate("/");
+      router.navigate('/');
       reloadAppAsync();
     } catch (error) {
-      console.error("Error logging out", error);
+      console.error('Error logging out', error);
     }
   };
 
@@ -47,7 +47,7 @@ const Header: React.FC<any> = (props) => {
       <View
         style={[
           styles.container,
-          Platform.OS === "ios" && { marginTop: 80 }, // Add marginTop for iOS
+          Platform.OS === 'ios' && { marginTop: 80 }, // Add marginTop for iOS
         ]}
       >
         <TouchableOpacity
@@ -90,16 +90,16 @@ const Header: React.FC<any> = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 50,
   },
   menuButton: {
-    position: "absolute",
+    position: 'absolute',
     top: -20,
     right: 20,
   },
   menu: {
-    position: "absolute",
+    position: 'absolute',
     top: 10,
     right: 20,
     backgroundColor: theme.colors.background.primary,

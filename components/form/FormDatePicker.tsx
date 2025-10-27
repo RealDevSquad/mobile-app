@@ -1,14 +1,14 @@
-import { theme } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import { theme } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from 'react';
 import {
   Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 type FormDatePickerProps = {
   label: string;
@@ -27,19 +27,19 @@ const FormDatePicker = ({
   label,
   value,
   onDateChange,
-  placeholder = "Select date",
+  placeholder = 'Select date',
   required = false,
   errorMessage,
   minimumDate,
   maximumDate,
   disabled = false,
-  icon = "calendar-outline",
+  icon = 'calendar-outline',
 }: FormDatePickerProps) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const formatDate = (date: Date): string => {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
@@ -105,7 +105,7 @@ const FormDatePicker = ({
         <DateTimePicker
           value={value || new Date()}
           mode="date"
-          display={Platform.OS === "ios" ? "spinner" : "default"}
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           minimumDate={minimumDate}
           maximumDate={maximumDate}
           onChange={handleDateChange}
@@ -122,8 +122,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: theme.spacing.sm,
   },
   icon: {
@@ -138,9 +138,9 @@ const styles = StyleSheet.create({
     color: theme.colors.error[500],
   },
   dateButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.border.primary,
     borderRadius: theme.radius.sm,
@@ -175,5 +175,3 @@ const styles = StyleSheet.create({
 });
 
 export default FormDatePicker;
-
-

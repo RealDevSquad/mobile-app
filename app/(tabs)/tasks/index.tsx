@@ -1,11 +1,11 @@
-import { TasksApi } from "@/api/tasks/tasks.api";
-import { TaskCardSkeleton } from "@/components/SkeletonLoader";
-import Task from "@/components/Task";
-import UserSearchModal from "@/components/UserSearchModal";
-import { theme } from "@/constants/theme";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import React, { useCallback, useState } from "react";
+import { TasksApi } from '@/api/tasks/tasks.api';
+import { TaskCardSkeleton } from '@/components/SkeletonLoader';
+import Task from '@/components/Task';
+import UserSearchModal from '@/components/UserSearchModal';
+import { theme } from '@/constants/theme';
+import useCheckUserSession from '@/hooks/getUserToken';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -14,7 +14,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 export default function TasksScreen() {
   const { token } = useCheckUserSession();
@@ -95,7 +95,7 @@ export default function TasksScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
-            Error: {error?.message || "Failed to load tasks"}
+            Error: {error?.message || 'Failed to load tasks'}
           </Text>
         </View>
       </SafeAreaView>
@@ -113,7 +113,7 @@ export default function TasksScreen() {
           <Text style={styles.searchButtonText}>
             {selectedAssignee
               ? `Filter: ${selectedAssignee}`
-              : "Filter by User"}
+              : 'Filter by User'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -121,7 +121,7 @@ export default function TasksScreen() {
       {selectedAssignee && (
         <View style={styles.filterContainer}>
           <Text style={styles.filterText}>
-            Showing tasks for:{" "}
+            Showing tasks for:{' '}
             <Text style={styles.filterUser}>{selectedAssignee}</Text>
           </Text>
           <TouchableOpacity
@@ -160,80 +160,80 @@ export default function TasksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: '#E0E0E0',
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#333333",
+    fontWeight: 'bold',
+    color: '#333333',
     flex: 1,
   },
   searchButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#007AFF',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
   },
   searchButtonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   filterContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#E3F2FD",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#E3F2FD',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#BBDEFB",
+    borderBottomColor: '#BBDEFB',
   },
   filterText: {
     fontSize: 14,
-    color: "#1976D2",
+    color: '#1976D2',
     flex: 1,
   },
   filterUser: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   clearButton: {
-    backgroundColor: "#FF5722",
+    backgroundColor: '#FF5722',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 4,
   },
   clearButtonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   errorContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   errorText: {
     fontSize: 16,
-    color: "#e74c3c",
-    textAlign: "center",
+    color: '#e74c3c',
+    textAlign: 'center',
   },
   skeletonContainer: {
     padding: theme.spacing.sm,

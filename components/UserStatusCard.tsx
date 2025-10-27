@@ -1,7 +1,7 @@
-import { theme } from "@/constants/theme";
-import { UserStatus } from "@/types/user.dto";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { theme } from '@/constants/theme';
+import { UserStatus } from '@/types/user.dto';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface UserStatusCardProps {
   userStatus: UserStatus | null;
@@ -14,9 +14,9 @@ const UserStatusCard: React.FC<UserStatusCardProps> = React.memo(
   ({ userStatus, onApplyOOO, onCancelOOO, isLoading = false }) => {
     const getStatusColor = (state: string): string => {
       switch (state?.toUpperCase()) {
-        case "ACTIVE":
+        case 'ACTIVE':
           return theme.colors.success[500]; // Green
-        case "OOO":
+        case 'OOO':
           return theme.colors.warning[500]; // Orange
         default:
           return theme.colors.gray[500]; // Gray
@@ -25,26 +25,26 @@ const UserStatusCard: React.FC<UserStatusCardProps> = React.memo(
 
     const getStatusText = (state: string): string => {
       switch (state?.toUpperCase()) {
-        case "ACTIVE":
-          return "Active";
-        case "OOO":
-          return "Out of Office";
+        case 'ACTIVE':
+          return 'Active';
+        case 'OOO':
+          return 'Out of Office';
         default:
-          return state || "Unknown";
+          return state || 'Unknown';
       }
     };
 
     const formatDate = (timestamp: number): string => {
       const date = new Date(timestamp);
-      return date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
       });
     };
 
     const isOOO =
-      userStatus?.data?.currentStatus?.state?.toUpperCase() === "OOO";
+      userStatus?.data?.currentStatus?.state?.toUpperCase() === 'OOO';
     const currentStatus = userStatus?.data?.currentStatus;
 
     return (
@@ -54,11 +54,11 @@ const UserStatusCard: React.FC<UserStatusCardProps> = React.memo(
             <View
               style={[
                 styles.statusDot,
-                { backgroundColor: getStatusColor(currentStatus?.state || "") },
+                { backgroundColor: getStatusColor(currentStatus?.state || '') },
               ]}
             />
             <Text style={styles.statusText}>
-              {getStatusText(currentStatus?.state || "")}
+              {getStatusText(currentStatus?.state || '')}
             </Text>
           </View>
 
@@ -72,10 +72,10 @@ const UserStatusCard: React.FC<UserStatusCardProps> = React.memo(
           >
             <Text style={styles.buttonText}>
               {isLoading
-                ? "Loading..."
+                ? 'Loading...'
                 : isOOO
-                ? "Cancel OOO"
-                : "Apply for OOO"}
+                  ? 'Cancel OOO'
+                  : 'Apply for OOO'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -101,7 +101,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = React.memo(
   }
 );
 
-UserStatusCard.displayName = "UserStatusCard";
+UserStatusCard.displayName = 'UserStatusCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -113,14 +113,14 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.sm,
   },
   statusContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
   statusDot: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     borderRadius: 20,
     minWidth: 100,
-    alignItems: "center",
+    alignItems: 'center',
   },
   applyButton: {
     backgroundColor: theme.colors.primary[500],
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
   },
   dateContainer: {
     marginTop: theme.spacing.sm,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   dateText: {
     fontSize: theme.typography.fontSize.xs,

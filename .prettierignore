@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.expo/
+.expo-shared/
+coverage/
+*.lock
+pnpm-lock.yaml
+android/
+ios/
+*.log
+.DS_Store

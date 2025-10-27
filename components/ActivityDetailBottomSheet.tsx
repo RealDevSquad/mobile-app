@@ -1,7 +1,7 @@
-import { theme } from "@/constants/theme";
-import { DateActivities, LogEntry } from "@/types/logs.dto";
-import { createActivitySummary, formatTimestamp } from "@/utils/calendarUtils";
-import React from "react";
+import { theme } from '@/constants/theme';
+import { DateActivities, LogEntry } from '@/types/logs.dto';
+import { createActivitySummary, formatTimestamp } from '@/utils/calendarUtils';
+import React from 'react';
 import {
   Modal,
   ScrollView,
@@ -9,7 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 interface ActivityDetailBottomSheetProps {
   visible: boolean;
@@ -28,16 +28,16 @@ const ActivityDetailBottomSheet: React.FC<ActivityDetailBottomSheetProps> = ({
     const summary = createActivitySummary(log);
     const getActivityColor = (type: string) => {
       switch (type) {
-        case "task":
-          return "#007AFF";
-        case "taskRequests":
-          return "#34C759";
-        case "oooRequests":
-          return "#FF9500";
-        case "extensionRequests":
-          return "#FF3B30";
+        case 'task':
+          return '#007AFF';
+        case 'taskRequests':
+          return '#34C759';
+        case 'oooRequests':
+          return '#FF9500';
+        case 'extensionRequests':
+          return '#FF3B30';
         default:
-          return "#8E8E93";
+          return '#8E8E93';
       }
     };
 
@@ -62,7 +62,7 @@ const ActivityDetailBottomSheet: React.FC<ActivityDetailBottomSheetProps> = ({
         )}
 
         {/* Type-specific details */}
-        {log.type === "task" && (
+        {log.type === 'task' && (
           <>
             {log.status && (
               <Text style={styles.logDetail}>Status: {log.status}</Text>
@@ -80,7 +80,7 @@ const ActivityDetailBottomSheet: React.FC<ActivityDetailBottomSheetProps> = ({
           </>
         )}
 
-        {log.type === "taskRequests" && (
+        {log.type === 'taskRequests' && (
           <>
             {log.requestType && (
               <Text style={styles.logDetail}>Type: {log.requestType}</Text>
@@ -96,14 +96,14 @@ const ActivityDetailBottomSheet: React.FC<ActivityDetailBottomSheetProps> = ({
           </>
         )}
 
-        {log.type === "extensionRequests" && (
+        {log.type === 'extensionRequests' && (
           <>
             {log.status && (
               <Text style={styles.logDetail}>Status: {log.status}</Text>
             )}
             {log.newEndsOn && log.oldEndsOn && (
               <Text style={styles.logDetail}>
-                Date: {new Date(log.oldEndsOn * 1000).toLocaleDateString()} →{" "}
+                Date: {new Date(log.oldEndsOn * 1000).toLocaleDateString()} →{' '}
                 {new Date(log.newEndsOn * 1000).toLocaleDateString()}
               </Text>
             )}
@@ -120,7 +120,7 @@ const ActivityDetailBottomSheet: React.FC<ActivityDetailBottomSheetProps> = ({
           </>
         )}
 
-        {log.type === "oooRequests" && (
+        {log.type === 'oooRequests' && (
           <>
             {log.status && (
               <Text style={styles.logDetail}>Status: {log.status}</Text>
@@ -158,12 +158,12 @@ const ActivityDetailBottomSheet: React.FC<ActivityDetailBottomSheetProps> = ({
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>
-            Activities for{" "}
-            {new Date(activities.date).toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
+            Activities for{' '}
+            {new Date(activities.date).toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
             })}
           </Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
@@ -198,9 +198,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface.secondary,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.background.primary,
@@ -219,8 +219,8 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     backgroundColor: theme.colors.surface.secondary,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   closeButtonText: {
     fontSize: theme.typography.fontSize.base,
@@ -235,12 +235,12 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.radius.sm,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   groupHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.md,
   },
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     padding: 0,
     borderRadius: theme.radius.sm,
     marginBottom: theme.spacing.sm,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   logHeader: {
     padding: theme.spacing.md,
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.xs,
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.info[500],
-    fontStyle: "italic",
+    fontStyle: 'italic',
     marginTop: 2,
   },
   logTitle: {
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.tertiary,
     marginTop: 4,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
 });
 

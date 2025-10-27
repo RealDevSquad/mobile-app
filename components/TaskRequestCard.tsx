@@ -1,9 +1,9 @@
-import { theme } from "@/constants/theme";
-import { TaskRequestDTO } from "@/types/task-request.dto";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import moment from "moment";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { theme } from '@/constants/theme';
+import { TaskRequestDTO } from '@/types/task-request.dto';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import moment from 'moment';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface TaskRequestCardProps {
   request: TaskRequestDTO;
@@ -20,11 +20,11 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
 
     const getStatusColor = (status: string) => {
       switch (status) {
-        case "PENDING":
+        case 'PENDING':
           return theme.colors.warning[500];
-        case "APPROVED":
+        case 'APPROVED':
           return theme.colors.success[500];
-        case "REJECTED":
+        case 'REJECTED':
           return theme.colors.error[500];
         default:
           return theme.colors.gray[500];
@@ -37,14 +37,14 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
         if (user.first_name && user.last_name) {
           return `${user.first_name} ${user.last_name}`;
         }
-        return user.username || "Unknown User";
+        return user.username || 'Unknown User';
       }
-      return "Unknown User";
+      return 'Unknown User';
     };
 
     const truncateText = (text: string, maxLength: number) => {
       if (text.length <= maxLength) return text;
-      return text.substring(0, maxLength) + "...";
+      return text.substring(0, maxLength) + '...';
     };
 
     return (
@@ -76,7 +76,7 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
         </View>
 
         <Text style={styles.text}>
-          Requested by:{" "}
+          Requested by:{' '}
           <Text style={styles.requestor}>{getRequestorName()}</Text>
         </Text>
 
@@ -85,7 +85,7 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
         </Text>
 
         <Text style={styles.text}>
-          Submitted:{" "}
+          Submitted:{' '}
           <Text style={styles.timestamp}>
             {formatTimeAgo(request.createdAt)}
           </Text>
@@ -94,7 +94,7 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
         {request.usersCount > 1 && (
           <Text style={styles.text}>
             +{request.usersCount - 1} more user
-            {request.usersCount > 2 ? "s" : ""}
+            {request.usersCount > 2 ? 's' : ''}
           </Text>
         )}
       </TouchableOpacity>
@@ -102,7 +102,7 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
   }
 );
 
-TaskRequestCard.displayName = "TaskRequestCard";
+TaskRequestCard.displayName = 'TaskRequestCard';
 
 const styles = StyleSheet.create({
   card: {
@@ -116,15 +116,15 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing.sm,
     paddingVertical: 4,
   },
   headerContent: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     flex: 1,
     marginRight: theme.spacing.sm,
   },
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: theme.radius.xl,
     minWidth: 80,
-    alignItems: "center",
+    alignItems: 'center',
   },
   statusText: {
     color: theme.colors.text.inverted,

@@ -1,7 +1,7 @@
-import { formatDateTime } from "@/common/utils/common";
-import { useLocalSearchParams } from "expo-router";
-import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { formatDateTime } from '@/common/utils/common';
+import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const TaskDetails = () => {
   const { id, title, createdBy, assignee, endsOn, startedOn, status } =
@@ -10,7 +10,7 @@ const TaskDetails = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
       <View style={styles.card}>
-        <Text style={styles.titleText}>{title ?? "Title is unavailable"}</Text>
+        <Text style={styles.titleText}>{title ?? 'Title is unavailable'}</Text>
         <Text style={styles.statusBadge}>{status}</Text>
       </View>
 
@@ -22,7 +22,7 @@ const TaskDetails = () => {
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Created By:</Text>
-          <Text style={styles.detailValue}>{createdBy ?? "Unknown"}</Text>
+          <Text style={styles.detailValue}>{createdBy ?? 'Unknown'}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Assignee:</Text>
@@ -59,14 +59,14 @@ const TaskDetails = () => {
 const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#f5f5f5',
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
@@ -74,16 +74,16 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 22,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: 'bold',
+    color: '#333',
     marginBottom: 8,
   },
   statusBadge: {
-    alignSelf: "flex-start",
-    backgroundColor: "#4caf50",
-    color: "#fff",
+    alignSelf: 'flex-start',
+    backgroundColor: '#4caf50',
+    color: '#fff',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 16,
@@ -91,28 +91,28 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#555",
+    fontWeight: 'bold',
+    color: '#555',
     marginBottom: 12,
   },
   detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 8,
   },
   detailLabel: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#666",
+    fontWeight: '600',
+    color: '#666',
   },
   detailValue: {
     fontSize: 16,
-    fontWeight: "400",
-    color: "#333",
+    fontWeight: '400',
+    color: '#333',
   },
   noteText: {
     fontSize: 16,
-    color: "#777",
+    color: '#777',
     lineHeight: 22,
   },
 });

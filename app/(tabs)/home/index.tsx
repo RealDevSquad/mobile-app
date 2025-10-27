@@ -1,18 +1,18 @@
-import { UsersApi } from "@/api/users/users.api";
-import Avatar from "@/components/Avatar";
-import OOOModal from "@/components/Modal/OOOModal";
-import MyTasksCard from "@/components/MyTasksCard";
-import QuickActionCard from "@/components/QuickActionCard";
+import { UsersApi } from '@/api/users/users.api';
+import Avatar from '@/components/Avatar';
+import OOOModal from '@/components/Modal/OOOModal';
+import MyTasksCard from '@/components/MyTasksCard';
+import QuickActionCard from '@/components/QuickActionCard';
 import {
   ProfileHeaderSkeleton,
   TaskCardSkeleton,
-} from "@/components/SkeletonLoader";
-import UserStatusCard from "@/components/UserStatusCard";
-import { theme } from "@/constants/theme";
-import useCheckUserSession from "@/hooks/getUserToken";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+} from '@/components/SkeletonLoader';
+import UserStatusCard from '@/components/UserStatusCard';
+import { theme } from '@/constants/theme';
+import useCheckUserSession from '@/hooks/getUserToken';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -22,7 +22,7 @@ import {
   StyleSheet,
   Text,
   View,
-} from "react-native";
+} from 'react-native';
 
 export default function HomeScreen() {
   const { token } = useCheckUserSession();
@@ -65,10 +65,10 @@ export default function HomeScreen() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: UsersApi.getUserStatus.key });
       setIsOOOModalVisible(false);
-      Alert.alert("Success", "OOO request submitted successfully");
+      Alert.alert('Success', 'OOO request submitted successfully');
     },
     onError: () => {
-      Alert.alert("Error", "Failed to submit OOO request");
+      Alert.alert('Error', 'Failed to submit OOO request');
     },
   });
 
@@ -76,10 +76,10 @@ export default function HomeScreen() {
     mutationFn: () => UsersApi.cancelOOO.fn(token || undefined),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: UsersApi.getUserStatus.key });
-      Alert.alert("Success", "OOO status cancelled successfully");
+      Alert.alert('Success', 'OOO status cancelled successfully');
     },
     onError: () => {
-      Alert.alert("Error", "Failed to cancel OOO status");
+      Alert.alert('Error', 'Failed to cancel OOO status');
     },
   });
 
@@ -117,7 +117,7 @@ export default function HomeScreen() {
     if (userData?.username) {
       return userData.username;
     }
-    return "User";
+    return 'User';
   };
 
   const handleApplyOOO = () => {
@@ -129,8 +129,8 @@ export default function HomeScreen() {
   };
 
   const handleOOOSubmit = (fromDate: Date, toDate: Date, reason: string) => {
-    const fromDateStr = fromDate.toISOString().split("T")[0];
-    const toDateStr = toDate.toISOString().split("T")[0];
+    const fromDateStr = fromDate.toISOString().split('T')[0];
+    const toDateStr = toDate.toISOString().split('T')[0];
 
     submitOOOMutation.mutate({
       fromDate: fromDateStr,
@@ -144,23 +144,23 @@ export default function HomeScreen() {
   };
 
   const handleMyTasksPress = () => {
-    router.push("/my-tasks");
+    router.push('/my-tasks');
   };
 
   const handleExtensionRequestsPress = () => {
-    router.push("/extension-requests");
+    router.push('/extension-requests');
   };
 
   const handleTaskRequestsPress = () => {
-    router.push("/task-requests");
+    router.push('/task-requests');
   };
 
   const handleTasksPress = () => {
-    router.push("/tasks");
+    router.push('/tasks');
   };
 
   const handleCalendarPress = () => {
-    router.push("/calendar");
+    router.push('/calendar');
   };
 
   return (
@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface.secondary,
   },
   headerTextContainer: {
-    flexDirection: "column",
-    alignItems: "flex-start",
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   usernameText: {
     fontSize: theme.typography.fontSize.lg,
@@ -279,16 +279,16 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     backgroundColor: theme.colors.surface.secondary,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.background.primary,
@@ -301,12 +301,12 @@ const styles = StyleSheet.create({
   },
   greetingSection: {
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing["2xl"],
+    paddingVertical: theme.spacing['2xl'],
     backgroundColor: theme.colors.background.primary,
     marginBottom: theme.spacing.md,
   },
   greeting: {
-    fontSize: theme.typography.fontSize["2xl"],
+    fontSize: theme.typography.fontSize['2xl'],
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
     marginBottom: 4,
@@ -321,8 +321,8 @@ const styles = StyleSheet.create({
     paddingBottom: theme.spacing.lg,
   },
   gridRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: theme.spacing.md,
   },
   gridItem: {

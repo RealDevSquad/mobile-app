@@ -6,16 +6,16 @@
  */
 export const createAuthHeaders = (token: string): Record<string, string> => {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   };
 
-  if (token?.startsWith("eyJ")) {
+  if (token?.startsWith('eyJ')) {
     // JWT token - use Authorization header
-    headers["Authorization"] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   } else {
     // Session token - use Cookie header
     // For staging environment, use rds-session-staging
-    headers["Cookie"] = `rds-session-staging=${token}`;
+    headers['Cookie'] = `rds-session-staging=${token}`;
   }
 
   return headers;
