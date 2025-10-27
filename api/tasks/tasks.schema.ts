@@ -79,9 +79,36 @@ export const submitProgressSchema = z
     }
   );
 
+export const taskRequestFormSchema = z
+  .object({
+    proposedStartDate: z.date({
+      required_error: 'Start date is required',
+    }),
+    proposedDeadline: z.date({
+      required_error: 'Deadline is required',
+    }),
+    description: z.string().min(1, 'Timeline overview is required'),
+  })
+  .refine(
+    (data) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return data.proposedStartDate >= today;
+    },
+    {
+      message: 'Start date cannot be in the past',
+      path: ['proposedStartDate'],
+    }
+  )
+  .refine((data) => data.proposedStartDate < data.proposedDeadline, {
+    message: 'Deadline must be after start date',
+    path: ['proposedDeadline'],
+  });
+
 export type TAddProgressFormData = z.infer<typeof addProgressSchema>;
 export type TTaskStatusUpdateFormData = z.infer<typeof taskStatusUpdateSchema>;
 export type TCreateTaskFormData = z.infer<typeof createTaskSchema>;
 export type TUpdateTaskFormData = z.infer<typeof updateTaskSchema>;
 export type TUpdateTaskStatusFormData = z.infer<typeof updateTaskStatusSchema>;
 export type TSubmitProgressFormData = z.infer<typeof submitProgressSchema>;
+export type TTaskRequestFormData = z.infer<typeof taskRequestFormSchema>;

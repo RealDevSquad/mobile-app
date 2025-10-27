@@ -1,5 +1,6 @@
 import { UsersApi } from '@/api/users/users.api';
 import Avatar from '@/components/Avatar';
+import CreateNewTaskCard from '@/components/CreateNewTaskCard';
 import OOOModal from '@/components/Modal/OOOModal';
 import MyTasksCard from '@/components/MyTasksCard';
 import QuickActionCard from '@/components/QuickActionCard';
@@ -157,6 +158,10 @@ export default function HomeScreen() {
     router.push('/calendar');
   };
 
+  const handleCreateNewTaskPress = () => {
+    router.push('/create-task');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -234,6 +239,9 @@ export default function HomeScreen() {
                 onPress={handleCalendarPress}
               />
             </View>
+          </View>
+          <View>
+            <CreateNewTaskCard onPress={handleCreateNewTaskPress} />
           </View>
         </View>
       </ScrollView>

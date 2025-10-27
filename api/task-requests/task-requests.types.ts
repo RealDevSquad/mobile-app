@@ -27,3 +27,16 @@ export type TGetTaskRequestByIdDto = {
 export type TGetTaskRequestByIdResponse = TaskRequestDTO;
 
 export type TTaskRequestActionResponse = TApiResponse<TaskRequestDTO>;
+
+export type TCreateTaskRequestDto = {
+  externalIssueUrl: string;
+  externalIssueHtmlUrl: string;
+  userId: string;
+  requestType: 'CREATION';
+  proposedStartDate: number;
+  proposedDeadline: number;
+  description: string;
+  markdownEnabled: boolean;
+};
+
+export type TCreateTaskRequestResponse = TApiResponse<TaskRequestDTO>;

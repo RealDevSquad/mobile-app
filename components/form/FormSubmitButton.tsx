@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
+  View,
 } from 'react-native';
 
 type FormSubmitButtonProps = {
@@ -50,14 +51,17 @@ const FormSubmitButton = ({
       {...props}
     >
       {isLoading ? (
-        <ActivityIndicator
-          size="small"
-          color={
-            variant === 'primary'
-              ? theme.colors.text.inverted
-              : theme.colors.text.primary
-          }
-        />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator
+            size="small"
+            color={
+              variant === 'primary'
+                ? theme.colors.text.inverted
+                : theme.colors.text.primary
+            }
+          />
+          <Text style={[textStyle, styles.loadingText]}>{text}</Text>
+        </View>
       ) : (
         <Text style={textStyle}>{text}</Text>
       )}
@@ -98,7 +102,15 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   disabledButtonText: {
-    color: theme.colors.text.disabled,
+    color: theme.colors.gray[600],
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginLeft: theme.spacing.sm,
   },
 });
 

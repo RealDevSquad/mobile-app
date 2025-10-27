@@ -7,6 +7,7 @@ import {
   TGetTaskProgressDto,
   TGetTaskReqDto,
   TGetTasksDto,
+  TGithubIssuesResponse,
   TSubmitProgressDto,
   TSubmitProgressResponse,
   TUpdateTaskDto,
@@ -118,6 +119,16 @@ export const TasksApi = {
       const { data } = await apiClient.post<TSubmitProgressResponse>(
         '/progresses',
         progress
+      );
+      return data;
+    },
+  },
+
+  getGithubIssue: {
+    key: (githubUrl: string) => ['TasksApi.getGithubIssue', githubUrl],
+    fn: async (githubUrl: string): Promise<TGithubIssuesResponse> => {
+      const { data } = await apiClient.get<TGithubIssuesResponse>(
+        `/issues?q=${encodeURIComponent(githubUrl)}`
       );
       return data;
     },

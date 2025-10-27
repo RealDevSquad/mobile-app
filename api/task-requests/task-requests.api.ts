@@ -1,5 +1,7 @@
 import { apiClient } from '../../lib/api-client';
 import {
+  TCreateTaskRequestDto,
+  TCreateTaskRequestResponse,
   TGetTaskRequestByIdResponse,
   TGetTaskRequestsDto,
   TGetTaskRequestsResponse,
@@ -102,6 +104,19 @@ export const TaskRequestsApi = {
       } catch (error: any) {
         throw error;
       }
+    },
+  },
+
+  createTaskRequest: {
+    key: ['TaskRequestsApi.createTaskRequest'],
+    fn: async (
+      taskRequest: TCreateTaskRequestDto
+    ): Promise<TCreateTaskRequestResponse> => {
+      const { data } = await apiClient.post<TCreateTaskRequestResponse>(
+        '/taskRequests',
+        taskRequest
+      );
+      return data;
     },
   },
 };
