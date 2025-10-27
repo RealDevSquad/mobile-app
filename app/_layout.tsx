@@ -1,17 +1,17 @@
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
-import "react-native-reanimated";
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from 'react';
+import 'react-native-reanimated';
 
 // Export ErrorBoundary for catching errors from the layout tree.
-export { ErrorBoundary } from "expo-router";
+export { ErrorBoundary } from 'expo-router';
 
 // Set initial route for Expo Router
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: '(tabs)',
 };
 
 // Prevent splash screen from auto-hiding until fonts are loaded.
@@ -32,7 +32,7 @@ const queryClient = new QueryClient({
 export default function RootLayout() {
   // Load custom fonts
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -68,3 +68,4 @@ function RootLayoutNav() {
     // </ThemeProvider>
   );
 }
+// Test comment
