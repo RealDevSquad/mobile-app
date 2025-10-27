@@ -3,12 +3,10 @@ import { TaskCardSkeleton } from '@/components/SkeletonLoader';
 import Task from '@/components/Task';
 import UserSearchModal from '@/components/UserSearchModal';
 import { theme } from '@/constants/theme';
-import { useAuthToken } from '@/store/authStore';
 import { useSearchModal } from '@/store/uiStore';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React, { useCallback, useState } from 'react';
 import {
-  ActivityIndicator,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
@@ -18,7 +16,6 @@ import {
 } from 'react-native';
 
 export default function TasksScreen() {
-  const token = useAuthToken();
   const {
     isOpen: showSearchModal,
     open: openSearchModal,
@@ -40,19 +37,33 @@ export default function TasksScreen() {
       assignee: selectedAssignee || undefined,
     }),
     queryFn: ({ pageParam }) =>
-      TasksApi.getTasks.fn(
-        {
-          assignee: selectedAssignee || undefined,
-          next: pageParam,
-        },
-        token || undefined
-      ),
-    enabled: !!token,
-    getNextPageParam: (lastPage) => lastPage.next,
+      TasksApi.getTasks.fn({
+        assignee: selectedAssignee || undefined,
+        next: pageParam,
+      }),
+    enabled: true,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage?.next) return undefined;
+      const urlParams = new URLSearchParams(lastPage.next.split('?')[1]);
+      return urlParams.get('next') || undefined;
+    },
     initialPageParam: undefined as string | undefined,
   });
 
-  const allTasks = data?.pages.flatMap((page: any) => page.tasks) || [];
+  const allTasks =
+    data?.pages.flatMap((page: any) => {
+      if (!page || !page.tasks) {
+        console.warn('Invalid page data received:', page);
+        return [];
+      }
+      return page.tasks.filter((task: any) => {
+        if (!task || !task.id) {
+          console.warn('Invalid task data received:', task);
+          return false;
+        }
+        return true;
+      });
+    }) || [];
 
   const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -71,14 +82,6 @@ export default function TasksScreen() {
   const handleRefresh = useCallback(async () => {
     await refetchTasks();
   }, [refetchTasks]);
-
-  if (!token) {
-    return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </SafeAreaView>
-    );
-  }
 
   if (loadingTasks && allTasks.length === 0) {
     return (

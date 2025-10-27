@@ -29,7 +29,6 @@ interface ExtensionRequestModalProps {
   taskId: string;
   oldEndsOn: number;
   assignee: string;
-  token: string;
 }
 
 interface ExtensionRequestData {
@@ -49,7 +48,6 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
   taskId,
   oldEndsOn,
   assignee,
-  token,
 }) => {
   const queryClient = useQueryClient();
 
@@ -79,11 +77,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
       status: 'PENDING';
       taskId: string;
       title: string;
-    }) =>
-      ExtensionRequestsApi.createExtensionRequest.fn(
-        extensionData,
-        token || undefined
-      ),
+    }) => ExtensionRequestsApi.createExtensionRequest.fn(extensionData),
     onSuccess: () => {
       Alert.alert('Success', 'Extension request submitted successfully!', [
         {

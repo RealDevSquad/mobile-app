@@ -27,7 +27,6 @@ interface UpdateTaskStatusModalProps {
   taskId: string;
   currentStatus: string;
   currentProgress: number;
-  token: string;
 }
 
 const STATUS_OPTIONS = [
@@ -56,7 +55,6 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
   taskId,
   currentStatus,
   currentProgress,
-  token,
 }) => {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const queryClient = useQueryClient();
@@ -79,7 +77,7 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
 
   const updateTaskStatusMutation = useMutation({
     mutationFn: (statusData: { status: string; percentCompleted: number }) =>
-      TasksApi.updateTaskStatus.fn(taskId, statusData, token || undefined),
+      TasksApi.updateTaskStatus.fn(taskId, statusData),
     onSuccess: () => {
       Alert.alert('Success', 'Task status and progress updated successfully.');
       queryClient.invalidateQueries({ queryKey: ['TasksApi.getSelfTasks'] });

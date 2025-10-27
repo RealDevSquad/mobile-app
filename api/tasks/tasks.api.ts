@@ -1,4 +1,3 @@
-import { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
 import { apiClient } from '../../lib/api-client';
 import {
   TCreateTaskReqDto,
@@ -22,35 +21,18 @@ export const TasksApi = {
       'TasksApi.getTasks',
       JSON.stringify(params),
     ],
-    fn: async (
-      params?: TGetTaskReqDto,
-      token?: string
-    ): Promise<TGetTasksDto> => {
-      const config: InternalAxiosRequestConfig = {
+    fn: async (params?: TGetTaskReqDto): Promise<TGetTasksDto> => {
+      const { data } = await apiClient.get<TGetTasksDto>('/tasks', {
         params: { dev: true, ...params },
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
-      const { data } = await apiClient.get<TGetTasksDto>('/tasks', config);
+      });
       return data;
     },
   },
 
   getSelfTasks: {
     key: ['TasksApi.getSelfTasks'],
-    fn: async (token?: string): Promise<TGetSelfTasksDto> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
-      const { data } = await apiClient.get<TGetSelfTasksDto>(
-        '/tasks/self',
-        config
-      );
+    fn: async (): Promise<TGetSelfTasksDto> => {
+      const { data } = await apiClient.get<TGetSelfTasksDto>('/tasks/self');
       return data;
     },
   },
@@ -118,19 +100,11 @@ export const TasksApi = {
     key: (id: string) => ['TasksApi.updateTaskStatus', id],
     fn: async (
       id: string,
-      statusData: TUpdateTaskStatusDto,
-      token?: string
+      statusData: TUpdateTaskStatusDto
     ): Promise<TUpdateTaskStatusResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
       const { data } = await apiClient.patch<TUpdateTaskStatusResponse>(
         `/tasks/self/${id}`,
-        statusData,
-        config
+        statusData
       );
       return data;
     },
@@ -139,19 +113,11 @@ export const TasksApi = {
   submitProgress: {
     key: ['TasksApi.submitProgress'],
     fn: async (
-      progress: TSubmitProgressDto,
-      token?: string
+      progress: TSubmitProgressDto
     ): Promise<TSubmitProgressResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
       const { data } = await apiClient.post<TSubmitProgressResponse>(
         '/progresses',
-        progress,
-        config
+        progress
       );
       return data;
     },

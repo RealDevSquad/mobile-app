@@ -1,4 +1,3 @@
-import { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
 import { apiClient } from '../../lib/api-client';
 import {
   TApproveTaskRequestDto,
@@ -17,8 +16,7 @@ export const TaskRequestsApi = {
       JSON.stringify(params),
     ],
     fn: async (
-      params?: TGetTaskRequestsDto,
-      token?: string
+      params?: TGetTaskRequestsDto
     ): Promise<TGetTaskRequestsResponse> => {
       let url = '/task-requests';
       const queryParams = new URLSearchParams();
@@ -39,36 +37,18 @@ export const TaskRequestsApi = {
         queryParams.append('next', params.next);
       }
 
-      const config: InternalAxiosRequestConfig = {
+      const { data } = await apiClient.get<TGetTaskRequestsResponse>(url, {
         params: queryParams,
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
-      const { data } = await apiClient.get<TGetTaskRequestsResponse>(
-        url,
-        config
-      );
+      });
       return data;
     },
   },
 
   getTaskRequestById: {
     key: (id: string) => ['TaskRequestsApi.getTaskRequestById', id],
-    fn: async (
-      id: string,
-      token?: string
-    ): Promise<TGetTaskRequestByIdResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
+    fn: async (id: string): Promise<TGetTaskRequestByIdResponse> => {
       const { data } = await apiClient.get<TGetTaskRequestByIdResponse>(
-        `/task-requests/${id}`,
-        config
+        `/task-requests/${id}`
       );
       return data;
     },
@@ -80,20 +60,13 @@ export const TaskRequestsApi = {
       taskRequestId,
       userId,
     ],
-    fn: async (
-      { taskRequestId, userId }: TApproveTaskRequestDto,
-      token?: string
-    ): Promise<TApproveTaskRequestResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
+    fn: async ({
+      taskRequestId,
+      userId,
+    }: TApproveTaskRequestDto): Promise<TApproveTaskRequestResponse> => {
       const { data } = await apiClient.patch<TApproveTaskRequestResponse>(
         '/task-requests/approve',
-        { taskRequestId, userId },
-        config
+        { taskRequestId, userId }
       );
       return data;
     },
@@ -105,20 +78,14 @@ export const TaskRequestsApi = {
       taskRequestId,
       userId,
     ],
-    fn: async (
-      { taskRequestId, userId, reason }: TRejectTaskRequestDto,
-      token?: string
-    ): Promise<TRejectTaskRequestResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
+    fn: async ({
+      taskRequestId,
+      userId,
+      reason,
+    }: TRejectTaskRequestDto): Promise<TRejectTaskRequestResponse> => {
       const { data } = await apiClient.patch<TRejectTaskRequestResponse>(
         '/task-requests/reject',
-        { taskRequestId, userId, reason },
-        config
+        { taskRequestId, userId, reason }
       );
       return data;
     },

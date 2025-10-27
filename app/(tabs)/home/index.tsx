@@ -9,13 +9,11 @@ import {
 } from '@/components/SkeletonLoader';
 import UserStatusCard from '@/components/UserStatusCard';
 import { theme } from '@/constants/theme';
-import { useAuthToken } from '@/store/authStore';
 import { useOOOModal } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  ActivityIndicator,
   Alert,
   RefreshControl,
   SafeAreaView,
@@ -26,7 +24,6 @@ import {
 } from 'react-native';
 
 export default function HomeScreen() {
-  const token = useAuthToken();
   const router = useRouter();
   const queryClient = useQueryClient();
   const {
@@ -41,8 +38,8 @@ export default function HomeScreen() {
     refetch: refetchUserData,
   } = useQuery({
     queryKey: UsersApi.getUserDetails.key,
-    queryFn: () => UsersApi.getUserDetails.fn(token || undefined),
-    enabled: !!token,
+    queryFn: () => UsersApi.getUserDetails.fn(),
+    enabled: true,
   });
 
   const {
@@ -51,8 +48,8 @@ export default function HomeScreen() {
     refetch: refetchUserStatus,
   } = useQuery({
     queryKey: UsersApi.getUserStatus.key,
-    queryFn: () => UsersApi.getUserStatus.fn(token || undefined),
-    enabled: !!token,
+    queryFn: () => UsersApi.getUserStatus.fn(),
+    enabled: true,
   });
 
   const loading = loadingUserData || loadingUserStatus;
@@ -66,7 +63,7 @@ export default function HomeScreen() {
       fromDate: string;
       toDate: string;
       description: string;
-    }) => UsersApi.submitOOOForm.fn(oooData, token || undefined),
+    }) => UsersApi.submitOOOForm.fn(oooData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: UsersApi.getUserStatus.key });
       closeOOOModal();
@@ -78,7 +75,7 @@ export default function HomeScreen() {
   });
 
   const cancelOOOMutation = useMutation({
-    mutationFn: () => UsersApi.cancelOOO.fn(token || undefined),
+    mutationFn: () => UsersApi.cancelOOO.fn(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: UsersApi.getUserStatus.key });
       Alert.alert('Success', 'OOO status cancelled successfully');
@@ -87,14 +84,6 @@ export default function HomeScreen() {
       Alert.alert('Error', 'Failed to cancel OOO status');
     },
   });
-
-  if (!token) {
-    return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </SafeAreaView>
-    );
-  }
 
   if (loading) {
     return (

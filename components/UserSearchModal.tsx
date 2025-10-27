@@ -1,6 +1,5 @@
 import { UsersApi } from '@/api/users/users.api';
 import { theme } from '@/constants/theme';
-import useCheckUserSession from '@/hooks/getUserToken';
 import { useQuery } from '@tanstack/react-query';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -25,7 +24,6 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   onClose,
   onUserSelect,
 }) => {
-  const { token } = useCheckUserSession();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
@@ -41,9 +39,8 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   // Search users when debounced term changes
   const { data: searchResults, isLoading: loadingSearch } = useQuery({
     queryKey: UsersApi.searchUsers.key(debouncedSearchTerm),
-    queryFn: () =>
-      UsersApi.searchUsers.fn(debouncedSearchTerm, token || undefined),
-    enabled: !!token && debouncedSearchTerm.length >= 3,
+    queryFn: () => UsersApi.searchUsers.fn(debouncedSearchTerm),
+    enabled: debouncedSearchTerm.length >= 3,
   });
 
   const handleUserSelect = useCallback(

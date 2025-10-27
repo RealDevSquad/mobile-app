@@ -1,4 +1,4 @@
-import { secureStorage } from '@/utils/secureStorage';
+import { secureStorage } from '@/utils/storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -40,15 +40,12 @@ interface AuthState {
   token: string | null;
   user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
 
   // Actions
   setToken: (token: string | null) => void;
   setUser: (user: User | null) => void;
   login: (token: string, user: User) => void;
   logout: () => void;
-  initialize: () => Promise<void>;
-  clearLoading: () => void;
 }
 
 // Custom storage adapter for Zustand persist
@@ -66,12 +63,11 @@ const secureStorageAdapter = {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Initial state
       token: null,
       user: null,
       isAuthenticated: false,
-      isLoading: true,
 
       // Actions
       setToken: (token) => {
@@ -90,7 +86,6 @@ export const useAuthStore = create<AuthState>()(
           token,
           user,
           isAuthenticated: true,
-          isLoading: false,
         });
       },
 
@@ -99,42 +94,7 @@ export const useAuthStore = create<AuthState>()(
           token: null,
           user: null,
           isAuthenticated: false,
-          isLoading: false,
         });
-      },
-
-      initialize: async () => {
-        try {
-          set({ isLoading: true });
-
-          // Try to load token from secure storage
-          const storedToken = await secureStorage.getItem('auth_token');
-
-          if (storedToken) {
-            set({
-              token: storedToken,
-              isAuthenticated: true,
-              isLoading: false,
-            });
-          } else {
-            set({
-              token: null,
-              isAuthenticated: false,
-              isLoading: false,
-            });
-          }
-        } catch (error) {
-          console.error('Error initializing auth store:', error);
-          set({
-            token: null,
-            isAuthenticated: false,
-            isLoading: false,
-          });
-        }
-      },
-
-      clearLoading: () => {
-        set({ isLoading: false });
       },
     }),
     {
@@ -148,18 +108,15 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// Selector hooks for better performance
+// Selector hooks for better performance (deprecated - use AuthProvider context instead)
 export const useAuthToken = () => useAuthStore((state) => state.token);
 export const useAuthUser = () => useAuthStore((state) => state.user);
 export const useIsAuthenticated = () =>
   useAuthStore((state) => state.isAuthenticated);
-export const useAuthLoading = () => useAuthStore((state) => state.isLoading);
 export const useAuthActions = () =>
   useAuthStore((state) => ({
     setToken: state.setToken,
     setUser: state.setUser,
     login: state.login,
     logout: state.logout,
-    initialize: state.initialize,
-    clearLoading: state.clearLoading,
   }));

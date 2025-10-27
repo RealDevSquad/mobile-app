@@ -1,19 +1,11 @@
 import { appConfig } from '@/config/app-config';
 import { useAuthStore } from '@/store/authStore';
 import { createAuthHeaders } from '@/utils/authHeaders';
-import axios, { InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { router } from 'expo-router';
 import { Alert, Platform, ToastAndroid } from 'react-native';
 
-interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-  token?: string;
-}
-
-declare module 'axios' {
-  interface InternalAxiosRequestConfig {
-    token?: string;
-  }
-}
+// Token is now automatically handled by the request interceptor
 
 const backendUrl = appConfig.backendBaseUrl;
 
@@ -35,10 +27,11 @@ apiClient.interceptors.request.use(
   async (config) => {
     config.headers.set('Content-Type', 'application/json');
 
-    if ((config as CustomAxiosRequestConfig).token) {
-      const authHeaders = createAuthHeaders(
-        (config as CustomAxiosRequestConfig).token!
-      );
+    // Automatically get token from auth store
+    const token = useAuthStore.getState().token;
+
+    if (token) {
+      const authHeaders = createAuthHeaders(token);
       for (const [key, value] of Object.entries(authHeaders)) {
         config.headers.set(key, value);
       }

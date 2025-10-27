@@ -3,7 +3,6 @@ import { UsersApi } from '@/api/users/users.api';
 import Header from '@/components/ProfileHeader';
 import Task from '@/components/Task';
 import { theme } from '@/constants/theme';
-import useCheckUserSession from '@/hooks/getUserToken';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import {
@@ -17,7 +16,6 @@ import { Tabs } from 'react-native-collapsible-tab-view';
 
 export default function ProfileScreen() {
   const HEADER_HEIGHT = 250;
-  const { token } = useCheckUserSession();
 
   const {
     data: userData,
@@ -25,8 +23,8 @@ export default function ProfileScreen() {
     refetch: refetchUserData,
   } = useQuery({
     queryKey: UsersApi.getUserDetails.key,
-    queryFn: () => UsersApi.getUserDetails.fn(token || undefined),
-    enabled: !!token,
+    queryFn: () => UsersApi.getUserDetails.fn(),
+    enabled: true,
   });
 
   const {
@@ -35,8 +33,8 @@ export default function ProfileScreen() {
     refetch: refetchTasks,
   } = useQuery({
     queryKey: TasksApi.getSelfTasks.key,
-    queryFn: () => TasksApi.getSelfTasks.fn(token || undefined),
-    enabled: !!token,
+    queryFn: () => TasksApi.getSelfTasks.fn(),
+    enabled: true,
   });
 
   const loading = loadingUserData || loadingTasks;
@@ -45,7 +43,7 @@ export default function ProfileScreen() {
     await Promise.all([refetchUserData(), refetchTasks()]);
   };
 
-  if (!token || loading) {
+  if (loading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#0000ff" />

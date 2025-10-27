@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { create } from 'zustand';
 
 // Modal state interface
@@ -97,38 +98,83 @@ export const useUIActions = () =>
     closeAllModals: state.closeAllModals,
   }));
 
-// Specific modal hooks for convenience
-export const useOOOModal = () =>
-  useUIStore((state) => ({
-    isOpen: state.oooModal,
-    open: () => state.setModal('oooModal', true),
-    close: () => state.setModal('oooModal', false),
-  }));
+// Specific modal hooks for convenience - Fixed to prevent infinite re-renders
+// These hooks now use separate selectors and memoized callbacks
 
-export const useSearchModal = () =>
-  useUIStore((state) => ({
-    isOpen: state.searchModal,
-    open: () => state.setModal('searchModal', true),
-    close: () => state.setModal('searchModal', false),
-  }));
+export const useOOOModal = () => {
+  const isOpen = useUIStore((state) => state.oooModal);
+  const openModal = useUIStore((state) => state.openModal);
+  const closeModal = useUIStore((state) => state.closeModal);
 
-export const useExtensionModal = () =>
-  useUIStore((state) => ({
-    isOpen: state.extensionModal,
-    open: () => state.setModal('extensionModal', true),
-    close: () => state.setModal('extensionModal', false),
-  }));
+  const open = useCallback(() => openModal('oooModal'), [openModal]);
+  const close = useCallback(() => closeModal('oooModal'), [closeModal]);
 
-export const useUpdateStatusModal = () =>
-  useUIStore((state) => ({
-    isOpen: state.updateStatusModal,
-    open: () => state.setModal('updateStatusModal', true),
-    close: () => state.setModal('updateStatusModal', false),
-  }));
+  return {
+    isOpen,
+    open,
+    close,
+  };
+};
 
-export const useAddProgressModal = () =>
-  useUIStore((state) => ({
-    isOpen: state.addProgressModal,
-    open: () => state.setModal('addProgressModal', true),
-    close: () => state.setModal('addProgressModal', false),
-  }));
+export const useSearchModal = () => {
+  const isOpen = useUIStore((state) => state.searchModal);
+  const openModal = useUIStore((state) => state.openModal);
+  const closeModal = useUIStore((state) => state.closeModal);
+
+  const open = useCallback(() => openModal('searchModal'), [openModal]);
+  const close = useCallback(() => closeModal('searchModal'), [closeModal]);
+
+  return {
+    isOpen,
+    open,
+    close,
+  };
+};
+
+export const useExtensionModal = () => {
+  const isOpen = useUIStore((state) => state.extensionModal);
+  const openModal = useUIStore((state) => state.openModal);
+  const closeModal = useUIStore((state) => state.closeModal);
+
+  const open = useCallback(() => openModal('extensionModal'), [openModal]);
+  const close = useCallback(() => closeModal('extensionModal'), [closeModal]);
+
+  return {
+    isOpen,
+    open,
+    close,
+  };
+};
+
+export const useUpdateStatusModal = () => {
+  const isOpen = useUIStore((state) => state.updateStatusModal);
+  const openModal = useUIStore((state) => state.openModal);
+  const closeModal = useUIStore((state) => state.closeModal);
+
+  const open = useCallback(() => openModal('updateStatusModal'), [openModal]);
+  const close = useCallback(
+    () => closeModal('updateStatusModal'),
+    [closeModal]
+  );
+
+  return {
+    isOpen,
+    open,
+    close,
+  };
+};
+
+export const useAddProgressModal = () => {
+  const isOpen = useUIStore((state) => state.addProgressModal);
+  const openModal = useUIStore((state) => state.openModal);
+  const closeModal = useUIStore((state) => state.closeModal);
+
+  const open = useCallback(() => openModal('addProgressModal'), [openModal]);
+  const close = useCallback(() => closeModal('addProgressModal'), [closeModal]);
+
+  return {
+    isOpen,
+    open,
+    close,
+  };
+};

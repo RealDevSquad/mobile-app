@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "rdsapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "assetBundlePatterns": ["assets/fonts/*"],
     "ios": {
       "supportsTablet": true

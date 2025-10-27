@@ -25,7 +25,6 @@ interface AddProgressModalProps {
   onClose: () => void;
   onSubmit: () => void;
   taskId: string;
-  token: string;
 }
 
 export default function AddProgressModal({
@@ -33,7 +32,6 @@ export default function AddProgressModal({
   onClose,
   onSubmit,
   taskId,
-  token,
 }: AddProgressModalProps) {
   const queryClient = useQueryClient();
 
@@ -58,7 +56,7 @@ export default function AddProgressModal({
       completed: string;
       planned: string;
       blockers: string;
-    }) => TasksApi.submitProgress.fn(progressData, token || undefined),
+    }) => TasksApi.submitProgress.fn(progressData),
     onSuccess: () => {
       Alert.alert('Success', 'Progress updated successfully');
       reset();

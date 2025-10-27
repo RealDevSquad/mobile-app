@@ -1,4 +1,3 @@
-import { AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
 import { apiClient } from '../../lib/api-client';
 import {
   TCancelOOOResponse,
@@ -13,16 +12,9 @@ import {
 export const UsersApi = {
   getUserDetails: {
     key: ['UsersApi.getUserDetails'],
-    fn: async (token?: string): Promise<TGetUserDetailsResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
+    fn: async (): Promise<TGetUserDetailsResponse> => {
       const { data } = await apiClient.get<TGetUserDetailsResponse>(
-        '/users?profile=true',
-        config
+        '/users?profile=true'
       );
       return data;
     },
@@ -30,54 +22,28 @@ export const UsersApi = {
 
   getUserStatus: {
     key: ['UsersApi.getUserStatus'],
-    fn: async (token?: string): Promise<TGetUserStatusResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
-      const { data } = await apiClient.get<TGetUserStatusResponse>(
-        '/users/status/self',
-        config
-      );
+    fn: async (): Promise<TGetUserStatusResponse> => {
+      const { data } =
+        await apiClient.get<TGetUserStatusResponse>('/users/status/self');
       return data;
     },
   },
 
   searchUsers: {
     key: (searchTerm: string) => ['UsersApi.searchUsers', searchTerm],
-    fn: async (
-      searchTerm: string,
-      token?: string
-    ): Promise<TSearchUsersResponse> => {
-      const config: InternalAxiosRequestConfig = {
+    fn: async (searchTerm: string): Promise<TSearchUsersResponse> => {
+      const { data } = await apiClient.get<TSearchUsersResponse>('/users', {
         params: { search: searchTerm, size: 5 },
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
-      const { data } = await apiClient.get<TSearchUsersResponse>(
-        '/users',
-        config
-      );
+      });
       return data;
     },
   },
 
   getActiveTask: {
     key: ['UsersApi.getActiveTask'],
-    fn: async (token?: string): Promise<TGetActiveTaskResponse> => {
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
+    fn: async (): Promise<TGetActiveTaskResponse> => {
       const { data } = await apiClient.get<TGetActiveTaskResponse>(
-        '/users/self/tasks/active',
-        config
+        '/users/self/tasks/active'
       );
       return data;
     },
@@ -85,10 +51,7 @@ export const UsersApi = {
 
   submitOOOForm: {
     key: ['UsersApi.submitOOOForm'],
-    fn: async (
-      oooData: TSubmitOOOFormDto,
-      token?: string
-    ): Promise<TSubmitOOOResponse> => {
+    fn: async (oooData: TSubmitOOOFormDto): Promise<TSubmitOOOResponse> => {
       const payload = {
         currentStatus: {
           from: new Date(oooData.fromDate).getTime(),
@@ -99,16 +62,9 @@ export const UsersApi = {
         },
       };
 
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
       const { data } = await apiClient.patch<TSubmitOOOResponse>(
         '/users/status/self?userStatusFlag=true',
-        payload,
-        config
+        payload
       );
       return data;
     },
@@ -116,21 +72,14 @@ export const UsersApi = {
 
   cancelOOO: {
     key: ['UsersApi.cancelOOO'],
-    fn: async (token?: string): Promise<TCancelOOOResponse> => {
+    fn: async (): Promise<TCancelOOOResponse> => {
       const payload = {
         cancelOoo: true,
       };
 
-      const config: InternalAxiosRequestConfig = {
-        headers: new AxiosHeaders(),
-      };
-      if (token) {
-        (config as any).token = token;
-      }
       const { data } = await apiClient.patch<TCancelOOOResponse>(
         '/users/status/self?userStatusFlag=true',
-        payload,
-        config
+        payload
       );
       return data;
     },

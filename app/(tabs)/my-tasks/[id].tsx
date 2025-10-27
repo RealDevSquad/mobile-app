@@ -1,13 +1,12 @@
 import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
 import { TasksApi } from '@/api/tasks/tasks.api';
 import { theme } from '@/constants/theme';
-import useCheckUserSession from '@/hooks/getUserToken';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { useLocalSearchParams } from 'expo-router';
 import moment from 'moment';
-import React, { lazy, Suspense, useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -34,7 +33,6 @@ const UpdateTaskStatusModal = lazy(
 
 export default function TaskDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { token } = useCheckUserSession();
   const queryClient = useQueryClient();
   const [expandedUpdate, setExpandedUpdate] = useState<string | null>(null);
   const [showExtensionModal, setShowExtensionModal] = useState(false);
@@ -51,7 +49,7 @@ export default function TaskDetailsScreen() {
   } = useQuery({
     queryKey: TasksApi.getTaskDetails.key(id || ''),
     queryFn: () => TasksApi.getTaskDetails.fn(id!),
-    enabled: !!token && !!id,
+    enabled: !!id,
   });
 
   const {
@@ -62,7 +60,7 @@ export default function TaskDetailsScreen() {
   } = useQuery({
     queryKey: TasksApi.getTaskProgress.key(id || ''),
     queryFn: () => TasksApi.getTaskProgress.fn(id!),
-    enabled: !!token && !!id,
+    enabled: !!id,
   });
 
   const { data: extensionRequestsData, isLoading: extensionRequestsLoading } =
@@ -71,11 +69,8 @@ export default function TaskDetailsScreen() {
         taskId: id || '',
       }),
       queryFn: () =>
-        ExtensionRequestsApi.getSelfExtensionRequests.fn(
-          { taskId: id! },
-          token || undefined
-        ),
-      enabled: !!token && !!id,
+        ExtensionRequestsApi.getSelfExtensionRequests.fn({ taskId: id! }),
+      enabled: !!id,
     });
 
   const progressUpdates = progressUpdatesData?.data || [];
@@ -449,7 +444,6 @@ export default function TaskDetailsScreen() {
             taskId={id || ''}
             oldEndsOn={task.endsOn}
             assignee={task.assignee}
-            token={token || ''}
           />
         </Suspense>
       )}
@@ -470,7 +464,6 @@ export default function TaskDetailsScreen() {
           taskId={id || ''}
           currentStatus={task.status}
           currentProgress={task.percentCompleted}
-          token={token || ''}
         />
       </Suspense>
 
@@ -480,7 +473,6 @@ export default function TaskDetailsScreen() {
           onClose={() => setShowAddProgressModal(false)}
           onSubmit={handleAddProgressSubmit}
           taskId={id || ''}
-          token={token || ''}
         />
       </Suspense>
     </SafeAreaView>

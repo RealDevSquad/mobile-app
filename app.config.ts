@@ -43,5 +43,6 @@ export default {
     apiUrl: validatedEnv.EXPO_PUBLIC_API_URL,
     apiKey: validatedEnv.EXPO_PUBLIC_API_KEY,
     environment: ENV,
+    plugins: ['expo-router', 'expo-web-browser'],
   },
 };

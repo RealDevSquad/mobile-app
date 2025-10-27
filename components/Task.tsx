@@ -40,6 +40,11 @@ const Task = React.memo(
     );
 
     const renderItem = ({ item }: { item: any }) => {
+      // Skip rendering if item is undefined or doesn't have required properties
+      if (!item?.id) {
+        return null;
+      }
+
       return (
         <TouchableOpacity
           style={styles.card}
@@ -48,26 +53,35 @@ const Task = React.memo(
         >
           <View style={styles.cardContent}>
             <View style={styles.cardText}>
-              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.title}>{item.title || 'Untitled Task'}</Text>
               <Text style={styles.text}>
-                Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
+                Assignee:{' '}
+                <Text style={styles.assignee}>
+                  {item.assignee || 'Unassigned'}
+                </Text>
               </Text>
               <Text style={styles.text}>
                 Progress:{' '}
-                <Text style={styles.progress}>{item.percentCompleted}%</Text>
+                <Text style={styles.progress}>
+                  {item.percentCompleted || 0}%
+                </Text>
               </Text>
               <Text style={styles.text}>
                 Ends On:{' '}
-                <Text style={styles.endsOn}>{formatTimeAgo(item.endsOn)}</Text>
+                <Text style={styles.endsOn}>
+                  {item.endsOn ? formatTimeAgo(item.endsOn) : 'Not set'}
+                </Text>
               </Text>
               <Text style={styles.text}>
                 Started On:{' '}
                 <Text style={styles.startedOn}>
-                  {formatTimeAgo(item.startedOn)}
+                  {item.startedOn
+                    ? formatTimeAgo(item.startedOn)
+                    : 'Not started'}
                 </Text>
               </Text>
               <Text style={[styles.text, styles.status]}>
-                Status: {item.status}
+                Status: {item.status || 'Unknown'}
               </Text>
             </View>
             {showArrow && (
@@ -97,8 +111,8 @@ const Task = React.memo(
 
     return tasks?.length > 0 ? (
       <FlatList
-        data={tasks}
-        keyExtractor={(item) => item.id}
+        data={tasks.filter((item) => item?.id)} // Filter out invalid items
+        keyExtractor={(item, index) => item?.id || `task-${index}`} // Fallback to index if no id
         renderItem={renderItem}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.1}

@@ -1,6 +1,5 @@
 import { TasksApi } from '@/api/tasks/tasks.api';
 import Task from '@/components/Task';
-import useCheckUserSession from '@/hooks/getUserToken';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -13,7 +12,6 @@ import {
 } from 'react-native';
 
 export default function MyTasksScreen() {
-  const { token } = useCheckUserSession();
   const router = useRouter();
 
   const {
@@ -23,23 +21,21 @@ export default function MyTasksScreen() {
     error,
   } = useQuery({
     queryKey: TasksApi.getSelfTasks.key,
-    queryFn: () => TasksApi.getSelfTasks.fn(token || undefined),
-    enabled: !!token,
+    queryFn: () => TasksApi.getSelfTasks.fn(),
+    enabled: true,
   });
 
-  const selfTasks = selfTasksData || [];
+  const selfTasks = (selfTasksData || []).filter((task) => {
+    if (!task || !task.id) {
+      console.warn('Invalid self task data received:', task);
+      return false;
+    }
+    return true;
+  });
 
   const handleTaskPress = (task: any) => {
     router.push(`/my-tasks/${task.id}`);
   };
-
-  if (!token) {
-    return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </SafeAreaView>
-    );
-  }
 
   if (loadingSelfTasks && selfTasks.length === 0) {
     return (

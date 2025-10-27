@@ -1,5 +1,4 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
-import useCheckUserSession from '@/hooks/getUserToken';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import moment from 'moment';
@@ -18,7 +17,6 @@ import {
 
 export default function TaskRequestDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { token } = useCheckUserSession();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [isApproving, setIsApproving] = useState(false);
@@ -31,9 +29,8 @@ export default function TaskRequestDetailsScreen() {
     error,
   } = useQuery({
     queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
-    queryFn: () =>
-      TaskRequestsApi.getTaskRequestById.fn(id!, token || undefined),
-    enabled: !!token && !!id,
+    queryFn: () => TaskRequestsApi.getTaskRequestById.fn(id!),
+    enabled: !!id,
   });
 
   const approveMutation = useMutation({
@@ -43,11 +40,7 @@ export default function TaskRequestDetailsScreen() {
     }: {
       taskRequestId: string;
       userId: string;
-    }) =>
-      TaskRequestsApi.approveTaskRequest.fn(
-        { taskRequestId, userId },
-        token || undefined
-      ),
+    }) => TaskRequestsApi.approveTaskRequest.fn({ taskRequestId, userId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
@@ -74,10 +67,7 @@ export default function TaskRequestDetailsScreen() {
       userId: string;
       reason?: string;
     }) =>
-      TaskRequestsApi.rejectTaskRequest.fn(
-        { taskRequestId, userId, reason },
-        token || undefined
-      ),
+      TaskRequestsApi.rejectTaskRequest.fn({ taskRequestId, userId, reason }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),

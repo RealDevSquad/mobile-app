@@ -1,6 +1,5 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import TaskRequestCard from '@/components/TaskRequestCard';
-import useCheckUserSession from '@/hooks/getUserToken';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -16,7 +15,6 @@ import {
 } from 'react-native';
 
 export default function TaskRequestsScreen() {
-  const { token } = useCheckUserSession();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -35,11 +33,7 @@ export default function TaskRequestsScreen() {
       status: taskRequestsFilter,
     }),
     queryFn: () =>
-      TaskRequestsApi.getTaskRequests.fn(
-        { status: taskRequestsFilter },
-        token || undefined
-      ),
-    enabled: !!token,
+      TaskRequestsApi.getTaskRequests.fn({ status: taskRequestsFilter }),
   });
 
   const taskRequests = taskRequestsData?.data || [];
@@ -129,7 +123,7 @@ export default function TaskRequestsScreen() {
     </Modal>
   );
 
-  if (!token || loading) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />

@@ -2,8 +2,8 @@ import { AuthApi } from '@/api/auth/auth.api';
 import CameraModal from '@/components/Modal/CameraModal';
 import GitHubLoginModal from '@/components/Modal/GithubLoginModal';
 import { theme } from '@/constants/theme';
-import { useAuthActions, useAuthToken } from '@/store/authStore';
-import { secureStorage } from '@/utils/secureStorage';
+import { useAuth } from '@/contexts/AuthProvider';
+import { secureStorage } from '@/utils/storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Camera } from 'expo-camera';
 import * as Device from 'expo-device';
@@ -43,11 +43,10 @@ function buildUrl(url: string, params: { [key: string]: string }) {
 const AuthScreen = () => {
   const router = useRouter();
   const [modalAnimation] = useState(
-    new Animated.Value(Dimensions.get('window').height)
+    () => new Animated.Value(Dimensions.get('window').height)
   );
 
-  const token = useAuthToken();
-  const { setToken } = useAuthActions();
+  const { token, setToken } = useAuth();
 
   const [githubLogin, setGithubLogin] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);

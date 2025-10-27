@@ -1,7 +1,10 @@
 import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
 import ExtensionRequestCard from '@/components/ExtensionRequestCard';
-import useCheckUserSession from '@/hooks/getUserToken';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,7 +18,6 @@ import {
 } from 'react-native';
 
 const ExtensionRequestsScreen: React.FC = () => {
-  const { token } = useCheckUserSession();
   const queryClient = useQueryClient();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -28,44 +30,66 @@ const ExtensionRequestsScreen: React.FC = () => {
     { label: 'Denied', value: 'DENIED' },
   ];
 
-  // Fetch extension requests with filtering
+  // Fetch extension requests with infinite scroll
   const {
-    data: extensionRequestsData,
+    data,
     isLoading: loading,
     isError,
     error,
     refetch,
-  } = useQuery({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ExtensionRequestsApi.getExtensionRequests.key({
       status: extensionRequestsFilter,
     }),
-    queryFn: () =>
-      ExtensionRequestsApi.getExtensionRequests.fn(
-        { status: extensionRequestsFilter },
-        token || undefined
-      ),
-    enabled: !!token,
+    queryFn: ({ pageParam }) =>
+      ExtensionRequestsApi.getExtensionRequests.fn({
+        status: extensionRequestsFilter,
+        next: pageParam,
+      }),
+    enabled: true,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage?.next) return undefined;
+      // Extract cursor parameter from URL like "/extension-requests?cursor=RREtras9tsRueAFLrwml&order=desc&size=5&q=status%3AAPPROVED%2BPENDING"
+      const urlParams = new URLSearchParams(lastPage.next.split('?')[1]);
+      return urlParams.get('cursor') || undefined;
+    },
+    initialPageParam: undefined as string | undefined,
   });
 
-  const extensionRequests = extensionRequestsData?.allExtensionRequests || [];
-  const hasMoreExtensionRequests = !!extensionRequestsData?.next;
+  const allExtensionRequests = React.useMemo(() => {
+    if (!data?.pages) return [];
 
-  const handleLoadMore = async () => {
-    // Note: For now, we'll handle pagination in a future update
-    // This would require implementing infinite queries
-    console.log(
-      'Load more functionality needs to be implemented with infinite queries'
-    );
+    return data.pages.flatMap((page: any) => {
+      if (!page || !page.allExtensionRequests) {
+        console.warn('Invalid page data received:', page);
+        return [];
+      }
+      return page.allExtensionRequests.filter((request: any) => {
+        if (!request || !request.id) {
+          console.warn('Invalid extension request data received:', request);
+          return false;
+        }
+        return true;
+      });
+    });
+  }, [data?.pages]);
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
   };
 
   // Approve extension request mutation
   const approveMutation = useMutation({
     mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
-      ExtensionRequestsApi.updateExtensionRequestStatus.fn(
-        id,
-        { status: 'APPROVED', reason },
-        token || undefined
-      ),
+      ExtensionRequestsApi.updateExtensionRequestStatus.fn(id, {
+        status: 'APPROVED',
+        reason,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ExtensionRequestsApi.getExtensionRequests.key({
@@ -83,11 +107,10 @@ const ExtensionRequestsScreen: React.FC = () => {
   // Reject extension request mutation
   const rejectMutation = useMutation({
     mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
-      ExtensionRequestsApi.updateExtensionRequestStatus.fn(
-        id,
-        { status: 'DENIED', reason },
-        token || undefined
-      ),
+      ExtensionRequestsApi.updateExtensionRequestStatus.fn(id, {
+        status: 'DENIED',
+        reason,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ExtensionRequestsApi.getExtensionRequests.key({
@@ -123,22 +146,16 @@ const ExtensionRequestsScreen: React.FC = () => {
     />
   );
 
-  const renderLoadMoreButton = () => {
-    if (!hasMoreExtensionRequests) return null;
-
-    return (
-      <TouchableOpacity
-        style={styles.loadMoreButton}
-        onPress={handleLoadMore}
-        disabled={isLoadingMore}
-      >
-        {isLoadingMore ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.loadMoreText}>Load More</Text>
-        )}
-      </TouchableOpacity>
-    );
+  const renderFooter = () => {
+    if (isFetchingNextPage) {
+      return (
+        <View style={styles.footerLoader}>
+          <ActivityIndicator size="small" color="#1D1283" />
+          <Text style={styles.loadingText}>Loading more requests...</Text>
+        </View>
+      );
+    }
+    return null;
   };
 
   const renderFilterModal = () => (
@@ -183,7 +200,7 @@ const ExtensionRequestsScreen: React.FC = () => {
     </Modal>
   );
 
-  if (!token || loading) {
+  if (loading && !data) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -240,12 +257,14 @@ const ExtensionRequestsScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {extensionRequests.length > 0 ? (
+      {allExtensionRequests && allExtensionRequests.length > 0 ? (
         <FlatList
-          data={extensionRequests}
+          data={allExtensionRequests || []}
           keyExtractor={(item) => item.id}
           renderItem={renderExtensionRequest}
-          ListFooterComponent={renderLoadMoreButton}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={renderFooter}
           showsVerticalScrollIndicator={false}
         />
       ) : (
@@ -299,17 +318,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-  loadMoreButton: {
-    backgroundColor: '#1D1283',
-    margin: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
+  footerLoader: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 16,
   },
-  loadMoreText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+  loadingText: {
+    marginLeft: 8,
+    color: '#666',
+    fontSize: 14,
+    fontWeight: '500',
   },
   emptyContainer: {
     flex: 1,

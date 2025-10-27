@@ -1,7 +1,6 @@
 import { LogsApi } from '@/api/logs/logs.api';
 import ActivityDetailBottomSheet from '@/components/ActivityDetailBottomSheet';
 import UserSearchModal from '@/components/UserSearchModal';
-import { useAuthToken } from '@/store/authStore';
 import { useSearchModal } from '@/store/uiStore';
 import {
   generateDateStatusMessage,
@@ -21,7 +20,6 @@ import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CalendarScreen() {
-  const token = useAuthToken();
   const {
     isOpen: showSearchModal,
     open: openSearchModal,
@@ -40,12 +38,8 @@ export default function CalendarScreen() {
   // Fetch user logs when username is selected
   const { data: calendarLogsData, isLoading: loadingLogs } = useQuery({
     queryKey: LogsApi.getUserLogs.key(selectedUsername || ''),
-    queryFn: () =>
-      LogsApi.getUserLogs.fn(
-        { username: selectedUsername! },
-        token || undefined
-      ),
-    enabled: !!token && !!selectedUsername,
+    queryFn: () => LogsApi.getUserLogs.fn({ username: selectedUsername! }),
+    enabled: !!selectedUsername,
   });
 
   const calendarLogs = useMemo(
