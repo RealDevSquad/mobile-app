@@ -51,7 +51,7 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
                   "Success",
                   "Extension request approved successfully."
                 );
-              } catch (error) {
+              } catch {
                 Alert.alert("Error", "Failed to approve extension request.");
               } finally {
                 setIsApproving(false);
@@ -79,7 +79,7 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = React.memo(
                   "Success",
                   "Extension request rejected successfully."
                 );
-              } catch (error) {
+              } catch {
                 Alert.alert("Error", "Failed to reject extension request.");
               } finally {
                 setIsRejecting(false);

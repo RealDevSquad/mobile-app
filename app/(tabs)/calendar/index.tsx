@@ -8,7 +8,7 @@ import {
   processLogsToMarkedDates,
 } from "@/utils/calendarUtils";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -43,7 +43,10 @@ export default function CalendarScreen() {
     enabled: !!token && !!selectedUsername,
   });
 
-  const calendarLogs = calendarLogsData?.data || [];
+  const calendarLogs = useMemo(
+    () => calendarLogsData?.data || [],
+    [calendarLogsData?.data]
+  );
 
   useEffect(() => {
     if (calendarLogs.length > 0) {

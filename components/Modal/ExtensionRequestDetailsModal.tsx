@@ -33,10 +33,6 @@ const ExtensionRequestDetailsModal: React.FC<
     return moment.unix(timestamp).format("MMM DD, YYYY");
   };
 
-  const formatDateTime = (timestamp: number) => {
-    return moment.unix(timestamp).format("MMM DD, YYYY [at] h:mm A");
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "PENDING":
