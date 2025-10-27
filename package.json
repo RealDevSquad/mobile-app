@@ -27,6 +27,7 @@
     "@react-navigation/native": "^7.1.6",
     "@tanstack/react-query": "^5.90.5",
     "axios": "^1.12.2",
+    "dotenv": "^17.2.3",
     "expo": "~53.0.5",
     "expo-blur": "~14.1.4",
     "expo-camera": "^16.1.6",

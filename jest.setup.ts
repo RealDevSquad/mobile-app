@@ -2,10 +2,9 @@ import '@testing-library/jest-native/extend-expect';
 import { Alert as ReactNativeAlert } from 'react-native';
 import 'react-native-gesture-handler/jestSetup';
 
-jest.mock(
-  '@react-native-async-storage/async-storage',
-  () =>
-    import('@react-native-async-storage/async-storage/jest/async-storage-mock')
+jest.mock('@react-native-async-storage/async-storage', () =>
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 );
 
 // ---- Mock for @expo/vector-icons ----
@@ -19,8 +18,10 @@ interface IoniconsProps {
 }
 
 jest.mock('@expo/vector-icons', () => {
-  const React = import('react');
-  const { View } = import('react-native');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { View } = require('react-native');
 
   const MockIonicons: React.FC<IoniconsProps> = (props) =>
     React.createElement(View, { ...props, testID: props.testID || 'icon' });
