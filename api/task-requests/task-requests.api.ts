@@ -18,39 +18,56 @@ export const TaskRequestsApi = {
     fn: async (
       params?: TGetTaskRequestsDto
     ): Promise<TGetTaskRequestsResponse> => {
-      let url = '/task-requests';
-      const queryParams = new URLSearchParams();
+      let url = '/taskRequests';
+
+      const queryParts: string[] = [];
 
       if (params?.status === 'ALL') {
-        queryParams.append('size', '20');
-        queryParams.append('q', 'sort:created-desc');
+        queryParts.push('size=5', 'q=sort:created-asc');
       } else {
         const status = params?.status || 'PENDING';
-        queryParams.append('size', '20');
-        queryParams.append(
-          'q',
-          `status:${status.toLowerCase()}++sort:created-desc`
+        queryParts.push(
+          'size=5',
+          `q=status%3A${status.toLowerCase()}+sort%3Acreated-asc`
         );
       }
 
       if (params?.next) {
-        queryParams.append('next', params.next);
+        queryParts.push(`next=${encodeURIComponent(params.next)}`);
       }
 
-      const { data } = await apiClient.get<TGetTaskRequestsResponse>(url, {
-        params: queryParams,
-      });
-      return data;
+      const queryString = queryParts.join('&');
+      const fullUrl = `${apiClient.defaults.baseURL}${url}?${queryString}`;
+
+      try {
+        const { data } = await apiClient.get<any>(fullUrl);
+
+        const transformedData: TGetTaskRequestsResponse = {
+          data: data.data || [],
+          taskRequests: data.data || [],
+          next: data.next,
+          hasMore: !!data.next,
+          total: data.total,
+        };
+
+        return transformedData;
+      } catch (error: any) {
+        throw error;
+      }
     },
   },
 
   getTaskRequestById: {
     key: (id: string) => ['TaskRequestsApi.getTaskRequestById', id],
     fn: async (id: string): Promise<TGetTaskRequestByIdResponse> => {
-      const { data } = await apiClient.get<TGetTaskRequestByIdResponse>(
-        `/task-requests/${id}`
-      );
-      return data;
+      const url = `/taskRequests/${id}`;
+
+      try {
+        const { data } = await apiClient.get<TGetTaskRequestByIdResponse>(url);
+        return data;
+      } catch (error: any) {
+        throw error;
+      }
     },
   },
 
@@ -64,11 +81,18 @@ export const TaskRequestsApi = {
       taskRequestId,
       userId,
     }: TApproveTaskRequestDto): Promise<TApproveTaskRequestResponse> => {
-      const { data } = await apiClient.patch<TApproveTaskRequestResponse>(
-        '/task-requests/approve',
-        { taskRequestId, userId }
-      );
-      return data;
+      const url = '/taskRequests/approve';
+      const payload = { taskRequestId, userId };
+
+      try {
+        const { data } = await apiClient.patch<TApproveTaskRequestResponse>(
+          url,
+          payload
+        );
+        return data;
+      } catch (error: any) {
+        throw error;
+      }
     },
   },
 
@@ -83,11 +107,18 @@ export const TaskRequestsApi = {
       userId,
       reason,
     }: TRejectTaskRequestDto): Promise<TRejectTaskRequestResponse> => {
-      const { data } = await apiClient.patch<TRejectTaskRequestResponse>(
-        '/task-requests/reject',
-        { taskRequestId, userId, reason }
-      );
-      return data;
+      const url = '/taskRequests/reject';
+      const payload = { taskRequestId, userId, reason };
+
+      try {
+        const { data } = await apiClient.patch<TRejectTaskRequestResponse>(
+          url,
+          payload
+        );
+        return data;
+      } catch (error: any) {
+        throw error;
+      }
     },
   },
 };

@@ -1,8 +1,8 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import TaskRequestCard from '@/components/TaskRequestCard';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -21,30 +21,60 @@ export default function TaskRequestsScreen() {
   const [isRetrying, setIsRetrying] = useState(false);
   const [taskRequestsFilter, setTaskRequestsFilter] = useState('PENDING');
 
-  // Fetch task requests with filtering
+  // Fetch task requests with infinite scroll
   const {
-    data: taskRequestsData,
+    data,
     isLoading: loading,
     isError,
     error,
-    refetch,
-  } = useQuery({
+    refetch: refetchTasks,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: TaskRequestsApi.getTaskRequests.key({
       status: taskRequestsFilter,
     }),
-    queryFn: () =>
-      TaskRequestsApi.getTaskRequests.fn({ status: taskRequestsFilter }),
+    queryFn: ({ pageParam }) =>
+      TaskRequestsApi.getTaskRequests.fn({
+        status: taskRequestsFilter,
+        next: pageParam,
+      }),
+    enabled: true,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage?.next) return undefined;
+      const urlParams = new URLSearchParams(lastPage.next.split('?')[1]);
+      return urlParams.get('next') || undefined;
+    },
+    initialPageParam: undefined as string | undefined,
   });
 
-  const taskRequests = taskRequestsData?.data || [];
+  const allTaskRequests =
+    data?.pages.flatMap((page: any) => {
+      if (!page || !page.taskRequests) {
+        console.warn('Invalid page data received:', page);
+        return [];
+      }
+      return page.taskRequests.filter((taskRequest: any) => {
+        if (!taskRequest || !taskRequest.id) {
+          console.warn('Invalid task request data received:', taskRequest);
+          return false;
+        }
+        return true;
+      });
+    }) || [];
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await refetch();
+    await refetchTasks();
     setRefreshing(false);
-  };
+  }, [refetchTasks]);
 
-  const handleLoadMore = async () => {};
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleCardPress = (id: string) => {
     router.push(`/task-requests/${id}`);
@@ -60,6 +90,14 @@ export default function TaskRequestsScreen() {
   );
 
   const renderLoadMoreButton = () => {
+    if (isFetchingNextPage) {
+      return (
+        <View style={styles.loadingMoreContainer}>
+          <ActivityIndicator size="small" color="#1D1283" />
+          <Text style={styles.loadingMoreText}>Loading more...</Text>
+        </View>
+      );
+    }
     return null;
   };
 
@@ -123,7 +161,7 @@ export default function TaskRequestsScreen() {
     </Modal>
   );
 
-  if (loading) {
+  if (loading && allTaskRequests.length === 0) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -143,7 +181,7 @@ export default function TaskRequestsScreen() {
             if (!isRetrying) {
               setIsRetrying(true);
               try {
-                await refetch();
+                await refetchTasks();
               } catch (error) {
                 console.error('Error retrying:', error);
               } finally {
@@ -180,28 +218,19 @@ export default function TaskRequestsScreen() {
         </TouchableOpacity>
       </View>
 
-      {taskRequests.length > 0 ? (
-        <FlatList
-          data={taskRequests}
-          renderItem={renderTaskRequest}
-          keyExtractor={(item) => item.id}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={renderLoadMoreButton}
-          ListEmptyComponent={loading ? null : renderEmpty}
-          showsVerticalScrollIndicator={false}
-        />
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No task requests found</Text>
-          <Text style={styles.emptySubtext}>
-            Try changing the filter or check back later
-          </Text>
-        </View>
-      )}
+      <FlatList
+        data={allTaskRequests}
+        renderItem={renderTaskRequest}
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderLoadMoreButton}
+        ListEmptyComponent={loading ? null : renderEmpty}
+        showsVerticalScrollIndicator={false}
+      />
 
       {renderFilterModal()}
     </View>
@@ -346,5 +375,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  loadingMoreContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  loadingMoreText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#666',
   },
 });

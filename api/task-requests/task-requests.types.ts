@@ -1,5 +1,5 @@
 import { TaskRequestDTO } from '@/types/task-request.dto';
-import { TApiResponse } from '../common/common.types';
+import { PaginatedResponse, TApiResponse } from '../common/common.types';
 
 // Request DTOs
 export type TGetTaskRequestsDto = {
@@ -21,9 +21,8 @@ export type TRejectTaskRequestDto = {
 };
 
 // Response DTOs
-export type TGetTaskRequestsResponse = {
-  data: TaskRequestDTO[];
-  next?: string;
+export type TGetTaskRequestsResponse = PaginatedResponse<TaskRequestDTO> & {
+  taskRequests: TaskRequestDTO[];
 };
 
 export type TGetTaskRequestByIdDto = {
