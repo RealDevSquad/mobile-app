@@ -6,6 +6,10 @@ export type TGetUserDetailsDto = Record<string, never>;
 
 export type TGetUserStatusDto = Record<string, never>;
 
+export type TGetUserByIdDto = {
+  userId: string;
+};
+
 export type TSearchUsersDto = {
   search: string;
   size?: number;

@@ -1,8 +1,9 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
+import { UsersApi } from '@/api/users/users.api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -15,12 +16,23 @@ import {
   View,
 } from 'react-native';
 
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'PENDING':
+      return '#FFA500';
+    case 'APPROVED':
+      return '#4CAF50';
+    case 'REJECTED':
+      return '#F44336';
+    default:
+      return '#666';
+  }
+};
+
 export default function TaskRequestDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [isApproving, setIsApproving] = useState(false);
-  const [isRejecting, setIsRejecting] = useState(false);
 
   const {
     data: taskRequest,
@@ -31,6 +43,12 @@ export default function TaskRequestDetailsScreen() {
     queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
     queryFn: () => TaskRequestsApi.getTaskRequestById.fn(id!),
     enabled: !!id,
+  });
+
+  const { data: primaryUserDetails, isLoading: userLoading } = useQuery({
+    queryKey: UsersApi.getUserById.key(taskRequest?.users?.[0]?.userId || ''),
+    queryFn: () => UsersApi.getUserById.fn(taskRequest!.users[0].userId),
+    enabled: !!taskRequest?.users?.[0]?.userId,
   });
 
   const approveMutation = useMutation({
@@ -95,16 +113,10 @@ export default function TaskRequestDetailsScreen() {
         {
           text: 'Approve',
           onPress: () => {
-            setIsApproving(true);
-            approveMutation.mutate(
-              {
-                taskRequestId: taskRequest.id,
-                userId: taskRequest.requestors?.[0] || '',
-              },
-              {
-                onSettled: () => setIsApproving(false),
-              }
-            );
+            approveMutation.mutate({
+              taskRequestId: taskRequest.id,
+              userId: taskRequest.requestors?.[0] || '',
+            });
           },
         },
       ]
@@ -123,16 +135,10 @@ export default function TaskRequestDetailsScreen() {
           text: 'Reject',
           style: 'destructive',
           onPress: () => {
-            setIsRejecting(true);
-            rejectMutation.mutate(
-              {
-                taskRequestId: taskRequest.id,
-                userId: taskRequest.requestors?.[0] || '',
-              },
-              {
-                onSettled: () => setIsRejecting(false),
-              }
-            );
+            rejectMutation.mutate({
+              taskRequestId: taskRequest.id,
+              userId: taskRequest.requestors?.[0] || '',
+            });
           },
         },
       ]
@@ -147,24 +153,11 @@ export default function TaskRequestDetailsScreen() {
     return moment(timestamp).format('MMM DD, YYYY [at] h:mm A');
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return '#FFA500';
-      case 'APPROVED':
-        return '#4CAF50';
-      case 'REJECTED':
-        return '#F44336';
-      default:
-        return '#666';
-    }
-  };
-
   const handleExternalLink = (url: string) => {
     Linking.openURL(url);
   };
 
-  if (loading) {
+  if (loading || userLoading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -193,8 +186,6 @@ export default function TaskRequestDetailsScreen() {
     );
   }
 
-  const primaryUser = taskRequest.users[0];
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -221,9 +212,7 @@ export default function TaskRequestDetailsScreen() {
             <View style={styles.infoRow}>
               <Text style={styles.label}>Requested by:</Text>
               <Text style={styles.value}>
-                {primaryUser.first_name && primaryUser.last_name
-                  ? `${primaryUser.first_name} ${primaryUser.last_name}`
-                  : primaryUser.username}
+                {primaryUserDetails?.user.username}
               </Text>
             </View>
             <View style={styles.infoRow}>
@@ -245,29 +234,24 @@ export default function TaskRequestDetailsScreen() {
           </View>
 
           {/* Timeline */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Proposed Timeline</Text>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Start Date:</Text>
-              <Text style={styles.value}>
-                {formatDate(primaryUser.proposedStartDate)}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Deadline:</Text>
-              <Text style={styles.value}>
-                {formatDate(primaryUser.proposedDeadline)}
-              </Text>
-            </View>
-          </View>
-
-          {/* Description */}
-          {primaryUser.description && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Description</Text>
-              <Text style={styles.description}>{primaryUser.description}</Text>
-            </View>
-          )}
+          {taskRequest.users[0]?.proposedStartDate &&
+            taskRequest.users[0]?.proposedDeadline && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Proposed Timeline</Text>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Start Date:</Text>
+                  <Text style={styles.value}>
+                    {formatDate(taskRequest.users[0].proposedStartDate)}
+                  </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Deadline:</Text>
+                  <Text style={styles.value}>
+                    {formatDate(taskRequest.users[0].proposedDeadline)}
+                  </Text>
+                </View>
+              </View>
+            )}
 
           {/* External Links */}
           {taskRequest.externalIssueUrl && (
@@ -300,16 +284,6 @@ export default function TaskRequestDetailsScreen() {
               <Text style={styles.sectionTitle}>
                 Additional Users ({taskRequest.usersCount - 1})
               </Text>
-              {taskRequest.users.slice(1).map((user) => (
-                <View key={user.userId} style={styles.userItem}>
-                  <Text style={styles.userName}>
-                    {user.first_name && user.last_name
-                      ? `${user.first_name} ${user.last_name}`
-                      : user.username}
-                  </Text>
-                  <Text style={styles.userStatus}>{user.status}</Text>
-                </View>
-              ))}
             </View>
           )}
         </View>
@@ -322,12 +296,13 @@ export default function TaskRequestDetailsScreen() {
             style={[
               styles.actionButton,
               styles.rejectButton,
-              (isApproving || isRejecting) && styles.disabledButton,
+              (approveMutation.isPending || rejectMutation.isPending) &&
+                styles.disabledButton,
             ]}
             onPress={handleReject}
-            disabled={isApproving || isRejecting}
+            disabled={approveMutation.isPending || rejectMutation.isPending}
           >
-            {isRejecting ? (
+            {rejectMutation.isPending ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Text style={styles.actionButtonText}>Reject</Text>
@@ -338,12 +313,13 @@ export default function TaskRequestDetailsScreen() {
             style={[
               styles.actionButton,
               styles.approveButton,
-              (isApproving || isRejecting) && styles.disabledButton,
+              (approveMutation.isPending || rejectMutation.isPending) &&
+                styles.disabledButton,
             ]}
             onPress={handleApprove}
-            disabled={isApproving || isRejecting}
+            disabled={approveMutation.isPending || rejectMutation.isPending}
           >
-            {isApproving ? (
+            {approveMutation.isPending ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Text style={styles.actionButtonText}>Approve</Text>

@@ -1,3 +1,4 @@
+import { TGetUserByIdResponse } from '@/types/user.dto';
 import { apiClient } from '../../lib/api-client';
 import {
   TCancelOOOResponse,
@@ -44,6 +45,16 @@ export const UsersApi = {
     fn: async (): Promise<TGetActiveTaskResponse> => {
       const { data } = await apiClient.get<TGetActiveTaskResponse>(
         '/users/self/tasks/active'
+      );
+      return data;
+    },
+  },
+
+  getUserById: {
+    key: (userId: string) => ['UsersApi.getUserById', userId],
+    fn: async (userId: string): Promise<TGetUserByIdResponse> => {
+      const { data } = await apiClient.get<TGetUserByIdResponse>(
+        `/users/userId/${userId}`
       );
       return data;
     },

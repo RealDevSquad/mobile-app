@@ -63,8 +63,11 @@ export const TaskRequestsApi = {
       const url = `/taskRequests/${id}`;
 
       try {
-        const { data } = await apiClient.get<TGetTaskRequestByIdResponse>(url);
-        return data;
+        const { data } = await apiClient.get<{
+          data: TGetTaskRequestByIdResponse;
+          message: string;
+        }>(url);
+        return data.data;
       } catch (error: any) {
         throw error;
       }
