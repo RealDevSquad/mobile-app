@@ -10,94 +10,98 @@ interface UserStatusCardProps {
   isLoading?: boolean;
 }
 
-const UserStatusCard: React.FC<UserStatusCardProps> = ({
-  userStatus,
-  onApplyOOO,
-  onCancelOOO,
-  isLoading = false,
-}) => {
-  const getStatusColor = (state: string): string => {
-    switch (state?.toUpperCase()) {
-      case "ACTIVE":
-        return theme.colors.success[500]; // Green
-      case "OOO":
-        return theme.colors.warning[500]; // Orange
-      default:
-        return theme.colors.gray[500]; // Gray
-    }
-  };
+const UserStatusCard: React.FC<UserStatusCardProps> = React.memo(
+  ({ userStatus, onApplyOOO, onCancelOOO, isLoading = false }) => {
+    const getStatusColor = (state: string): string => {
+      switch (state?.toUpperCase()) {
+        case "ACTIVE":
+          return theme.colors.success[500]; // Green
+        case "OOO":
+          return theme.colors.warning[500]; // Orange
+        default:
+          return theme.colors.gray[500]; // Gray
+      }
+    };
 
-  const getStatusText = (state: string): string => {
-    switch (state?.toUpperCase()) {
-      case "ACTIVE":
-        return "Active";
-      case "OOO":
-        return "Out of Office";
-      default:
-        return state || "Unknown";
-    }
-  };
+    const getStatusText = (state: string): string => {
+      switch (state?.toUpperCase()) {
+        case "ACTIVE":
+          return "Active";
+        case "OOO":
+          return "Out of Office";
+        default:
+          return state || "Unknown";
+      }
+    };
 
-  const formatDate = (timestamp: number): string => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
+    const formatDate = (timestamp: number): string => {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    };
 
-  const isOOO = userStatus?.data?.currentStatus?.state?.toUpperCase() === "OOO";
-  const currentStatus = userStatus?.data?.currentStatus;
+    const isOOO =
+      userStatus?.data?.currentStatus?.state?.toUpperCase() === "OOO";
+    const currentStatus = userStatus?.data?.currentStatus;
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.statusContainer}>
-          <View
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.statusContainer}>
+            <View
+              style={[
+                styles.statusDot,
+                { backgroundColor: getStatusColor(currentStatus?.state || "") },
+              ]}
+            />
+            <Text style={styles.statusText}>
+              {getStatusText(currentStatus?.state || "")}
+            </Text>
+          </View>
+
+          <TouchableOpacity
             style={[
-              styles.statusDot,
-              { backgroundColor: getStatusColor(currentStatus?.state || "") },
+              styles.actionButton,
+              isOOO ? styles.cancelButton : styles.applyButton,
             ]}
-          />
-          <Text style={styles.statusText}>
-            {getStatusText(currentStatus?.state || "")}
-          </Text>
+            onPress={isOOO ? onCancelOOO : onApplyOOO}
+            disabled={isLoading}
+          >
+            <Text style={styles.buttonText}>
+              {isLoading
+                ? "Loading..."
+                : isOOO
+                ? "Cancel OOO"
+                : "Apply for OOO"}
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={[
-            styles.actionButton,
-            isOOO ? styles.cancelButton : styles.applyButton,
-          ]}
-          onPress={isOOO ? onCancelOOO : onApplyOOO}
-          disabled={isLoading}
-        >
-          <Text style={styles.buttonText}>
-            {isLoading ? "Loading..." : isOOO ? "Cancel OOO" : "Apply for OOO"}
-          </Text>
-        </TouchableOpacity>
+        {currentStatus?.message && (
+          <View style={styles.messageContainer}>
+            <Text style={styles.messageText}>{currentStatus.message}</Text>
+          </View>
+        )}
+
+        {isOOO && currentStatus && (
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateText}>
+              From: {formatDate(currentStatus.from)}
+            </Text>
+            <Text style={styles.dateText}>
+              Until: {formatDate(currentStatus.until)}
+            </Text>
+          </View>
+        )}
       </View>
+    );
+  }
+);
 
-      {currentStatus?.message && (
-        <View style={styles.messageContainer}>
-          <Text style={styles.messageText}>{currentStatus.message}</Text>
-        </View>
-      )}
-
-      {isOOO && currentStatus && (
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateText}>
-            From: {formatDate(currentStatus.from)}
-          </Text>
-          <Text style={styles.dateText}>
-            Until: {formatDate(currentStatus.until)}
-          </Text>
-        </View>
-      )}
-    </View>
-  );
-};
+UserStatusCard.displayName = "UserStatusCard";
 
 const styles = StyleSheet.create({
   container: {

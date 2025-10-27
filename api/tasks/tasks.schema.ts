@@ -85,3 +85,5 @@ export type TCreateTaskFormData = z.infer<typeof createTaskSchema>;
 export type TUpdateTaskFormData = z.infer<typeof updateTaskSchema>;
 export type TUpdateTaskStatusFormData = z.infer<typeof updateTaskStatusSchema>;
 export type TSubmitProgressFormData = z.infer<typeof submitProgressSchema>;
+
+

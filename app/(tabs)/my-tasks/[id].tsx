@@ -1,19 +1,15 @@
 import { ExtensionRequestsApi } from "@/api/extension-requests/extension-requests.api";
 import { TasksApi } from "@/api/tasks/tasks.api";
-import AddProgressModal from "@/components/Modal/AddProgressModal";
-import ExtensionRequestDetailsModal from "@/components/Modal/ExtensionRequestDetailsModal";
-import ExtensionRequestModal from "@/components/Modal/ExtensionRequestModal";
-import UpdateTaskStatusModal from "@/components/Modal/UpdateTaskStatusModal";
 import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -22,6 +18,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+const AddProgressModal = lazy(
+  () => import("@/components/Modal/AddProgressModal")
+);
+const ExtensionRequestDetailsModal = lazy(
+  () => import("@/components/Modal/ExtensionRequestDetailsModal")
+);
+const ExtensionRequestModal = lazy(
+  () => import("@/components/Modal/ExtensionRequestModal")
+);
+const UpdateTaskStatusModal = lazy(
+  () => import("@/components/Modal/UpdateTaskStatusModal")
+);
 
 export default function TaskDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -187,7 +196,8 @@ export default function TaskDetailsScreen() {
               <Image
                 source={{ uri: update.userData.picture.url }}
                 style={styles.progressCardAvatar}
-                defaultSource={require("@/assets/images/icon.png")}
+                placeholder="blurhash"
+                contentFit="cover"
               />
               <FontAwesome
                 name={isExpanded ? "chevron-up" : "chevron-down"}
@@ -431,40 +441,48 @@ export default function TaskDetailsScreen() {
       </ScrollView>
 
       {showExtensionModal && (
-        <ExtensionRequestModal
-          visible={showExtensionModal}
-          onClose={() => setShowExtensionModal(false)}
-          onSubmit={handleExtensionRequestSubmit}
-          taskId={id || ""}
-          oldEndsOn={task.endsOn}
-          assignee={task.assignee}
-          token={token || ""}
-        />
+        <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
+          <ExtensionRequestModal
+            visible={showExtensionModal}
+            onClose={() => setShowExtensionModal(false)}
+            onSubmit={handleExtensionRequestSubmit}
+            taskId={id || ""}
+            oldEndsOn={task.endsOn}
+            assignee={task.assignee}
+            token={token || ""}
+          />
+        </Suspense>
       )}
 
-      <ExtensionRequestDetailsModal
-        visible={showExtensionDetailsModal}
-        onClose={() => setShowExtensionDetailsModal(false)}
-        extensionDetails={pendingExtensionDetails || null}
-      />
+      <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
+        <ExtensionRequestDetailsModal
+          visible={showExtensionDetailsModal}
+          onClose={() => setShowExtensionDetailsModal(false)}
+          extensionDetails={pendingExtensionDetails || null}
+        />
+      </Suspense>
 
-      <UpdateTaskStatusModal
-        visible={showUpdateStatusModal}
-        onClose={() => setShowUpdateStatusModal(false)}
-        onSubmit={handleUpdateStatusSubmit}
-        taskId={id || ""}
-        currentStatus={task.status}
-        currentProgress={task.percentCompleted}
-        token={token || ""}
-      />
+      <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
+        <UpdateTaskStatusModal
+          visible={showUpdateStatusModal}
+          onClose={() => setShowUpdateStatusModal(false)}
+          onSubmit={handleUpdateStatusSubmit}
+          taskId={id || ""}
+          currentStatus={task.status}
+          currentProgress={task.percentCompleted}
+          token={token || ""}
+        />
+      </Suspense>
 
-      <AddProgressModal
-        visible={showAddProgressModal}
-        onClose={() => setShowAddProgressModal(false)}
-        onSubmit={handleAddProgressSubmit}
-        taskId={id || ""}
-        token={token || ""}
-      />
+      <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
+        <AddProgressModal
+          visible={showAddProgressModal}
+          onClose={() => setShowAddProgressModal(false)}
+          onSubmit={handleAddProgressSubmit}
+          taskId={id || ""}
+          token={token || ""}
+        />
+      </Suspense>
     </SafeAreaView>
   );
 }

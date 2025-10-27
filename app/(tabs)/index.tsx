@@ -1,8 +1,7 @@
+import { AuthApi } from "@/api/auth/auth.api";
 import { setLocalStorageItem } from "@/common/utils/common";
 import CameraModal from "@/components/Modal/CameraModal";
 import GitHubLoginModal from "@/components/Modal/GithubLoginModal";
-import AuthApis from "@/constants/apiConstant/auth-api";
-// import Colors from "@/constants/colors"; // Replaced with theme
 import { TOKEN_KEY } from "@/constants/constants";
 import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
@@ -12,12 +11,12 @@ import * as Device from "expo-device";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 
+import { Image } from "expo-image";
 import {
   Alert,
   Animated,
   Dimensions,
   Easing,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -92,7 +91,10 @@ const AuthScreen = () => {
     redirectURL: "rdsapp://auth",
   };
 
-  const githubAuthUrl = buildUrl(AuthApis.GITHUB_AUTH_API, queryParams);
+  const githubAuthUrl = buildUrl(
+    "https://staging-api.realdevsquad.com/auth/github/login",
+    queryParams
+  );
   const handleNavigationStateChange = async (navState: any) => {
     if (navState.url.includes("token=")) {
       try {
@@ -128,10 +130,8 @@ const AuthScreen = () => {
 
   const qrCodeLogin = async () => {
     const deviceId = Device.osBuildId;
-    const url = `${AuthApis.QR_AUTH_API}?device_id=${deviceId}`;
     try {
-      const userInfo = await fetch(url);
-      const userInfoJson = await userInfo.json();
+      const userInfoJson = await AuthApi.qrCodeAuth.fn(deviceId || "");
       if (userInfoJson.data.token) {
         // Await token storage before navigation
         await setLocalStorageItem(TOKEN_KEY, userInfoJson.data.token);
@@ -160,46 +160,28 @@ const AuthScreen = () => {
   const getAuthStatus = useCallback(async () => {
     const deviceInfo = Device.modelName;
     const deviceId = Device.osBuildId;
-    const url = `${AuthApis.QR_AUTH_API}?device_id=${deviceId}`;
     try {
-      const data = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          device_info: deviceInfo,
-          user_id: scannedUserId,
-          device_id: deviceId,
-        }),
+      const dataJson = await AuthApi.qrCodeAuthPost.fn({
+        device_info: deviceInfo || "",
+        user_id: scannedUserId,
+        device_id: deviceId || "",
       });
 
-      if (data.ok) {
-        const dataJson = await data.json();
-        Alert.alert("Please Confirm", dataJson.message, [
-          {
-            text: "Cancel",
-            onPress: () => {
-              setCameraVisible(false);
-              setScannedUserId("");
-            },
+      Alert.alert("Please Confirm", dataJson.message, [
+        {
+          text: "Cancel",
+          onPress: () => {
+            setCameraVisible(false);
+            setScannedUserId("");
           },
-          {
-            text: "OK",
-            onPress: () => {
-              setShowModal(true);
-            },
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            setShowModal(true);
           },
-        ]);
-      } else {
-        await data.json();
-        Toast.show({
-          type: "error",
-          text1: "Something went wrong, please try again",
-          position: "bottom",
-          bottomOffset: 80,
-        });
-      }
+        },
+      ]);
     } catch (err) {
       Toast.show({
         type: "error",
@@ -263,7 +245,8 @@ const AuthScreen = () => {
           <Image
             source={require("../../assets/images/rdsLogo.png")}
             style={styles.logo}
-            resizeMode="contain"
+            contentFit="contain"
+            placeholder="blurhash"
           />
           <Text style={styles.title}>Welcome to</Text>
           <Text style={styles.title1}>REAL DEV SQUAD</Text>

@@ -3,6 +3,10 @@ import Avatar from "@/components/Avatar";
 import OOOModal from "@/components/Modal/OOOModal";
 import MyTasksCard from "@/components/MyTasksCard";
 import QuickActionCard from "@/components/QuickActionCard";
+import {
+  ProfileHeaderSkeleton,
+  TaskCardSkeleton,
+} from "@/components/SkeletonLoader";
 import UserStatusCard from "@/components/UserStatusCard";
 import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
@@ -12,6 +16,7 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -25,19 +30,31 @@ export default function HomeScreen() {
   const queryClient = useQueryClient();
   const [isOOOModalVisible, setIsOOOModalVisible] = useState(false);
 
-  const { data: userData, isLoading: loadingUserData } = useQuery({
+  const {
+    data: userData,
+    isLoading: loadingUserData,
+    refetch: refetchUserData,
+  } = useQuery({
     queryKey: UsersApi.getUserDetails.key,
     queryFn: () => UsersApi.getUserDetails.fn(token || undefined),
     enabled: !!token,
   });
 
-  const { data: userStatus, isLoading: loadingUserStatus } = useQuery({
+  const {
+    data: userStatus,
+    isLoading: loadingUserStatus,
+    refetch: refetchUserStatus,
+  } = useQuery({
     queryKey: UsersApi.getUserStatus.key,
     queryFn: () => UsersApi.getUserStatus.fn(token || undefined),
     enabled: !!token,
   });
 
   const loading = loadingUserData || loadingUserStatus;
+
+  const handleRefresh = async () => {
+    await Promise.all([refetchUserData(), refetchUserStatus()]);
+  };
 
   const submitOOOMutation = useMutation({
     mutationFn: (oooData: {
@@ -66,10 +83,29 @@ export default function HomeScreen() {
     },
   });
 
-  if (!token || loading) {
+  if (!token) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <ProfileHeaderSkeleton />
+          </View>
+          <View style={styles.cardsContainer}>
+            <TaskCardSkeleton />
+            <TaskCardSkeleton />
+          </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -132,6 +168,14 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary[500]]}
+            tintColor={theme.colors.primary[500]}
+          />
+        }
       >
         {/* Header */}
         <View style={styles.header}>
@@ -287,5 +331,9 @@ const styles = StyleSheet.create({
   },
   userStatusContainer: {
     marginTop: theme.spacing.md,
+  },
+  cardsContainer: {
+    paddingHorizontal: theme.spacing.sm,
+    paddingBottom: theme.spacing.md,
   },
 });

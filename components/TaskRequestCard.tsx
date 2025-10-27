@@ -10,94 +10,99 @@ interface TaskRequestCardProps {
   onPress: (id: string) => void;
 }
 
-const TaskRequestCard: React.FC<TaskRequestCardProps> = ({
-  request,
-  onPress,
-}) => {
-  const formatTimeAgo = (timestamp: number) => {
-    const currentDate = moment();
-    const requestDate = moment(timestamp);
-    return requestDate.from(currentDate);
-  };
+const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
+  ({ request, onPress }) => {
+    const formatTimeAgo = (timestamp: number) => {
+      const currentDate = moment();
+      const requestDate = moment(timestamp);
+      return requestDate.from(currentDate);
+    };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return theme.colors.warning[500];
-      case "APPROVED":
-        return theme.colors.success[500];
-      case "REJECTED":
-        return theme.colors.error[500];
-      default:
-        return theme.colors.gray[500];
-    }
-  };
-
-  const getRequestorName = () => {
-    if (request.users && request.users.length > 0) {
-      const user = request.users[0];
-      if (user.first_name && user.last_name) {
-        return `${user.first_name} ${user.last_name}`;
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case "PENDING":
+          return theme.colors.warning[500];
+        case "APPROVED":
+          return theme.colors.success[500];
+        case "REJECTED":
+          return theme.colors.error[500];
+        default:
+          return theme.colors.gray[500];
       }
-      return user.username || "Unknown User";
-    }
-    return "Unknown User";
-  };
+    };
 
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
-  };
+    const getRequestorName = () => {
+      if (request.users && request.users.length > 0) {
+        const user = request.users[0];
+        if (user.first_name && user.last_name) {
+          return `${user.first_name} ${user.last_name}`;
+        }
+        return user.username || "Unknown User";
+      }
+      return "Unknown User";
+    };
 
-  return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => onPress(request.id)}
-      activeOpacity={0.7}
-    >
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Text style={styles.title}>
-            {truncateText(request.taskTitle, 60)}
-          </Text>
-          <View
-            style={[
-              styles.statusBadge,
-              { backgroundColor: getStatusColor(request.status) },
-            ]}
-          >
-            <Text style={styles.statusText}>{request.status}</Text>
+    const truncateText = (text: string, maxLength: number) => {
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength) + "...";
+    };
+
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => onPress(request.id)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Text style={styles.title}>
+              {truncateText(request.taskTitle, 60)}
+            </Text>
+            <View
+              style={[
+                styles.statusBadge,
+                { backgroundColor: getStatusColor(request.status) },
+              ]}
+            >
+              <Text style={styles.statusText}>{request.status}</Text>
+            </View>
           </View>
+          <FontAwesome
+            name="chevron-right"
+            size={16}
+            color="#666"
+            style={styles.arrowIcon}
+          />
         </View>
-        <FontAwesome
-          name="chevron-right"
-          size={16}
-          color="#666"
-          style={styles.arrowIcon}
-        />
-      </View>
 
-      <Text style={styles.text}>
-        Requested by: <Text style={styles.requestor}>{getRequestorName()}</Text>
-      </Text>
-
-      <Text style={styles.text}>
-        Type: <Text style={styles.type}>{request.requestType}</Text>
-      </Text>
-
-      <Text style={styles.text}>
-        Submitted:{" "}
-        <Text style={styles.timestamp}>{formatTimeAgo(request.createdAt)}</Text>
-      </Text>
-
-      {request.usersCount > 1 && (
         <Text style={styles.text}>
-          +{request.usersCount - 1} more user{request.usersCount > 2 ? "s" : ""}
+          Requested by:{" "}
+          <Text style={styles.requestor}>{getRequestorName()}</Text>
         </Text>
-      )}
-    </TouchableOpacity>
-  );
-};
+
+        <Text style={styles.text}>
+          Type: <Text style={styles.type}>{request.requestType}</Text>
+        </Text>
+
+        <Text style={styles.text}>
+          Submitted:{" "}
+          <Text style={styles.timestamp}>
+            {formatTimeAgo(request.createdAt)}
+          </Text>
+        </Text>
+
+        {request.usersCount > 1 && (
+          <Text style={styles.text}>
+            +{request.usersCount - 1} more user
+            {request.usersCount > 2 ? "s" : ""}
+          </Text>
+        )}
+      </TouchableOpacity>
+    );
+  }
+);
+
+TaskRequestCard.displayName = "TaskRequestCard";
 
 const styles = StyleSheet.create({
   card: {

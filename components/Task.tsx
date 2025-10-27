@@ -1,105 +1,118 @@
 import { theme } from "@/constants/theme";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import moment from "moment";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 
-const Task = ({
-  tasks,
-  onEndReached,
-  loading = false,
-  onTaskPress,
-  showArrow = true,
-}: {
-  tasks: any[];
-  onEndReached?: () => void;
-  loading?: boolean;
-  onTaskPress?: (task: any) => void;
-  showArrow?: boolean;
-}) => {
-  const formatTimeAgo = (timestamp: number) => {
-    const currentDate = moment();
-    const endDate = moment.unix(timestamp);
-    return endDate.from(currentDate);
-  };
-
-  const renderItem = ({ item }: { item: any }) => {
-    return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => onTaskPress?.(item)}
-        activeOpacity={0.7}
-      >
-        <View style={styles.cardContent}>
-          <View style={styles.cardText}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.text}>
-              Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
-            </Text>
-            <Text style={styles.text}>
-              Progress:{" "}
-              <Text style={styles.progress}>{item.percentCompleted}%</Text>
-            </Text>
-            <Text style={styles.text}>
-              Ends On:{" "}
-              <Text style={styles.endsOn}>{formatTimeAgo(item.endsOn)}</Text>
-            </Text>
-            <Text style={styles.text}>
-              Started On:{" "}
-              <Text style={styles.startedOn}>
-                {formatTimeAgo(item.startedOn)}
-              </Text>
-            </Text>
-            <Text style={[styles.text, styles.status]}>
-              Status: {item.status}
-            </Text>
-          </View>
-          {showArrow && (
-            <FontAwesome
-              name="chevron-right"
-              size={16}
-              color={theme.colors.text.secondary}
-              style={styles.chevron}
-            />
-          )}
-        </View>
-      </TouchableOpacity>
+const Task = React.memo(
+  ({
+    tasks,
+    onEndReached,
+    loading = false,
+    onTaskPress,
+    showArrow = true,
+    refreshControl,
+  }: {
+    tasks: any[];
+    onEndReached?: () => void;
+    loading?: boolean;
+    onTaskPress?: (task: any) => void;
+    showArrow?: boolean;
+    refreshControl?: React.ReactElement<
+      React.ComponentProps<typeof RefreshControl>
+    >;
+  }) => {
+    const formatTimeAgo = useMemo(
+      () => (timestamp: number) => {
+        const currentDate = moment();
+        const endDate = moment.unix(timestamp);
+        return endDate.from(currentDate);
+      },
+      []
     );
-  };
 
-  const renderFooter = () => {
-    if (loading) {
+    const renderItem = ({ item }: { item: any }) => {
       return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color="#0000ff" />
-          <Text style={styles.loadingText}>Loading more tasks...</Text>
-        </View>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => onTaskPress?.(item)}
+          activeOpacity={0.7}
+        >
+          <View style={styles.cardContent}>
+            <View style={styles.cardText}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.text}>
+                Assignee: <Text style={styles.assignee}>{item.assignee}</Text>
+              </Text>
+              <Text style={styles.text}>
+                Progress:{" "}
+                <Text style={styles.progress}>{item.percentCompleted}%</Text>
+              </Text>
+              <Text style={styles.text}>
+                Ends On:{" "}
+                <Text style={styles.endsOn}>{formatTimeAgo(item.endsOn)}</Text>
+              </Text>
+              <Text style={styles.text}>
+                Started On:{" "}
+                <Text style={styles.startedOn}>
+                  {formatTimeAgo(item.startedOn)}
+                </Text>
+              </Text>
+              <Text style={[styles.text, styles.status]}>
+                Status: {item.status}
+              </Text>
+            </View>
+            {showArrow && (
+              <FontAwesome
+                name="chevron-right"
+                size={16}
+                color={theme.colors.text.secondary}
+                style={styles.chevron}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
       );
-    }
-    return null;
-  };
+    };
 
-  return tasks?.length > 0 ? (
-    <FlatList
-      data={tasks}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      onEndReached={onEndReached}
-      onEndReachedThreshold={0.1}
-      showsVerticalScrollIndicator={false}
-      ListFooterComponent={renderFooter}
-    />
-  ) : (
-    <Text style={styles.emptyView}>No tasks found...</Text>
-  );
-};
+    const renderFooter = () => {
+      if (loading) {
+        return (
+          <View style={styles.footerLoader}>
+            <ActivityIndicator size="small" color="#0000ff" />
+            <Text style={styles.loadingText}>Loading more tasks...</Text>
+          </View>
+        );
+      }
+      return null;
+    };
+
+    return tasks?.length > 0 ? (
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.1}
+        showsVerticalScrollIndicator={false}
+        ListFooterComponent={renderFooter}
+        refreshControl={refreshControl}
+      />
+    ) : (
+      <Text style={styles.emptyView}>No tasks found...</Text>
+    );
+  }
+);
+
+Task.displayName = "Task";
 
 const styles = StyleSheet.create({
   card: {

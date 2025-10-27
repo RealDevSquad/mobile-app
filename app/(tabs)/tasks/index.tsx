@@ -1,11 +1,14 @@
 import { TasksApi } from "@/api/tasks/tasks.api";
+import { TaskCardSkeleton } from "@/components/SkeletonLoader";
 import Task from "@/components/Task";
 import UserSearchModal from "@/components/UserSearchModal";
+import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -19,33 +22,50 @@ export default function TasksScreen() {
   const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
 
   const {
-    data: tasksData,
+    data,
     isLoading: loadingTasks,
     isError,
     error,
-  } = useQuery({
+    refetch: refetchTasks,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: TasksApi.getTasks.key({
       assignee: selectedAssignee || undefined,
     }),
-    queryFn: () =>
+    queryFn: ({ pageParam }) =>
       TasksApi.getTasks.fn(
-        { assignee: selectedAssignee || undefined },
+        {
+          assignee: selectedAssignee || undefined,
+          next: pageParam,
+        },
         token || undefined
       ),
     enabled: !!token,
+    getNextPageParam: (lastPage) => lastPage.next,
+    initialPageParam: undefined as string | undefined,
   });
 
-  const allTasks = tasksData?.tasks || [];
+  const allTasks = data?.pages.flatMap((page: any) => page.tasks) || [];
 
-  const handleLoadMore = useCallback(() => {}, []);
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const handleUserSelect = (username: string) => {
+  const handleUserSelect = useCallback((username: string) => {
     setSelectedAssignee(username);
-  };
+  }, []);
 
-  const handleClearFilter = () => {
+  const handleClearFilter = useCallback(() => {
     setSelectedAssignee(null);
-  };
+  }, []);
+
+  const handleRefresh = useCallback(async () => {
+    await refetchTasks();
+  }, [refetchTasks]);
 
   if (!token) {
     return (
@@ -57,8 +77,15 @@ export default function TasksScreen() {
 
   if (loadingTasks && allTasks.length === 0) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Tasks</Text>
+        </View>
+        <View style={styles.skeletonContainer}>
+          <TaskCardSkeleton />
+          <TaskCardSkeleton />
+          <TaskCardSkeleton />
+        </View>
       </SafeAreaView>
     );
   }
@@ -109,8 +136,16 @@ export default function TasksScreen() {
       <Task
         tasks={allTasks}
         onEndReached={handleLoadMore}
-        loading={loadingTasks}
+        loading={isFetchingNextPage}
         showArrow={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={loadingTasks}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary[500]]}
+            tintColor={theme.colors.primary[500]}
+          />
+        }
       />
 
       <UserSearchModal
@@ -199,5 +234,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#e74c3c",
     textAlign: "center",
+  },
+  skeletonContainer: {
+    padding: theme.spacing.sm,
   },
 });

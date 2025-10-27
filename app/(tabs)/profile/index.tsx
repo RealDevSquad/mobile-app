@@ -2,29 +2,48 @@ import { TasksApi } from "@/api/tasks/tasks.api";
 import { UsersApi } from "@/api/users/users.api";
 import Header from "@/components/ProfileHeader";
 import Task from "@/components/Task";
+import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Tabs } from "react-native-collapsible-tab-view";
 
 export default function ProfileScreen() {
   const HEADER_HEIGHT = 250;
   const { token } = useCheckUserSession();
 
-  const { data: userData, isLoading: loadingUserData } = useQuery({
+  const {
+    data: userData,
+    isLoading: loadingUserData,
+    refetch: refetchUserData,
+  } = useQuery({
     queryKey: UsersApi.getUserDetails.key,
     queryFn: () => UsersApi.getUserDetails.fn(token || undefined),
     enabled: !!token,
   });
 
-  const { data: tasks, isLoading: loadingTasks } = useQuery({
+  const {
+    data: tasks,
+    isLoading: loadingTasks,
+    refetch: refetchTasks,
+  } = useQuery({
     queryKey: TasksApi.getSelfTasks.key,
     queryFn: () => TasksApi.getSelfTasks.fn(token || undefined),
     enabled: !!token,
   });
 
   const loading = loadingUserData || loadingTasks;
+
+  const handleRefresh = async () => {
+    await Promise.all([refetchUserData(), refetchTasks()]);
+  };
 
   if (!token || loading) {
     return (
@@ -47,6 +66,14 @@ export default function ProfileScreen() {
           )}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <Task tasks={[item]} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={handleRefresh}
+              colors={[theme.colors.primary[500]]}
+              tintColor={theme.colors.primary[500]}
+            />
+          }
         />
       </Tabs.Tab>
       <Tabs.Tab name="Completed Tasks">
@@ -56,6 +83,14 @@ export default function ProfileScreen() {
           )}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <Task tasks={[item]} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={handleRefresh}
+              colors={[theme.colors.primary[500]]}
+              tintColor={theme.colors.primary[500]}
+            />
+          }
         />
       </Tabs.Tab>
     </Tabs.Container>

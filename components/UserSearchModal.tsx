@@ -2,7 +2,7 @@ import { UsersApi } from "@/api/users/users.api";
 import { theme } from "@/constants/theme";
 import useCheckUserSession from "@/hooks/getUserToken";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -46,15 +46,18 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
     enabled: !!token && debouncedSearchTerm.length >= 3,
   });
 
-  const handleUserSelect = (username: string) => {
-    onUserSelect(username);
-    onClose();
-  };
+  const handleUserSelect = useCallback(
+    (username: string) => {
+      onUserSelect(username);
+      onClose();
+    },
+    [onUserSelect, onClose]
+  );
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setSearchTerm("");
     onClose();
-  };
+  }, [onClose]);
 
   const renderUserItem = ({ item }: { item: any }) => (
     <TouchableOpacity
