@@ -13,7 +13,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "test": "jest --coverage",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:android:preview": "pnpm eas build --platform android --profile preview",
+    "build:android:production": "pnpm eas build --platform android --profile production"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -68,6 +70,7 @@
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.0.10",
+    "eas-cli": "latest",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.8",

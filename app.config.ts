@@ -44,5 +44,47 @@ export default {
     apiKey: validatedEnv.EXPO_PUBLIC_API_KEY,
     environment: ENV,
     plugins: ['expo-router', 'expo-web-browser'],
+    android: {
+      package: 'com.rds.mobileapp',
+      versionCode: 1,
+      adaptiveIcon: {
+        foregroundImage: './assets/images/adaptive-icon.png',
+        backgroundColor: '#ffffff',
+      },
+      edgeToEdgeEnabled: true,
+      permissions: [
+        'android.permission.CAMERA',
+        'android.permission.INTERNET',
+        'android.permission.ACCESS_NETWORK_STATE',
+      ],
+    },
+    ios: {
+      bundleIdentifier: 'com.rds.mobileapp',
+      supportsTablet: true,
+    },
+    web: {
+      bundler: 'metro',
+      output: 'static',
+      favicon: './assets/images/favicon.png',
+    },
+    orientation: 'portrait',
+    icon: './assets/images/icon.png',
+    userInterfaceStyle: 'automatic',
+    newArchEnabled: false,
+    assetBundlePatterns: ['assets/fonts/*'],
+    splash: {
+      image: './assets/images/splash-icon.png',
+      imageWidth: 200,
+      resizeMode: 'contain',
+      backgroundColor: '#ffffff',
+    },
+    experiments: {
+      typedRoutes: true,
+    },
+    extra: {
+      eas: {
+        projectId: '9bc70082-9cfc-4d22-abf1-3b7d28ad53fc',
+      },
+    },
   },
 };
