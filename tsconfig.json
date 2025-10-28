@@ -5,7 +5,7 @@
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "jsx": "react-native",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowJs": true,
     "noEmit": true,
     "resolveJsonModule": true,
@@ -20,6 +20,12 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "jest.setup.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "jest.setup.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
   "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
 }

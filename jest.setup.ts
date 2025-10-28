@@ -116,53 +116,6 @@ jest.mock('@expo/vector-icons', () => {
   };
 });
 
-// ---- Mock react-native-date-picker ----
-interface MockDatePickerComponentProps {
-  // Keep interface
-  open: boolean;
-  date: Date;
-  onConfirm: (date: Date) => void;
-  onCancel: () => void;
-  modal?: boolean;
-  mode?: 'date' | 'datetime' | 'time';
-}
-
-let mockDatePickerOpen = false;
-let mockDatePickerOnConfirm: (date: Date) => void = () => {};
-let mockDatePickerOnCancel: () => void = () => {};
-
-interface MockDatePickerModule extends React.FC<MockDatePickerComponentProps> {
-  simulateConfirm: (date: Date) => void;
-  simulateCancel: () => void;
-}
-
-jest.mock('react-native-date-picker', (): MockDatePickerModule => {
-  const MockDatePickerComponent: MockDatePickerModule = (props) => {
-    mockDatePickerOpen = props.open;
-    mockDatePickerOnConfirm = props.onConfirm;
-    mockDatePickerOnCancel = props.onCancel;
-
-    if (props.open) {
-      return null;
-    }
-    return null;
-  };
-
-  MockDatePickerComponent.simulateConfirm = (dateToConfirm: Date) => {
-    if (mockDatePickerOpen && mockDatePickerOnConfirm) {
-      mockDatePickerOnConfirm(dateToConfirm);
-    }
-  };
-
-  MockDatePickerComponent.simulateCancel = () => {
-    if (mockDatePickerOpen && mockDatePickerOnCancel) {
-      mockDatePickerOnCancel();
-    }
-  };
-
-  return MockDatePickerComponent;
-});
-
 // ---- Mock React Native Alert ----
 jest.spyOn(ReactNativeAlert, 'alert');
 

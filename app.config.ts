@@ -71,7 +71,15 @@ export default {
     icon: './assets/images/icon.png',
     userInterfaceStyle: 'automatic',
     newArchEnabled: false,
-    assetBundlePatterns: ['assets/fonts/*'],
+    assetBundlePatterns: [
+      'assets/fonts/*',
+      'assets/images/icon.png',
+      'assets/images/adaptive-icon.png',
+      'assets/images/splash-icon.png',
+      'assets/images/rdsLogo.png',
+      'assets/images/rdsXGithub.webp',
+      'assets/images/favicon.png',
+    ],
     splash: {
       image: './assets/images/splash-icon.png',
       imageWidth: 200,

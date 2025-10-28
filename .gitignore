@@ -45,3 +45,6 @@ app-example
 .env.development
 .env.production
 
+#build apk
+build-*.apk
+

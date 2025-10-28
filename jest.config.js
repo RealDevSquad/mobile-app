@@ -25,7 +25,7 @@ module.exports = {
       '|@expo-google-fonts/.*|react-navigation|@react-navigation/.*' +
       '|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg' +
       '|expo-modules-core|expo-image|expo-asset|expo-constants|expo-font|@expo/vector-icons' +
-      '|toastify-react-native|react-native-date-picker|expo-camera|expo-device)/)',
+      '|toastify-react-native|expo-camera|expo-device)/)',
   ],
   collectCoverage: true,
   coverageReporters: ['text'],

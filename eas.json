@@ -6,16 +6,24 @@
     "preview": {
       "android": {
         "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease"
+        "gradleCommand": ":app:assembleRelease",
+        "withoutCredentials": true
       },
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "ANDROID_ABI_FILTERS": "arm64-v8a",
+        "ANDROID_ENABLE_PROGUARD": "true"
+      }
     },
     "production": {
       "android": {
         "buildType": "app-bundle",
         "gradleCommand": ":app:bundleRelease"
       },
-      "distribution": "store"
+      "distribution": "store",
+      "env": {
+        "ANDROID_ENABLE_PROGUARD": "true"
+      }
     }
   },
   "submit": {
