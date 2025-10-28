@@ -12,7 +12,9 @@ import UserStatusCard from '@/components/UserStatusCard';
 import { theme } from '@/constants/theme';
 import { useOOOModal } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import {
   Alert,
@@ -21,6 +23,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -162,6 +165,10 @@ export default function HomeScreen() {
     router.push('/create-task');
   };
 
+  const handlePromoImagePress = () => {
+    WebBrowser.openBrowserAsync('https://todo.realdevsquad.com/');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -200,6 +207,19 @@ export default function HomeScreen() {
             }
           />
         </View>
+
+        <TouchableOpacity
+          style={styles.promoImageContainer}
+          onPress={handlePromoImagePress}
+          activeOpacity={0.7}
+        >
+          <Image
+            source={require('../../../assets/images/rdstodo.png')}
+            style={styles.promoImage}
+            contentFit="contain"
+            placeholder="blurhash"
+          />
+        </TouchableOpacity>
 
         {/* My Tasks Card */}
         <View>
@@ -333,6 +353,20 @@ const styles = StyleSheet.create({
   },
   userStatusContainer: {
     marginTop: theme.spacing.md,
+  },
+  promoImageContainer: {
+    marginHorizontal: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    marginVertical: theme.spacing.md,
+    overflow: 'hidden',
+    ...theme.shadow.sm,
+  },
+  promoImage: {
+    width: '98%',
+    height: 130,
+    borderRadius: theme.radius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.border.secondary,
   },
   cardsContainer: {
     paddingHorizontal: theme.spacing.sm,

@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.primary,
     marginHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
     ...theme.shadow.md,
