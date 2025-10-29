@@ -1,12 +1,14 @@
 import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
 import { TasksApi } from '@/api/tasks/tasks.api';
 import { theme } from '@/constants/theme';
+
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { useLocalSearchParams } from 'expo-router';
 import moment from 'moment';
-import React, { Suspense, lazy, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -18,22 +20,17 @@ import {
   View,
 } from 'react-native';
 
-const AddProgressModal = lazy(
-  () => import('@/components/Modal/AddProgressModal')
-);
-const ExtensionRequestDetailsModal = lazy(
-  () => import('@/components/Modal/ExtensionRequestDetailsModal')
-);
-const ExtensionRequestModal = lazy(
-  () => import('@/components/Modal/ExtensionRequestModal')
-);
-const UpdateTaskStatusModal = lazy(
-  () => import('@/components/Modal/UpdateTaskStatusModal')
-);
+import AddProgressModal from '@/components/Modal/AddProgressModal';
+import ExtensionRequestDetailsModal from '@/components/Modal/ExtensionRequestDetailsModal';
+import ExtensionRequestModal from '@/components/Modal/ExtensionRequestModal';
+import UpdateTaskStatusModal from '@/components/Modal/UpdateTaskStatusModal';
 
 export default function TaskDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
+
+  const { user: currentUser } = useCurrentUser();
+
   const [expandedUpdate, setExpandedUpdate] = useState<string | null>(null);
   const [showExtensionModal, setShowExtensionModal] = useState(false);
   const [showExtensionDetailsModal, setShowExtensionDetailsModal] =
@@ -52,12 +49,7 @@ export default function TaskDetailsScreen() {
     enabled: !!id,
   });
 
-  const {
-    data: progressUpdatesData,
-    isLoading: progressLoading,
-    isError: progressError,
-    error: progressErrorDetails,
-  } = useQuery({
+  const { data: progressUpdatesData, isLoading: progressLoading } = useQuery({
     queryKey: TasksApi.getTaskProgress.key(id || ''),
     queryFn: () => TasksApi.getTaskProgress.fn(id!),
     enabled: !!id,
@@ -85,9 +77,8 @@ export default function TaskDetailsScreen() {
   let error: string | null = null;
   if (taskError) {
     error = taskErrorDetails?.message || null;
-  } else if (progressError) {
-    error = progressErrorDetails?.message || null;
   }
+  // Don't treat progress error as critical - just show empty state
 
   const formatDate = (timestamp: number) => {
     return moment.unix(timestamp).format('MMM DD, YYYY');
@@ -301,6 +292,11 @@ export default function TaskDetailsScreen() {
 
   const task = taskDetails.taskData;
 
+  console.log('task', task);
+  console.log('currentUser', currentUser);
+
+  const isOwner = task.assigneeId === currentUser?.id;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -323,12 +319,14 @@ export default function TaskDetailsScreen() {
           <View style={styles.section}>
             <View style={styles.taskDetailsHeader}>
               <Text style={styles.sectionTitle}>Task Details</Text>
-              <TouchableOpacity
-                style={styles.updateStatusButton}
-                onPress={() => setShowUpdateStatusModal(true)}
-              >
-                <Text style={styles.updateStatusButtonText}>Update Task</Text>
-              </TouchableOpacity>
+              {isOwner && (
+                <TouchableOpacity
+                  style={styles.updateStatusButton}
+                  onPress={() => setShowUpdateStatusModal(true)}
+                >
+                  <Text style={styles.updateStatusButtonText}>Update Task</Text>
+                </TouchableOpacity>
+              )}
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.label}>Assignee:</Text>
@@ -355,26 +353,28 @@ export default function TaskDetailsScreen() {
           <View style={styles.section}>
             <View style={styles.timelineHeader}>
               <Text style={styles.sectionTitle}>Timeline</Text>
-              <TouchableOpacity
-                style={[
-                  styles.extensionRequestButton,
-                  extensionRequestsLoading &&
-                    styles.extensionRequestButtonDisabled,
-                ]}
-                onPress={handleExtensionRequestClick}
-                disabled={extensionRequestsLoading}
-              >
-                {extensionRequestsLoading ? (
-                  <ActivityIndicator
-                    size="small"
-                    color={theme.colors.text.inverted}
-                  />
-                ) : (
-                  <Text style={styles.extensionRequestButtonText}>
-                    {hasPendingExtension ? 'ER Pending' : 'Raise an ER'}
-                  </Text>
-                )}
-              </TouchableOpacity>
+              {isOwner && (
+                <TouchableOpacity
+                  style={[
+                    styles.extensionRequestButton,
+                    extensionRequestsLoading &&
+                      styles.extensionRequestButtonDisabled,
+                  ]}
+                  onPress={handleExtensionRequestClick}
+                  disabled={extensionRequestsLoading}
+                >
+                  {extensionRequestsLoading ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={theme.colors.text.inverted}
+                    />
+                  ) : (
+                    <Text style={styles.extensionRequestButtonText}>
+                      {hasPendingExtension ? 'ER Pending' : 'Raise an ER'}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              )}
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.label}>Started On:</Text>
@@ -422,12 +422,14 @@ export default function TaskDetailsScreen() {
           <View style={styles.section}>
             <View style={styles.progressHeader}>
               <Text style={styles.sectionTitle}>Progress Updates</Text>
-              <TouchableOpacity
-                style={styles.addProgressButton}
-                onPress={() => setShowAddProgressModal(true)}
-              >
-                <Text style={styles.addProgressButtonText}>Add Progress</Text>
-              </TouchableOpacity>
+              {isOwner && (
+                <TouchableOpacity
+                  style={styles.addProgressButton}
+                  onPress={() => setShowAddProgressModal(true)}
+                >
+                  <Text style={styles.addProgressButtonText}>Add Progress</Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             {renderProgressContent()}
@@ -436,45 +438,37 @@ export default function TaskDetailsScreen() {
       </ScrollView>
 
       {showExtensionModal && (
-        <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
-          <ExtensionRequestModal
-            visible={showExtensionModal}
-            onClose={() => setShowExtensionModal(false)}
-            onSubmit={handleExtensionRequestSubmit}
-            taskId={id || ''}
-            oldEndsOn={task.endsOn}
-            assignee={task.assignee}
-          />
-        </Suspense>
+        <ExtensionRequestModal
+          visible={showExtensionModal}
+          onClose={() => setShowExtensionModal(false)}
+          onSubmit={handleExtensionRequestSubmit}
+          taskId={id || ''}
+          oldEndsOn={task.endsOn}
+          assignee={task.assignee}
+        />
       )}
 
-      <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
-        <ExtensionRequestDetailsModal
-          visible={showExtensionDetailsModal}
-          onClose={() => setShowExtensionDetailsModal(false)}
-          extensionDetails={pendingExtensionDetails || null}
-        />
-      </Suspense>
+      <ExtensionRequestDetailsModal
+        visible={showExtensionDetailsModal}
+        onClose={() => setShowExtensionDetailsModal(false)}
+        extensionDetails={pendingExtensionDetails || null}
+      />
 
-      <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
-        <UpdateTaskStatusModal
-          visible={showUpdateStatusModal}
-          onClose={() => setShowUpdateStatusModal(false)}
-          onSubmit={handleUpdateStatusSubmit}
-          taskId={id || ''}
-          currentStatus={task.status}
-          currentProgress={task.percentCompleted}
-        />
-      </Suspense>
+      <UpdateTaskStatusModal
+        visible={showUpdateStatusModal}
+        onClose={() => setShowUpdateStatusModal(false)}
+        onSubmit={handleUpdateStatusSubmit}
+        taskId={id || ''}
+        currentStatus={task.status}
+        currentProgress={task.percentCompleted}
+      />
 
-      <Suspense fallback={<ActivityIndicator size="large" color="#0000ff" />}>
-        <AddProgressModal
-          visible={showAddProgressModal}
-          onClose={() => setShowAddProgressModal(false)}
-          onSubmit={handleAddProgressSubmit}
-          taskId={id || ''}
-        />
-      </Suspense>
+      <AddProgressModal
+        visible={showAddProgressModal}
+        onClose={() => setShowAddProgressModal(false)}
+        onSubmit={handleAddProgressSubmit}
+        taskId={id || ''}
+      />
     </SafeAreaView>
   );
 }

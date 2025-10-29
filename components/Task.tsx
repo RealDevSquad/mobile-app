@@ -80,7 +80,6 @@ Task.displayName = 'Task';
 const styles = StyleSheet.create({
   card: {
     marginHorizontal: theme.spacing.sm,
-    marginVertical: theme.spacing.xs,
     backgroundColor: 'transparent',
     borderWidth: 0,
     padding: 0,

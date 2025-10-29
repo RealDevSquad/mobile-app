@@ -5,6 +5,7 @@ import UserSearchModal from '@/components/UserSearchModal';
 import { theme } from '@/constants/theme';
 import { useSearchModal } from '@/store/uiStore';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   RefreshControl,
@@ -18,6 +19,7 @@ import {
 type Segment = 'all' | 'mine';
 
 export default function TasksScreen() {
+  const router = useRouter();
   const [segment, setSegment] = useState<Segment>('all');
   const {
     isOpen: showSearchModal,
@@ -97,6 +99,13 @@ export default function TasksScreen() {
   const handleClearFilter = useCallback(() => {
     setSelectedAssignee(null);
   }, []);
+
+  const handleTaskPress = useCallback(
+    (task: any) => {
+      if (task?.id) router.push(`/my-tasks/${task.id}`);
+    },
+    [router]
+  );
 
   const handleRefresh = useCallback(async () => {
     if (segment === 'all') {
@@ -213,6 +222,7 @@ export default function TasksScreen() {
           onEndReached={handleLoadMore}
           loading={isFetchingNextPage}
           showArrow={false}
+          onTaskPress={handleTaskPress}
           refreshControl={
             <RefreshControl
               refreshing={loadingTasks}
@@ -228,6 +238,7 @@ export default function TasksScreen() {
           onEndReached={() => {}}
           loading={loadingSelfTasks}
           showArrow={false}
+          onTaskPress={handleTaskPress}
         />
       )}
 
@@ -267,7 +278,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionsRow: {
-    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingBottom: 12,
     flexDirection: 'row',
@@ -287,7 +297,6 @@ const styles = StyleSheet.create({
   },
   segmentContainer: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     paddingHorizontal: 8,
     paddingVertical: 10,
   },
@@ -296,7 +305,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#F0F0F9',
     alignItems: 'center',
   },
   segmentActive: {
