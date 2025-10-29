@@ -4,8 +4,8 @@ import Task from '@/components/Task';
 import UserSearchModal from '@/components/UserSearchModal';
 import { theme } from '@/constants/theme';
 import { useSearchModal } from '@/store/uiStore';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import React, { useCallback, useState } from 'react';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   RefreshControl,
   SafeAreaView,
@@ -15,7 +15,10 @@ import {
   View,
 } from 'react-native';
 
+type Segment = 'all' | 'mine';
+
 export default function TasksScreen() {
+  const [segment, setSegment] = useState<Segment>('all');
   const {
     isOpen: showSearchModal,
     open: openSearchModal,
@@ -50,6 +53,17 @@ export default function TasksScreen() {
     initialPageParam: undefined as string | undefined,
   });
 
+  const {
+    data: selfTasksData,
+    isLoading: loadingSelfTasks,
+    isError: isSelfTasksError,
+    error: selfTasksError,
+  } = useQuery({
+    queryKey: TasksApi.getSelfTasks.key,
+    queryFn: () => TasksApi.getSelfTasks.fn(),
+    enabled: segment === 'mine',
+  });
+
   const allTasks =
     data?.pages.flatMap((page: any) => {
       if (!page || !page.tasks) {
@@ -64,6 +78,11 @@ export default function TasksScreen() {
         return true;
       });
     }) || [];
+
+  const myTasks = useMemo(() => {
+    const raw = selfTasksData || [];
+    return raw.filter((task: any) => task && task.id);
+  }, [selfTasksData]);
 
   const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -80,10 +99,12 @@ export default function TasksScreen() {
   }, []);
 
   const handleRefresh = useCallback(async () => {
-    await refetchTasks();
-  }, [refetchTasks]);
+    if (segment === 'all') {
+      await refetchTasks();
+    }
+  }, [refetchTasks, segment]);
 
-  if (loadingTasks && allTasks.length === 0) {
+  if (segment === 'all' && loadingTasks && allTasks.length === 0) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -98,12 +119,18 @@ export default function TasksScreen() {
     );
   }
 
-  if (isError) {
+  if (
+    (segment === 'all' && isError) ||
+    (segment === 'mine' && isSelfTasksError)
+  ) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
-            Error: {error?.message || 'Failed to load tasks'}
+            Error:{' '}
+            {segment === 'all'
+              ? error?.message || 'Failed to load tasks'
+              : selfTasksError?.message || 'Failed to load my tasks'}
           </Text>
         </View>
       </SafeAreaView>
@@ -112,52 +139,105 @@ export default function TasksScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Tasks</Text>
-        <TouchableOpacity style={styles.searchButton} onPress={openSearchModal}>
-          <Text style={styles.searchButtonText}>
-            {selectedAssignee
-              ? `Filter: ${selectedAssignee}`
-              : 'Filter by User'}
+      <View style={styles.header}></View>
+
+      {/* Segmented control */}
+      <View style={styles.segmentContainer}>
+        <TouchableOpacity
+          style={[
+            styles.segmentButton,
+            segment === 'all' && styles.segmentActive,
+          ]}
+          onPress={() => setSegment('all')}
+        >
+          <Text
+            style={[
+              styles.segmentText,
+              segment === 'all' && styles.segmentTextActive,
+            ]}
+          >
+            Tasks
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.segmentButton,
+            segment === 'mine' && styles.segmentActive,
+          ]}
+          onPress={() => setSegment('mine')}
+        >
+          <Text
+            style={[
+              styles.segmentText,
+              segment === 'mine' && styles.segmentTextActive,
+            ]}
+          >
+            My Tasks
           </Text>
         </TouchableOpacity>
       </View>
 
-      {selectedAssignee && (
-        <View style={styles.filterContainer}>
-          <Text style={styles.filterText}>
-            Showing tasks for:{' '}
-            <Text style={styles.filterUser}>{selectedAssignee}</Text>
-          </Text>
-          <TouchableOpacity
-            onPress={handleClearFilter}
-            style={styles.clearButton}
-          >
-            <Text style={styles.clearButtonText}>Clear</Text>
-          </TouchableOpacity>
-        </View>
+      {segment === 'all' && (
+        <>
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={openSearchModal}
+            >
+              <Text style={styles.searchButtonText}>
+                {selectedAssignee || 'Filter by User'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {selectedAssignee && (
+            <View style={styles.filterContainer}>
+              <Text style={styles.filterText}>
+                Showing tasks for:{' '}
+                <Text style={styles.filterUser}>{selectedAssignee}</Text>
+              </Text>
+              <TouchableOpacity
+                onPress={handleClearFilter}
+                style={styles.clearButton}
+              >
+                <Text style={styles.clearButtonText}>Clear</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </>
       )}
 
-      <Task
-        tasks={allTasks}
-        onEndReached={handleLoadMore}
-        loading={isFetchingNextPage}
-        showArrow={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={loadingTasks}
-            onRefresh={handleRefresh}
-            colors={[theme.colors.primary[500]]}
-            tintColor={theme.colors.primary[500]}
-          />
-        }
-      />
+      {segment === 'all' ? (
+        <Task
+          tasks={allTasks}
+          onEndReached={handleLoadMore}
+          loading={isFetchingNextPage}
+          showArrow={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={loadingTasks}
+              onRefresh={handleRefresh}
+              colors={[theme.colors.primary[500]]}
+              tintColor={theme.colors.primary[500]}
+            />
+          }
+        />
+      ) : (
+        <Task
+          tasks={myTasks}
+          onEndReached={() => {}}
+          loading={loadingSelfTasks}
+          showArrow={false}
+        />
+      )}
 
-      <UserSearchModal
-        visible={showSearchModal}
-        onClose={closeSearchModal}
-        onUserSelect={handleUserSelect}
-      />
+      {segment === 'all' && (
+        <UserSearchModal
+          visible={showSearchModal}
+          onClose={closeSearchModal}
+          onUserSelect={handleUserSelect}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -179,9 +259,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
   },
   title: {
     fontSize: 24,
@@ -189,16 +266,49 @@ const styles = StyleSheet.create({
     color: '#333333',
     flex: 1,
   },
+  actionsRow: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
   searchButton: {
     backgroundColor: '#007AFF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 6,
+    alignSelf: 'flex-end',
   },
   searchButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '500',
+  },
+  segmentContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+  },
+  segmentButton: {
+    flex: 1,
+    marginHorizontal: 8,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#F0F0F0',
+    alignItems: 'center',
+  },
+  segmentActive: {
+    backgroundColor: theme.colors.primary[500],
+  },
+  segmentText: {
+    color: '#333333',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  segmentTextActive: {
+    color: '#FFFFFF',
   },
   filterContainer: {
     flexDirection: 'row',

@@ -37,14 +37,14 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Notify tab */}
+      {/* Tasks tab */}
       <Tabs.Screen
-        name="notify"
+        name="tasks"
         options={{
-          title: 'Notify',
+          title: 'Tasks',
           tabBarIcon: ({ color }: { color: string }) => (
             <FontAwesome
-              name="bell-o"
+              name="tasks"
               size={28}
               color={color}
               style={{ marginBottom: -3 }}
@@ -84,13 +84,7 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
-      <Tabs.Screen
-        name="tasks"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
+
       <Tabs.Screen
         name="calendar"
         options={{

@@ -2,7 +2,6 @@ import { UsersApi } from '@/api/users/users.api';
 import Avatar from '@/components/Avatar';
 import CreateNewTaskCard from '@/components/CreateNewTaskCard';
 import OOOModal from '@/components/Modal/OOOModal';
-import MyTasksCard from '@/components/MyTasksCard';
 import QuickActionCard from '@/components/QuickActionCard';
 import {
   ProfileHeaderSkeleton,
@@ -141,20 +140,12 @@ export default function HomeScreen() {
     closeOOOModal();
   };
 
-  const handleMyTasksPress = () => {
-    router.push('/my-tasks');
-  };
-
   const handleExtensionRequestsPress = () => {
     router.push('/extension-requests');
   };
 
   const handleTaskRequestsPress = () => {
     router.push('/task-requests');
-  };
-
-  const handleTasksPress = () => {
-    router.push('/tasks');
   };
 
   const handleCalendarPress = () => {
@@ -221,11 +212,6 @@ export default function HomeScreen() {
           />
         </TouchableOpacity>
 
-        {/* My Tasks Card */}
-        <View>
-          <MyTasksCard onPress={handleMyTasksPress} />
-        </View>
-
         {/* Quick Actions Grid */}
         <View style={styles.quickActionsContainer}>
           <View style={styles.gridRow}>
@@ -245,13 +231,6 @@ export default function HomeScreen() {
             </View>
           </View>
           <View style={styles.gridRow}>
-            <View style={styles.gridItem}>
-              <QuickActionCard
-                icon="check-square-o"
-                label="Tasks"
-                onPress={handleTasksPress}
-              />
-            </View>
             <View style={styles.gridItem}>
               <QuickActionCard
                 icon="calendar"

@@ -4,8 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import 'react-native-reanimated';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 // Export ErrorBoundary for catching errors from the layout tree.
 export { ErrorBoundary } from 'expo-router';
@@ -51,11 +53,16 @@ export default function RootLayout() {
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <RootLayoutNav />
-        </AuthProvider>
-      </QueryClientProvider>
+      <SafeAreaProvider>
+        <StatusBar style="dark" backgroundColor="#ffffff" />
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <SafeAreaView style={{ flex: 1 }}>
+              <RootLayoutNav />
+            </SafeAreaView>
+          </AuthProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }

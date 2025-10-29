@@ -48,7 +48,7 @@ export default {
       package: 'com.rds.mobileapp',
       versionCode: 1,
       adaptiveIcon: {
-        foregroundImage: './assets/images/adaptive-icon.png',
+        foregroundImage: './assets/images/rdsLogo.png',
         backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,
@@ -68,7 +68,7 @@ export default {
       favicon: './assets/images/favicon.png',
     },
     orientation: 'portrait',
-    icon: './assets/images/icon.png',
+    icon: './assets/images/rdsLogo.png',
     userInterfaceStyle: 'automatic',
     newArchEnabled: false,
     assetBundlePatterns: [
