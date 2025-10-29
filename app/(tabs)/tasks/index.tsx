@@ -111,9 +111,9 @@ export default function TasksScreen() {
           <Text style={styles.title}>Tasks</Text>
         </View>
         <View style={styles.skeletonContainer}>
-          <TaskCardSkeleton />
-          <TaskCardSkeleton />
-          <TaskCardSkeleton />
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <TaskCardSkeleton key={`task-skeleton-${idx + 1}`} />
+          ))}
         </View>
       </SafeAreaView>
     );

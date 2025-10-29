@@ -1,7 +1,6 @@
+import { TaskCard } from '@/components/task-card/TaskCard';
 import { theme } from '@/constants/theme';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import moment from 'moment';
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -30,15 +29,6 @@ const Task = React.memo(
       React.ComponentProps<typeof RefreshControl>
     >;
   }) => {
-    const formatTimeAgo = useMemo(
-      () => (timestamp: number) => {
-        const currentDate = moment();
-        const endDate = moment.unix(timestamp);
-        return endDate.from(currentDate);
-      },
-      []
-    );
-
     const renderItem = ({ item }: { item: any }) => {
       // Skip rendering if item is undefined or doesn't have required properties
       if (!item?.id) {
@@ -51,48 +41,7 @@ const Task = React.memo(
           onPress={() => onTaskPress?.(item)}
           activeOpacity={0.7}
         >
-          <View style={styles.cardContent}>
-            <View style={styles.cardText}>
-              <Text style={styles.title}>{item.title || 'Untitled Task'}</Text>
-              <Text style={styles.text}>
-                Assignee:{' '}
-                <Text style={styles.assignee}>
-                  {item.assignee || 'Unassigned'}
-                </Text>
-              </Text>
-              <Text style={styles.text}>
-                Progress:{' '}
-                <Text style={styles.progress}>
-                  {item.percentCompleted || 0}%
-                </Text>
-              </Text>
-              <Text style={styles.text}>
-                Ends On:{' '}
-                <Text style={styles.endsOn}>
-                  {item.endsOn ? formatTimeAgo(item.endsOn) : 'Not set'}
-                </Text>
-              </Text>
-              <Text style={styles.text}>
-                Started On:{' '}
-                <Text style={styles.startedOn}>
-                  {item.startedOn
-                    ? formatTimeAgo(item.startedOn)
-                    : 'Not started'}
-                </Text>
-              </Text>
-              <Text style={[styles.text, styles.status]}>
-                Status: {item.status || 'Unknown'}
-              </Text>
-            </View>
-            {showArrow && (
-              <FontAwesome
-                name="chevron-right"
-                size={16}
-                color={theme.colors.text.secondary}
-                style={styles.chevron}
-              />
-            )}
-          </View>
+          <TaskCard task={item} />
         </TouchableOpacity>
       );
     };
@@ -130,54 +79,14 @@ Task.displayName = 'Task';
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.primary,
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-    margin: theme.spacing.sm,
-    backgroundColor: theme.colors.background.primary,
-    ...theme.shadow.md,
+    marginHorizontal: theme.spacing.sm,
+    marginVertical: theme.spacing.xs,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    padding: 0,
+    ...theme.shadow.none,
   },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  cardText: {
-    flex: 1,
-  },
-  chevron: {
-    marginLeft: theme.spacing.sm,
-    marginTop: 2,
-  },
-  title: {
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.medium,
-    marginBottom: theme.spacing.sm,
-    color: theme.colors.primary[700],
-  },
-  text: {
-    fontSize: theme.typography.fontSize.sm,
-    marginBottom: 6,
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.text.primary,
-  },
-  assignee: {
-    color: theme.colors.text.secondary,
-  },
-  progress: {
-    color: theme.colors.success[500],
-    fontFamily: theme.typography.fontFamily.medium,
-  },
-  endsOn: {
-    color: theme.colors.text.secondary,
-  },
-  startedOn: {
-    color: theme.colors.text.secondary,
-  },
-  status: {
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.info[500],
-  },
+  // Inner text styles now handled by TaskCard
   emptyView: {
     color: theme.colors.text.primary,
     marginTop: theme.spacing.lg,

@@ -1,15 +1,10 @@
 import { TasksApi } from '@/api/tasks/tasks.api';
+import { TaskCardSkeleton } from '@/components/SkeletonLoader';
 import Task from '@/components/Task';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 export default function MyTasksScreen() {
   const router = useRouter();
@@ -39,8 +34,12 @@ export default function MyTasksScreen() {
 
   if (loadingSelfTasks && selfTasks.length === 0) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <SafeAreaView style={styles.container}>
+        <View style={{ padding: 12 }}>
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <TaskCardSkeleton key={`mytask-skeleton-${idx + 1}`} />
+          ))}
+        </View>
       </SafeAreaView>
     );
   }
