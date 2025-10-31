@@ -35,7 +35,7 @@ const CreateNewTaskCard: React.FC<CreateNewTaskCardProps> = ({ onPress }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.primary,
-    marginHorizontal: theme.spacing.md,
+    marginHorizontal: theme.spacing.sm,
     marginBottom: theme.spacing.md,
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
@@ -50,13 +50,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   description: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    marginBottom: 2,
   },
   subtitle: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.secondary,
   },

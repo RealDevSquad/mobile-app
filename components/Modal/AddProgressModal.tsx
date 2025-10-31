@@ -4,7 +4,6 @@ import {
   TAddProgressFormData,
 } from '@/api/tasks/tasks.schema';
 import FormInput from '@/components/form/FormInput';
-import FormSubmitButton from '@/components/form/FormSubmitButton';
 import { theme } from '@/constants/theme';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -112,7 +111,7 @@ export default function AddProgressModal({
             style={styles.content}
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.section}>
+            <View>
               <Text style={styles.sectionTitle}>Add Task Update</Text>
               <Text style={styles.sectionSubtitle}>
                 On{' '}
@@ -183,18 +182,30 @@ export default function AddProgressModal({
           </ScrollView>
 
           <View style={styles.footer}>
-            <FormSubmitButton
-              text="Cancel"
+            <TouchableOpacity
+              style={[styles.button, styles.cancelButton]}
               onPress={handleClose}
-              variant="secondary"
-              isDisabled={submitProgressMutation.isPending}
-            />
-            <FormSubmitButton
-              text="Submit"
+              disabled={submitProgressMutation.isPending}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.submitButton,
+                (!isDirty || submitProgressMutation.isPending) &&
+                  styles.disabledButton,
+              ]}
               onPress={handleSubmit(handleFormSubmit)}
-              isLoading={submitProgressMutation.isPending}
-              isDisabled={!isDirty || submitProgressMutation.isPending}
-            />
+              disabled={!isDirty || submitProgressMutation.isPending}
+            >
+              {submitProgressMutation.isPending ? (
+                <Text style={styles.submitButtonText}>Submitting...</Text>
+              ) : (
+                <Text style={styles.submitButtonText}>Submit</Text>
+              )}
+            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </View>
@@ -221,7 +232,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.radius.lg,
     width: '100%',
-    maxHeight: '90%',
+    maxHeight: '80%',
     ...theme.shadow.lg,
   },
   header: {
@@ -248,21 +259,18 @@ const styles = StyleSheet.create({
     maxHeight: 450,
     padding: theme.spacing.md,
   },
-  section: {
-    marginBottom: theme.spacing.lg,
-  },
   sectionTitle: {
-    fontSize: theme.typography.fontSize.xl,
+    fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.xs,
   },
   sectionSubtitle: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.secondary,
   },
   form: {
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.md,
   },
   textInput: {
     backgroundColor: theme.colors.surface.primary,
@@ -278,19 +286,20 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    padding: theme.spacing.sm,
-    paddingBottom: theme.spacing.md,
+    padding: theme.spacing.lg,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.primary,
-    gap: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
+    gap: theme.spacing.md,
   },
-  cancelButton: {
+  button: {
     flex: 1,
-    backgroundColor: theme.colors.background.tertiary,
     paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelButton: {
+    backgroundColor: theme.colors.background.tertiary,
     borderWidth: 1,
     borderColor: theme.colors.border.secondary,
   },
@@ -300,18 +309,14 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
   },
   submitButton: {
-    flex: 1,
     backgroundColor: theme.colors.primary[600],
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.sm,
-    alignItems: 'center',
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
   },
   submitButtonText: {
     fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.inverted,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
 });

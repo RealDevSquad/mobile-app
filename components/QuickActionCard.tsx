@@ -19,7 +19,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
       <View style={styles.iconContainer}>
         <FontAwesome
           name={icon as any}
-          size={32}
+          size={24}
           color={theme.colors.primary[700]}
         />
       </View>
@@ -32,17 +32,17 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.radius.md,
-    padding: theme.spacing.lg,
+    padding: theme.spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
     ...theme.shadow.md,
-    minHeight: 120,
+    minHeight: 90,
   },
   iconContainer: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   label: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.text.primary,
     textAlign: 'center',

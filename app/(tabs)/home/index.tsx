@@ -3,10 +3,7 @@ import Avatar from '@/components/Avatar';
 import CreateNewTaskCard from '@/components/CreateNewTaskCard';
 import OOOModal from '@/components/Modal/OOOModal';
 import QuickActionCard from '@/components/QuickActionCard';
-import {
-  ProfileHeaderSkeleton,
-  TaskCardSkeleton,
-} from '@/components/SkeletonLoader';
+import { HomeScreenSkeleton } from '@/components/SkeletonLoader';
 import UserStatusCard from '@/components/UserStatusCard';
 import { theme } from '@/constants/theme';
 import { useOOOModal } from '@/store/uiStore';
@@ -95,13 +92,7 @@ export default function HomeScreen() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <ProfileHeaderSkeleton />
-          </View>
-          <View style={styles.cardsContainer}>
-            <TaskCardSkeleton />
-            <TaskCardSkeleton />
-          </View>
+          <HomeScreenSkeleton />
         </ScrollView>
       </SafeAreaView>
     );
@@ -183,7 +174,7 @@ export default function HomeScreen() {
             <Text style={styles.welcomeText}>Welcome to RDS</Text>
           </View>
           {userData?.picture?.url && (
-            <Avatar uri={userData.picture.url} size={40} />
+            <Avatar uri={userData.picture.url} size={32} />
           )}
         </View>
 
@@ -266,16 +257,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   usernameText: {
-    fontSize: theme.typography.fontSize.lg,
+    fontSize: theme.typography.fontSize.base,
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
     marginLeft: theme.spacing.sm,
   },
   welcomeText: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.primary,
+    color: theme.colors.text.secondary,
     marginLeft: theme.spacing.sm,
+    marginTop: 2,
   },
   loadingContainer: {
     flex: 1,
@@ -291,7 +283,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
@@ -319,31 +311,30 @@ const styles = StyleSheet.create({
   },
   quickActionsContainer: {
     paddingHorizontal: theme.spacing.sm,
-    paddingBottom: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
   },
   gridRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   gridItem: {
     flex: 1,
     marginHorizontal: theme.spacing.sm,
   },
   userStatusContainer: {
-    marginTop: theme.spacing.md,
+    marginTop: theme.spacing.sm,
   },
   promoImageContainer: {
     marginHorizontal: theme.spacing.md,
     borderRadius: theme.radius.md,
-    marginVertical: theme.spacing.md,
+    marginVertical: theme.spacing.sm,
     overflow: 'hidden',
     ...theme.shadow.sm,
   },
   promoImage: {
-    width: '98%',
-    height: 130,
-    borderRadius: theme.radius.lg,
+    height: 100,
+    borderRadius: theme.radius.md,
     borderWidth: 1,
     borderColor: theme.colors.border.secondary,
   },

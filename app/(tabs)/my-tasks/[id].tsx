@@ -2,12 +2,16 @@ import { ExtensionRequestsApi } from '@/api/extension-requests/extension-request
 import { TasksApi } from '@/api/tasks/tasks.api';
 import { theme } from '@/constants/theme';
 
+import {
+  formatDate,
+  formatDateTime,
+  formatTimeAgo as formatTimeAgoUtil,
+} from '@/common/utils/dateUtils';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { useLocalSearchParams } from 'expo-router';
-import moment from 'moment';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -80,16 +84,11 @@ export default function TaskDetailsScreen() {
   }
   // Don't treat progress error as critical - just show empty state
 
-  const formatDate = (timestamp: number) => {
-    return moment.unix(timestamp).format('MMM DD, YYYY');
-  };
-
-  const formatDateTime = (timestamp: number) => {
-    return moment.unix(timestamp).format('MMM DD, YYYY [at] h:mm A');
-  };
-
   const formatTimeAgo = (timestamp: number) => {
-    return moment(timestamp).fromNow();
+    // If timestamp is in milliseconds, convert to unix seconds
+    const unixTimestamp =
+      timestamp > 1000000000000 ? Math.floor(timestamp / 1000) : timestamp;
+    return formatTimeAgoUtil(unixTimestamp);
   };
 
   const getStatusColor = (status: string) => {
@@ -154,9 +153,7 @@ export default function TaskDetailsScreen() {
     }
 
     if (progressUpdates.length === 0) {
-      return (
-        <Text style={styles.noProgressText}>No progress updates available</Text>
-      );
+      return null;
     }
 
     return progressUpdates.map((update, index) => {
@@ -187,7 +184,7 @@ export default function TaskDetailsScreen() {
               />
               <FontAwesome
                 name={isExpanded ? 'chevron-up' : 'chevron-down'}
-                size={16}
+                size={14}
                 color={theme.colors.text.secondary}
                 style={styles.progressCardChevron}
               />
@@ -201,7 +198,7 @@ export default function TaskDetailsScreen() {
                   <View style={styles.progressDetailHeader}>
                     <FontAwesome
                       name="check-circle"
-                      size={14}
+                      size={12}
                       color={theme.colors.success[500]}
                     />
                     <Text style={styles.progressDetailLabel}>Completed</Text>
@@ -217,7 +214,7 @@ export default function TaskDetailsScreen() {
                   <View style={styles.progressDetailHeader}>
                     <FontAwesome
                       name="calendar"
-                      size={14}
+                      size={12}
                       color={theme.colors.info[500]}
                     />
                     <Text style={styles.progressDetailLabel}>Planned</Text>
@@ -233,7 +230,7 @@ export default function TaskDetailsScreen() {
                   <View style={styles.progressDetailHeader}>
                     <FontAwesome
                       name="exclamation-triangle"
-                      size={14}
+                      size={12}
                       color={theme.colors.warning[500]}
                     />
                     <Text style={styles.progressDetailLabel}>Blockers</Text>
@@ -291,9 +288,6 @@ export default function TaskDetailsScreen() {
   }
 
   const task = taskDetails.taskData;
-
-  console.log('task', task);
-  console.log('currentUser', currentUser);
 
   const isOwner = task.assigneeId === currentUser?.id;
 
@@ -485,8 +479,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: theme.spacing.md,
-    fontSize: theme.typography.fontSize.base,
+    marginTop: theme.spacing.sm,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.secondary,
   },
   errorContainer: {
@@ -529,7 +523,7 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.border.primary,
   },
   title: {
-    fontSize: theme.typography.fontSize.xl,
+    fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.primary,
     flex: 1,
@@ -545,17 +539,17 @@ const styles = StyleSheet.create({
   statusText: {
     color: theme.colors.text.inverted,
     fontSize: theme.typography.fontSize.xs,
-    fontWeight: theme.typography.fontWeight.bold,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   section: {
     backgroundColor: theme.colors.surface.primary,
     borderRadius: theme.radius.sm,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    padding: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
     ...theme.shadow.sm,
   },
   sectionTitle: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.sm,
@@ -564,7 +558,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   timelineHeader: {
     flexDirection: 'row',
@@ -579,13 +573,13 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xs,
   },
   label: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.secondary,
     flex: 1,
   },
   value: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.primary,
     flex: 2,
     textAlign: 'right',
@@ -600,7 +594,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   githubLinkLabel: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.secondary,
     flex: 1,
@@ -608,23 +602,23 @@ const styles = StyleSheet.create({
   githubLinkButton: {
     backgroundColor: theme.colors.primary[600],
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
     borderRadius: theme.radius.sm,
     minWidth: 60,
     alignItems: 'center',
   },
   githubLinkButtonText: {
     color: theme.colors.text.inverted,
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
   },
   dependencyItem: {
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: 3,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
   },
   dependencyText: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.primary,
     fontWeight: theme.typography.fontWeight.medium,
   },
@@ -632,17 +626,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   addProgressButton: {
     backgroundColor: theme.colors.primary[600],
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
   },
   addProgressButtonText: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.inverted,
     fontWeight: theme.typography.fontWeight.semibold,
   },
@@ -660,14 +654,14 @@ const styles = StyleSheet.create({
   progressCard: {
     backgroundColor: theme.colors.surface.primary,
     borderRadius: theme.radius.md,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
     ...theme.shadow.md,
   },
   progressCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing.md,
+    padding: theme.spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
   },
@@ -676,10 +670,10 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.sm,
   },
   progressCardTitleText: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    marginBottom: 2,
   },
   progressCardSubtitle: {
     fontSize: theme.typography.fontSize.xs,
@@ -690,9 +684,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressCardAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: theme.colors.background.tertiary,
     marginRight: theme.spacing.xs,
   },
@@ -700,27 +694,26 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.xs,
   },
   progressCardContent: {
-    padding: theme.spacing.md,
+    padding: theme.spacing.sm,
   },
   progressDetailItem: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   progressDetailHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs,
+    marginBottom: 2,
   },
   progressDetailLabel: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.primary,
     marginLeft: theme.spacing.xs,
   },
   progressDetailText: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.secondary,
-    lineHeight:
-      theme.typography.lineHeight.normal * theme.typography.fontSize.sm,
+    lineHeight: 14,
   },
   noProgressText: {
     fontSize: theme.typography.fontSize.sm,
@@ -731,14 +724,14 @@ const styles = StyleSheet.create({
   },
   extensionRequestButton: {
     backgroundColor: '#FF6B35', // Orange color
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
   },
   extensionRequestButtonText: {
     color: theme.colors.text.inverted,
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
   },
   extensionRequestButtonDisabled: {
@@ -747,14 +740,14 @@ const styles = StyleSheet.create({
   },
   updateStatusButton: {
     backgroundColor: theme.colors.primary[600],
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
   },
   updateStatusButtonText: {
     color: theme.colors.text.inverted,
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
   },
 });

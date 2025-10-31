@@ -125,12 +125,12 @@ const ExtensionRequestsScreen: React.FC = () => {
     },
   });
 
-  const handleApprove = async (id: string) => {
-    return approveMutation.mutateAsync({ id });
+  const handleApprove = async (id: string): Promise<void> => {
+    await approveMutation.mutateAsync({ id });
   };
 
-  const handleReject = async (id: string) => {
-    return rejectMutation.mutateAsync({ id });
+  const handleReject = async (id: string): Promise<void> => {
+    await rejectMutation.mutateAsync({ id });
   };
 
   const handleFilterChange = (filter: string) => {

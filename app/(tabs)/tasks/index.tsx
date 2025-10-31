@@ -1,6 +1,6 @@
 import { TasksApi } from '@/api/tasks/tasks.api';
 import { TaskCardSkeleton } from '@/components/SkeletonLoader';
-import Task from '@/components/Task';
+import { TaskCard } from '@/components/task-card/TaskCard';
 import UserSearchModal from '@/components/UserSearchModal';
 import { theme } from '@/constants/theme';
 import { useSearchModal } from '@/store/uiStore';
@@ -8,6 +8,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
@@ -15,15 +16,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-type Segment = 'all' | 'mine';
+import { Tabs } from 'react-native-collapsible-tab-view';
 
 export default function TasksScreen() {
   const router = useRouter();
-  const [segment, setSegment] = useState<Segment>('all');
   const {
     isOpen: showSearchModal,
-    open: openSearchModal,
+
     close: closeSearchModal,
   } = useSearchModal();
   const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
@@ -60,10 +59,11 @@ export default function TasksScreen() {
     isLoading: loadingSelfTasks,
     isError: isSelfTasksError,
     error: selfTasksError,
+    refetch: refetchSelfTasks,
   } = useQuery({
     queryKey: TasksApi.getSelfTasks.key,
     queryFn: () => TasksApi.getSelfTasks.fn(),
-    enabled: segment === 'mine',
+    enabled: true,
   });
 
   const allTasks =
@@ -107,20 +107,19 @@ export default function TasksScreen() {
     [router]
   );
 
-  const handleRefresh = useCallback(async () => {
-    if (segment === 'all') {
-      await refetchTasks();
-    }
-  }, [refetchTasks, segment]);
+  const handleRefreshTasks = useCallback(async () => {
+    await refetchTasks();
+  }, [refetchTasks]);
 
-  if (segment === 'all' && loadingTasks && allTasks.length === 0) {
+  const handleRefreshMyTasks = useCallback(async () => {
+    await refetchSelfTasks();
+  }, [refetchSelfTasks]);
+
+  if (loadingTasks && allTasks.length === 0 && loadingSelfTasks) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Tasks</Text>
-        </View>
         <View style={styles.skeletonContainer}>
-          {Array.from({ length: 5 }).map((_, idx) => (
+          {Array.from({ length: 6 }).map((_, idx) => (
             <TaskCardSkeleton key={`task-skeleton-${idx + 1}`} />
           ))}
         </View>
@@ -128,127 +127,123 @@ export default function TasksScreen() {
     );
   }
 
-  if (
-    (segment === 'all' && isError) ||
-    (segment === 'mine' && isSelfTasksError)
-  ) {
+  if (isError || isSelfTasksError) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
             Error:{' '}
-            {segment === 'all'
-              ? error?.message || 'Failed to load tasks'
-              : selfTasksError?.message || 'Failed to load my tasks'}
+            {error?.message ||
+              selfTasksError?.message ||
+              'Failed to load tasks'}
           </Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
+  const renderHeader = () => (
+    <View>
       <View style={styles.header}></View>
 
-      {/* Segmented control */}
-      <View style={styles.segmentContainer}>
-        <TouchableOpacity
-          style={[
-            styles.segmentButton,
-            segment === 'all' && styles.segmentActive,
-          ]}
-          onPress={() => setSegment('all')}
-        >
-          <Text
-            style={[
-              styles.segmentText,
-              segment === 'all' && styles.segmentTextActive,
-            ]}
-          >
-            Tasks
+      {selectedAssignee && (
+        <View style={styles.filterContainer}>
+          <Text style={styles.filterText}>
+            Showing tasks for:{' '}
+            <Text style={styles.filterUser}>{selectedAssignee}</Text>
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.segmentButton,
-            segment === 'mine' && styles.segmentActive,
-          ]}
-          onPress={() => setSegment('mine')}
-        >
-          <Text
-            style={[
-              styles.segmentText,
-              segment === 'mine' && styles.segmentTextActive,
-            ]}
+          <TouchableOpacity
+            onPress={handleClearFilter}
+            style={styles.clearButton}
           >
-            My Tasks
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <Text style={styles.clearButtonText}>Clear</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
 
-      {segment === 'all' && (
-        <>
-          <View style={styles.actionsRow}>
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={openSearchModal}
-            >
-              <Text style={styles.searchButtonText}>
-                {selectedAssignee || 'Filter by User'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+  const renderFooter = (loading: boolean) => {
+    if (loading) {
+      return (
+        <View style={styles.footerLoader}>
+          <ActivityIndicator size="small" color={theme.colors.primary[500]} />
+          <Text style={styles.loadingText}>Loading more tasks...</Text>
+        </View>
+      );
+    }
+    return null;
+  };
 
-          {selectedAssignee && (
-            <View style={styles.filterContainer}>
-              <Text style={styles.filterText}>
-                Showing tasks for:{' '}
-                <Text style={styles.filterUser}>{selectedAssignee}</Text>
-              </Text>
+  return (
+    <SafeAreaView style={styles.container}>
+      <Tabs.Container renderHeader={renderHeader}>
+        <Tabs.Tab name="Tasks">
+          <Tabs.FlatList
+            data={allTasks}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+            renderItem={({ item }) => (
               <TouchableOpacity
-                onPress={handleClearFilter}
-                style={styles.clearButton}
+                onPress={() => handleTaskPress(item)}
+                activeOpacity={0.7}
               >
-                <Text style={styles.clearButtonText}>Clear</Text>
+                <TaskCard task={item} />
               </TouchableOpacity>
-            </View>
-          )}
-        </>
-      )}
+            )}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={() => renderFooter(isFetchingNextPage)}
+            ListEmptyComponent={
+              loadingTasks ? null : (
+                <Text style={styles.emptyView}>No tasks found...</Text>
+              )
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={loadingTasks}
+                onRefresh={handleRefreshTasks}
+                colors={[theme.colors.primary[500]]}
+                tintColor={theme.colors.primary[500]}
+              />
+            }
+          />
+        </Tabs.Tab>
+        <Tabs.Tab name="My Tasks">
+          <Tabs.FlatList
+            data={myTasks}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => handleTaskPress(item)}
+                activeOpacity={0.7}
+              >
+                <TaskCard task={item} />
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              loadingSelfTasks ? null : (
+                <Text style={styles.emptyView}>No tasks found...</Text>
+              )
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={loadingSelfTasks}
+                onRefresh={handleRefreshMyTasks}
+                colors={[theme.colors.primary[500]]}
+                tintColor={theme.colors.primary[500]}
+              />
+            }
+          />
+        </Tabs.Tab>
+      </Tabs.Container>
 
-      {segment === 'all' ? (
-        <Task
-          tasks={allTasks}
-          onEndReached={handleLoadMore}
-          loading={isFetchingNextPage}
-          showArrow={false}
-          onTaskPress={handleTaskPress}
-          refreshControl={
-            <RefreshControl
-              refreshing={loadingTasks}
-              onRefresh={handleRefresh}
-              colors={[theme.colors.primary[500]]}
-              tintColor={theme.colors.primary[500]}
-            />
-          }
-        />
-      ) : (
-        <Task
-          tasks={myTasks}
-          onEndReached={() => {}}
-          loading={loadingSelfTasks}
-          showArrow={false}
-          onTaskPress={handleTaskPress}
-        />
-      )}
-
-      {segment === 'all' && (
-        <UserSearchModal
-          visible={showSearchModal}
-          onClose={closeSearchModal}
-          onUserSelect={handleUserSelect}
-        />
-      )}
+      <UserSearchModal
+        visible={showSearchModal}
+        onClose={closeSearchModal}
+        onUserSelect={handleUserSelect}
+      />
     </SafeAreaView>
   );
 }
@@ -295,30 +290,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  segmentContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 8,
-    paddingVertical: 10,
-  },
-  segmentButton: {
-    flex: 1,
-    marginHorizontal: 8,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#F0F0F9',
-    alignItems: 'center',
-  },
-  segmentActive: {
-    backgroundColor: theme.colors.primary[500],
-  },
-  segmentText: {
-    color: '#333333',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  segmentTextActive: {
-    color: '#FFFFFF',
-  },
   filterContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -361,5 +332,25 @@ const styles = StyleSheet.create({
   },
   skeletonContainer: {
     padding: theme.spacing.sm,
+  },
+  footerLoader: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: theme.spacing.lg,
+  },
+  loadingText: {
+    marginLeft: theme.spacing.sm,
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.regular,
+  },
+  emptyView: {
+    color: theme.colors.text.primary,
+    marginTop: theme.spacing.lg,
+    textAlign: 'center',
+  },
+  listContent: {
+    paddingTop: theme.spacing.sm,
   },
 });

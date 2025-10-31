@@ -1,6 +1,6 @@
 import { TaskDTO } from '@/api/tasks/task.dto';
+import { getRelativeFromNow } from '@/common/utils/dateUtils';
 import { theme } from '@/constants/theme';
-import moment from 'moment';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -8,20 +8,23 @@ export interface TaskCardProps {
   task: TaskDTO;
 }
 
-function getRelativeFromNow(timestamp?: number): string {
-  if (!timestamp) return 'Not set';
-  const date = moment.unix(timestamp);
-  return date.from(moment());
-}
-
 function getStatusColor(status?: string): string {
-  const normalized = (status || '').toLowerCase();
-  if (normalized === 'done' || normalized === 'completed')
-    return theme.colors.success[500];
-  if (normalized === 'in progress' || normalized === 'ongoing')
-    return theme.colors.secondary[400];
-  if (normalized === 'blocked') return theme.colors.error[500];
-  return theme.colors.text.secondary;
+  const normalized = (status || '').toUpperCase();
+  switch (normalized) {
+    case 'ASSIGNED':
+      return theme.colors.info[500]; // Blue
+    case 'IN_PROGRESS':
+      return theme.colors.secondary[500]; // Orange
+    case 'IN_REVIEW':
+      return theme.colors.warning[500]; // Amber/Yellow
+    case 'DONE':
+    case 'COMPLETED':
+      return theme.colors.success[500]; // Green
+    case 'BLOCKED':
+      return theme.colors.error[500]; // Red
+    default:
+      return theme.colors.text.secondary;
+  }
 }
 
 export const TaskCard = ({ task }: TaskCardProps) => {
@@ -38,7 +41,9 @@ export const TaskCard = ({ task }: TaskCardProps) => {
           </Text>
         </View>
         <View style={styles.rightColumn}>
-          <Text style={styles.statusText}>{task?.status || 'Unknown'}</Text>
+          <Text style={[styles.statusText, { color: statusColor }]}>
+            {task?.status || 'Unknown'}
+          </Text>
           <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
         </View>
       </View>
@@ -78,10 +83,10 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   title: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   rows: {
     flexDirection: 'row',
@@ -91,10 +96,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   titleContainer: {
-    width: '50%',
+    width: '60%',
     paddingRight: theme.spacing.sm,
   },
   leftColumn: {
@@ -107,9 +112,9 @@ const styles = StyleSheet.create({
     paddingLeft: theme.spacing.md,
   },
   label: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.secondary,
-    marginBottom: 6,
+    marginBottom: 4,
     fontFamily: theme.typography.fontFamily.regular,
   },
   assignedLabel: {
@@ -120,9 +125,9 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.medium,
   },
   subtle: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
     fontFamily: theme.typography.fontFamily.regular,
   },
   assignedRow: {
@@ -135,17 +140,17 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.xs,
   },
   assigneeName: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.primary,
     fontFamily: theme.typography.fontFamily.medium,
     maxWidth: 180,
-    marginLeft: 6,
+    marginLeft: 4,
   },
   statusText: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.primary,
     fontFamily: theme.typography.fontFamily.medium,
-    marginRight: theme.spacing.sm,
+    marginRight: theme.spacing.xs,
   },
   statusDot: {
     width: 10,

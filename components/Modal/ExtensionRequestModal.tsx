@@ -10,7 +10,11 @@ import { theme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import moment from 'moment';
+import {
+  formatDate,
+  dateToUnix,
+  addDaysToUnix,
+} from '@/common/utils/dateUtils';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -109,7 +113,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
   const handleFormSubmit = (data: TExtensionRequestFormData) => {
     const extensionRequestData: ExtensionRequestData = {
       assignee: data.assignee,
-      newEndsOn: moment(data.newDeadline).unix(),
+      newEndsOn: dateToUnix(data.newDeadline),
       oldEndsOn: data.oldEndsOn,
       reason: data.reason.trim(),
       status: 'PENDING',
@@ -125,7 +129,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
     onClose();
   };
 
-  const oldDeadlineDate = moment.unix(oldEndsOn).format('MMM DD, YYYY');
+  const oldDeadlineDate = formatDate(oldEndsOn);
 
   return (
     <Modal
@@ -211,7 +215,7 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
                   required
                   errorMessage={errors.newDeadline?.message}
                   icon="calendar-outline"
-                  minimumDate={moment.unix(oldEndsOn).add(1, 'day').toDate()}
+                  minimumDate={addDaysToUnix(oldEndsOn, 1)}
                   disabled={createExtensionRequestMutation.isPending}
                 />
               )}

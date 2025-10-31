@@ -1,8 +1,8 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import { UsersApi } from '@/api/users/users.api';
+import { formatDate, formatDateTime } from '@/common/utils/dateUtils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import moment from 'moment';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -138,12 +138,16 @@ export default function TaskRequestDetailsScreen() {
     );
   };
 
-  const formatDate = (timestamp: number) => {
-    return moment(timestamp).format('MMM DD, YYYY');
+  const formatDateFromTimestamp = (timestamp: number) => {
+    const unixTimestamp =
+      timestamp > 1000000000000 ? Math.floor(timestamp / 1000) : timestamp;
+    return formatDate(unixTimestamp);
   };
 
-  const formatDateTime = (timestamp: number) => {
-    return moment(timestamp).format('MMM DD, YYYY [at] h:mm A');
+  const formatDateTimeFromTimestamp = (timestamp: number) => {
+    const unixTimestamp =
+      timestamp > 1000000000000 ? Math.floor(timestamp / 1000) : timestamp;
+    return formatDateTime(unixTimestamp);
   };
 
   const handleExternalLink = (url: string) => {
@@ -215,13 +219,13 @@ export default function TaskRequestDetailsScreen() {
             <View style={styles.infoRow}>
               <Text style={styles.label}>Created:</Text>
               <Text style={styles.value}>
-                {formatDateTime(taskRequest.createdAt)}
+                {formatDateTimeFromTimestamp(taskRequest.createdAt)}
               </Text>
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.label}>Last Modified:</Text>
               <Text style={styles.value}>
-                {formatDateTime(taskRequest.lastModifiedAt)}
+                {formatDateTimeFromTimestamp(taskRequest.lastModifiedAt)}
               </Text>
             </View>
           </View>
@@ -234,13 +238,17 @@ export default function TaskRequestDetailsScreen() {
                 <View style={styles.infoRow}>
                   <Text style={styles.label}>Start Date:</Text>
                   <Text style={styles.value}>
-                    {formatDate(taskRequest.users[0].proposedStartDate)}
+                    {formatDateFromTimestamp(
+                      taskRequest.users[0].proposedStartDate
+                    )}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
                   <Text style={styles.label}>Deadline:</Text>
                   <Text style={styles.value}>
-                    {formatDate(taskRequest.users[0].proposedDeadline)}
+                    {formatDateFromTimestamp(
+                      taskRequest.users[0].proposedDeadline
+                    )}
                   </Text>
                 </View>
               </View>

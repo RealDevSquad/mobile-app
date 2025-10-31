@@ -54,10 +54,10 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
-        <StatusBar style="dark" backgroundColor="#ffffff" />
+        <StatusBar style="dark" backgroundColor="#ffffff" translucent={false} />
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <SafeAreaView style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
               <RootLayoutNav />
             </SafeAreaView>
           </AuthProvider>

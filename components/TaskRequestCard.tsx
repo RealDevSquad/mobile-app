@@ -1,7 +1,7 @@
 import { TaskRequestDTO } from '@/api/task-requests/task-request.dto';
+import { getRelativeTime } from '@/common/utils/dateUtils';
 import { theme } from '@/constants/theme';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import moment from 'moment';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -13,9 +13,10 @@ interface TaskRequestCardProps {
 const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
   ({ request, onPress }) => {
     const formatTimeAgo = (timestamp: number) => {
-      const currentDate = moment();
-      const requestDate = moment(timestamp);
-      return requestDate.from(currentDate);
+      const unixTimestamp =
+        timestamp > 1000000000000 ? Math.floor(timestamp / 1000) : timestamp;
+      const currentUnix = Math.floor(Date.now() / 1000);
+      return getRelativeTime(unixTimestamp, currentUnix);
     };
 
     const getStatusColor = (status: string) => {

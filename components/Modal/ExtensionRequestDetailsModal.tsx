@@ -1,6 +1,6 @@
 import { theme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
-import moment from 'moment';
+import { formatDate } from '@/common/utils/dateUtils';
 import React from 'react';
 import {
   ScrollView,
@@ -29,9 +29,7 @@ const ExtensionRequestDetailsModal: React.FC<
 > = ({ visible, onClose, extensionDetails }) => {
   if (!visible || !extensionDetails) return null;
 
-  const formatDate = (timestamp: number) => {
-    return moment.unix(timestamp).format('MMM DD, YYYY');
-  };
+  // Using formatDate from dateUtils
 
   const getStatusColor = (status: string) => {
     switch (status) {

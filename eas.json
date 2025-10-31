@@ -22,6 +22,7 @@
       },
       "distribution": "store",
       "env": {
+        "ANDROID_ABI_FILTERS": "arm64-v8a",
         "ANDROID_ENABLE_PROGUARD": "true"
       }
     }

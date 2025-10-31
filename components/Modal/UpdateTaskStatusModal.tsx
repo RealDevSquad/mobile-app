@@ -122,7 +122,7 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
             <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
               <Ionicons
                 name="close"
-                size={24}
+                size={20}
                 color={theme.colors.text.primary}
               />
             </TouchableOpacity>
@@ -149,7 +149,7 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
                         name={
                           showStatusDropdown ? 'chevron-up' : 'chevron-down'
                         }
-                        size={20}
+                        size={18}
                         color={theme.colors.text.secondary}
                       />
                     </TouchableOpacity>
@@ -288,13 +288,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
   },
   title: {
-    fontSize: theme.typography.fontSize.lg,
+    fontSize: theme.typography.fontSize.base,
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.primary,
   },
@@ -302,16 +302,16 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xs,
   },
   content: {
-    padding: theme.spacing.lg,
+    padding: theme.spacing.md,
   },
   section: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
   },
   sectionTitle: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   dropdown: {
     flexDirection: 'row',
@@ -321,10 +321,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border.secondary,
     borderRadius: theme.radius.sm,
-    padding: theme.spacing.md,
+    padding: theme.spacing.sm,
   },
   dropdownText: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.primary,
     fontWeight: theme.typography.fontWeight.medium,
   },
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     ...theme.shadow.md,
   },
   dropdownItem: {
-    padding: theme.spacing.md,
+    padding: theme.spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
   },
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   sliderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: theme.spacing.sm,
+    marginTop: theme.spacing.xs,
   },
   slider: {
     flex: 1,
@@ -374,24 +374,24 @@ const styles = StyleSheet.create({
     height: 20,
   },
   sliderLabel: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.secondary,
     fontWeight: theme.typography.fontWeight.medium,
   },
   currentValues: {
     backgroundColor: theme.colors.background.tertiary,
-    padding: theme.spacing.md,
+    padding: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    marginTop: theme.spacing.sm,
+    marginTop: theme.spacing.xs,
   },
   currentValuesTitle: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs,
+    marginBottom: 2,
   },
   currentValuesText: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.primary,
   },
   actions: {
@@ -433,9 +433,9 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.error[500],
   },
   errorText: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.error[500],
-    marginTop: theme.spacing.xs,
+    marginTop: 2,
   },
 });
 

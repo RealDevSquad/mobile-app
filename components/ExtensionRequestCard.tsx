@@ -1,7 +1,7 @@
 import { ExtensionRequestDTO } from '@/api/extension-requests/extension-request.dto';
+import { formatDate, getRelativeTime } from '@/common/utils/dateUtils';
 import { theme } from '@/constants/theme';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import moment from 'moment';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -28,13 +28,8 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = ({
   const [isRejecting, setIsRejecting] = useState(false);
 
   const formatTimeAgo = (timestamp: number) => {
-    const currentDate = moment();
-    const endDate = moment.unix(timestamp);
-    return endDate.from(currentDate);
-  };
-
-  const formatDate = (timestamp: number) => {
-    return moment.unix(timestamp).format('MMM DD, YYYY');
+    const currentUnix = Math.floor(Date.now() / 1000);
+    return getRelativeTime(timestamp, currentUnix);
   };
 
   const handleApprove = async () => {

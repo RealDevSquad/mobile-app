@@ -1,7 +1,6 @@
 import { oooFormSchema, TOOOFormData } from '@/api/users/users.schema';
 import FormDatePicker from '@/components/form/FormDatePicker';
 import FormInput from '@/components/form/FormInput';
-import FormSubmitButton from '@/components/form/FormSubmitButton';
 import { theme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -122,14 +121,33 @@ const OOOModal: React.FC<OOOModalProps> = ({
               />
             )}
           />
+        </View>
 
-          {/* Submit Button */}
-          <FormSubmitButton
-            text="Apply for OOO"
+        {/* Action Buttons */}
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={handleClose}
+            disabled={isLoading}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.button,
+              styles.submitButton,
+              (!isDirty || isLoading) && styles.disabledButton,
+            ]}
             onPress={handleSubmit(handleFormSubmit)}
-            isLoading={isLoading}
-            isDisabled={!isDirty || isLoading}
-          />
+            disabled={!isDirty || isLoading}
+          >
+            {isLoading ? (
+              <Text style={styles.submitButtonText}>Submitting...</Text>
+            ) : (
+              <Text style={styles.submitButtonText}>Apply for OOO</Text>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -151,7 +169,6 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: '90%',
     maxWidth: 400,
-    padding: theme.spacing.lg,
     backgroundColor: theme.colors.background.primary,
     borderRadius: theme.radius.lg,
     ...theme.shadow.lg,
@@ -163,18 +180,56 @@ const styles = StyleSheet.create({
     zIndex: 4,
   },
   title: {
-    fontSize: theme.typography.fontSize.xl,
+    fontSize: theme.typography.fontSize.base,
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
   },
   form: {
-    marginTop: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.sm,
   },
   textArea: {
     height: 80,
     textAlignVertical: 'top',
+  },
+  actions: {
+    flexDirection: 'row',
+    padding: theme.spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border.primary,
+    gap: theme.spacing.md,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelButton: {
+    backgroundColor: theme.colors.background.tertiary,
+    borderWidth: 1,
+    borderColor: theme.colors.border.secondary,
+  },
+  cancelButtonText: {
+    fontSize: theme.typography.fontSize.base,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.text.primary,
+  },
+  submitButton: {
+    backgroundColor: theme.colors.primary[600],
+  },
+  submitButtonText: {
+    fontSize: theme.typography.fontSize.base,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.text.inverted,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
 });
 
