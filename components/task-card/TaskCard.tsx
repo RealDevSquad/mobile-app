@@ -1,6 +1,7 @@
 import { TaskDTO } from '@/api/tasks/task.dto';
 import { getRelativeFromNow } from '@/common/utils/dateUtils';
 import { theme } from '@/constants/theme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -48,7 +49,7 @@ export const TaskCard = ({ task }: TaskCardProps) => {
         </View>
       </View>
 
-      <View style={styles.rows}>
+      <View style={styles.contentRow}>
         <View style={styles.leftColumn}>
           <Text style={styles.label}>
             Due <Text style={styles.strong}>{estimated}</Text>
@@ -66,6 +67,14 @@ export const TaskCard = ({ task }: TaskCardProps) => {
             </Text>
           </View>
         </View>
+      </View>
+
+      <View style={styles.arrowContainer}>
+        <FontAwesome
+          name="chevron-right"
+          size={14}
+          color={theme.colors.text.secondary}
+        />
       </View>
     </View>
   );
@@ -88,7 +97,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.xs,
   },
-  rows: {
+  contentRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
@@ -157,6 +166,10 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginTop: 2,
+  },
+  arrowContainer: {
+    alignSelf: 'flex-end',
+    marginTop: theme.spacing.xs,
   },
 });
 

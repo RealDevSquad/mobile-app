@@ -16,7 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Tabs } from 'react-native-collapsible-tab-view';
+import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 export default function TasksScreen() {
   const router = useRouter();
@@ -175,9 +175,24 @@ export default function TasksScreen() {
     return null;
   };
 
+  const renderTabBar = (props: any) => (
+    <MaterialTabBar
+      {...props}
+      indicatorStyle={styles.tabIndicator}
+      style={styles.tabBar}
+      labelStyle={styles.tabLabel}
+      activeColor={theme.colors.primary[600]}
+      inactiveColor={theme.colors.text.secondary}
+    />
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <Tabs.Container renderHeader={renderHeader}>
+      <Tabs.Container
+        renderHeader={renderHeader}
+        renderTabBar={renderTabBar}
+        tabBarHeight={50}
+      >
         <Tabs.Tab name="Tasks">
           <Tabs.FlatList
             data={allTasks}
@@ -352,5 +367,24 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingTop: theme.spacing.sm,
+  },
+  tabBar: {
+    backgroundColor: theme.colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+    paddingHorizontal: theme.spacing.md,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  tabLabel: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
+    textTransform: 'none',
+    marginHorizontal: theme.spacing.xs,
+  },
+  tabIndicator: {
+    backgroundColor: theme.colors.primary[600],
+    height: 3,
+    borderRadius: 2,
   },
 });

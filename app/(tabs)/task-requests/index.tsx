@@ -1,13 +1,14 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import TaskRequestCard from '@/components/TaskRequestCard';
+import { theme } from '@/constants/theme';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Modal,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,9 +18,18 @@ import {
 export default function TaskRequestsScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  const [showFilterModal, setShowFilterModal] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [taskRequestsFilter, setTaskRequestsFilter] = useState('PENDING');
+
+  // Map filter value to API value (REJECTED -> DENIED)
+  const getApiStatusValue = (filterValue: string): string => {
+    if (filterValue === 'REJECTED') {
+      return 'DENIED';
+    }
+    return filterValue;
+  };
+
+  const apiStatusValue = getApiStatusValue(taskRequestsFilter);
 
   // Fetch task requests with infinite scroll
   const {
@@ -33,11 +43,11 @@ export default function TaskRequestsScreen() {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: TaskRequestsApi.getTaskRequests.key({
-      status: taskRequestsFilter,
+      status: apiStatusValue,
     }),
     queryFn: ({ pageParam }) =>
       TaskRequestsApi.getTaskRequests.fn({
-        status: taskRequestsFilter,
+        status: apiStatusValue,
         next: pageParam,
       }),
     enabled: true,
@@ -82,7 +92,6 @@ export default function TaskRequestsScreen() {
 
   const handleFilterChange = (filter: string) => {
     setTaskRequestsFilter(filter);
-    setShowFilterModal(false);
   };
 
   const renderTaskRequest = ({ item }: { item: any }) => (
@@ -93,7 +102,7 @@ export default function TaskRequestsScreen() {
     if (isFetchingNextPage) {
       return (
         <View style={styles.loadingMoreContainer}>
-          <ActivityIndicator size="small" color="#1D1283" />
+          <ActivityIndicator size="small" color={theme.colors.primary[600]} />
           <Text style={styles.loadingMoreText}>Loading more...</Text>
         </View>
       );
@@ -119,52 +128,23 @@ export default function TaskRequestsScreen() {
     { label: 'Rejected', value: 'REJECTED' },
   ];
 
-  const renderFilterModal = () => (
-    <Modal
-      visible={showFilterModal}
-      transparent={true}
-      animationType="slide"
-      onRequestClose={() => setShowFilterModal(false)}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Filter by Status</Text>
-          {filterOptions.map((option) => (
-            <TouchableOpacity
-              key={option.value}
-              style={[
-                styles.filterOption,
-                taskRequestsFilter === option.value &&
-                  styles.selectedFilterOption,
-              ]}
-              onPress={() => handleFilterChange(option.value)}
-            >
-              <Text
-                style={[
-                  styles.filterOptionText,
-                  taskRequestsFilter === option.value &&
-                    styles.selectedFilterOptionText,
-                ]}
-              >
-                {option.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setShowFilterModal(false)}
-          >
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
+  const getFilterColor = (value: string) => {
+    switch (value) {
+      case 'PENDING':
+        return theme.colors.warning[500];
+      case 'APPROVED':
+        return theme.colors.success[500];
+      case 'REJECTED':
+        return theme.colors.error[500];
+      default:
+        return theme.colors.primary[600];
+    }
+  };
 
   if (loading && allTaskRequests.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color={theme.colors.primary[600]} />
       </View>
     );
   }
@@ -203,19 +183,38 @@ export default function TaskRequestsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={() => setShowFilterModal(true)}
+      <View style={styles.filterContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterScrollContent}
         >
-          <Text style={styles.filterButtonText}>
-            Filter:{' '}
-            {
-              filterOptions.find((opt) => opt.value === taskRequestsFilter)
-                ?.label
-            }
-          </Text>
-        </TouchableOpacity>
+          {filterOptions.map((option) => {
+            const isSelected = taskRequestsFilter === option.value;
+            return (
+              <TouchableOpacity
+                key={option.value}
+                style={[
+                  styles.filterChip,
+                  isSelected && [
+                    styles.filterChipSelected,
+                    { backgroundColor: getFilterColor(option.value) },
+                  ],
+                ]}
+                onPress={() => handleFilterChange(option.value)}
+              >
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    isSelected && styles.filterChipTextSelected,
+                  ]}
+                >
+                  {option.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
 
       <FlatList
@@ -231,8 +230,6 @@ export default function TaskRequestsScreen() {
         ListEmptyComponent={loading ? null : renderEmpty}
         showsVerticalScrollIndicator={false}
       />
-
-      {renderFilterModal()}
     </View>
   );
 }
@@ -240,151 +237,111 @@ export default function TaskRequestsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: theme.spacing.xl,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    padding: 16,
-    backgroundColor: 'white',
+  filterContainer: {
+    backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: theme.colors.border.primary,
+    paddingVertical: theme.spacing.sm,
   },
-  filterButton: {
-    backgroundColor: '#1D1283',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+  filterScrollContent: {
+    paddingHorizontal: theme.spacing.md,
+    gap: theme.spacing.sm,
   },
-  filterButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
+  filterChip: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs + 2,
+    borderRadius: theme.radius.full,
+    backgroundColor: theme.colors.background.secondary,
+    borderWidth: 1,
+    borderColor: theme.colors.border.primary,
+    marginRight: theme.spacing.sm,
+  },
+  filterChipSelected: {
+    borderColor: 'transparent',
+  },
+  filterChipText: {
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.text.secondary,
+  },
+  filterChipTextSelected: {
+    color: theme.colors.text.inverted,
+    fontFamily: theme.typography.fontFamily.bold,
   },
   loadMoreButton: {
-    backgroundColor: '#1D1283',
-    margin: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: theme.colors.primary[600],
+    margin: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.md,
     alignItems: 'center',
   },
   loadMoreText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+    color: theme.colors.text.inverted,
+    fontFamily: theme.typography.fontFamily.bold,
+    fontSize: theme.typography.fontSize.base,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: theme.spacing.xl,
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#666',
-    marginBottom: 8,
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.sm,
   },
   emptySubtext: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text.secondary,
     textAlign: 'center',
   },
   errorText: {
-    fontSize: 16,
-    color: '#F44336',
+    fontSize: theme.typography.fontSize.base,
+    color: theme.colors.error[600],
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   retryButton: {
-    backgroundColor: '#1D1283',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: theme.colors.primary[600],
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.md,
     alignSelf: 'center',
     minWidth: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
   retryButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 24,
-    width: '80%',
-    maxWidth: 300,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  filterOption: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedFilterOption: {
-    backgroundColor: '#1D1283',
-    borderColor: '#1D1283',
-  },
-  filterOptionText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  selectedFilterOptionText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  closeButton: {
-    backgroundColor: '#666',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+    color: theme.colors.text.inverted,
+    fontFamily: theme.typography.fontFamily.bold,
+    fontSize: theme.typography.fontSize.base,
   },
   loadingMoreContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: theme.spacing.md,
   },
   loadingMoreText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: '#666',
+    marginLeft: theme.spacing.sm,
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text.secondary,
   },
 });

@@ -1,16 +1,19 @@
 import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
 import ExtensionRequestCard from '@/components/ExtensionRequestCard';
+import { TaskCardSkeleton } from '@/components/SkeletonLoader';
+import { theme } from '@/constants/theme';
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Modal,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,16 +22,10 @@ import {
 
 const ExtensionRequestsScreen: React.FC = () => {
   const queryClient = useQueryClient();
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [extensionRequestsFilter, setExtensionRequestsFilter] =
     useState('PENDING');
-
-  const filterOptions = [
-    { label: 'Pending', value: 'PENDING' },
-    { label: 'Approved', value: 'APPROVED' },
-    { label: 'Denied', value: 'DENIED' },
-  ];
 
   // Fetch extension requests with infinite scroll
   const {
@@ -36,7 +33,7 @@ const ExtensionRequestsScreen: React.FC = () => {
     isLoading: loading,
     isError,
     error,
-    refetch,
+    refetch: refetchRequests,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -77,11 +74,17 @@ const ExtensionRequestsScreen: React.FC = () => {
     });
   }, [data?.pages]);
 
-  const handleLoadMore = () => {
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetchRequests();
+    setRefreshing(false);
+  }, [refetchRequests]);
+
+  const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Approve extension request mutation
   const approveMutation = useMutation({
@@ -135,7 +138,6 @@ const ExtensionRequestsScreen: React.FC = () => {
 
   const handleFilterChange = (filter: string) => {
     setExtensionRequestsFilter(filter);
-    setShowFilterModal(false);
   };
 
   const renderExtensionRequest = ({ item }: { item: any }) => (
@@ -146,67 +148,58 @@ const ExtensionRequestsScreen: React.FC = () => {
     />
   );
 
-  const renderFooter = () => {
+  const renderSkeletonLoader = ({ item }: { item: any }) => (
+    <TaskCardSkeleton />
+  );
+
+  const renderLoadMoreButton = () => {
     if (isFetchingNextPage) {
       return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color="#1D1283" />
-          <Text style={styles.loadingText}>Loading more requests...</Text>
+        <View style={styles.loadingMoreContainer}>
+          <ActivityIndicator size="small" color={theme.colors.primary[600]} />
+          <Text style={styles.loadingMoreText}>Loading more...</Text>
         </View>
       );
     }
     return null;
   };
 
-  const renderFilterModal = () => (
-    <Modal
-      visible={showFilterModal}
-      transparent={true}
-      animationType="slide"
-      onRequestClose={() => setShowFilterModal(false)}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Filter by Status</Text>
-          {filterOptions.map((option) => (
-            <TouchableOpacity
-              key={option.value}
-              style={[
-                styles.filterOption,
-                extensionRequestsFilter === option.value &&
-                  styles.selectedFilterOption,
-              ]}
-              onPress={() => handleFilterChange(option.value)}
-            >
-              <Text
-                style={[
-                  styles.filterOptionText,
-                  extensionRequestsFilter === option.value &&
-                    styles.selectedFilterOptionText,
-                ]}
-              >
-                {option.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setShowFilterModal(false)}
-          >
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+  const renderEmpty = () => (
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyText}>No extension requests found</Text>
+      <Text style={styles.emptySubtext}>
+        {extensionRequestsFilter === 'PENDING'
+          ? 'No pending requests at the moment'
+          : extensionRequestsFilter === 'DENIED'
+            ? 'No rejected requests found'
+            : `No ${extensionRequestsFilter.toLowerCase()} requests found`}
+      </Text>
+    </View>
   );
 
-  if (loading && !data) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  const filterOptions = [
+    { label: 'Pending', value: 'PENDING' },
+    { label: 'Approved', value: 'APPROVED' },
+    { label: 'Rejected', value: 'DENIED' },
+  ];
+
+  const getFilterColor = (value: string) => {
+    switch (value) {
+      case 'PENDING':
+        return theme.colors.warning[500];
+      case 'APPROVED':
+        return theme.colors.success[500];
+      case 'DENIED':
+        return theme.colors.error[500];
+      default:
+        return theme.colors.primary[600];
+    }
+  };
+
+  const skeletonData =
+    loading && allExtensionRequests.length === 0
+      ? Array.from({ length: 5 }, (_, i) => ({ id: `skeleton-${i}` }))
+      : [];
 
   if (isError) {
     return (
@@ -220,7 +213,7 @@ const ExtensionRequestsScreen: React.FC = () => {
             if (!isRetrying) {
               setIsRetrying(true);
               try {
-                await refetch();
+                await refetchRequests();
               } catch (error) {
                 console.error('Error retrying:', error);
               } finally {
@@ -242,41 +235,61 @@ const ExtensionRequestsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={() => setShowFilterModal(true)}
+      <View style={styles.filterContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterScrollContent}
         >
-          <Text style={styles.filterButtonText}>
-            Filter:{' '}
-            {
-              filterOptions.find((opt) => opt.value === extensionRequestsFilter)
-                ?.label
-            }
-          </Text>
-        </TouchableOpacity>
+          {filterOptions.map((option) => {
+            const isSelected = extensionRequestsFilter === option.value;
+            return (
+              <TouchableOpacity
+                key={option.value}
+                style={[
+                  styles.filterChip,
+                  isSelected && [
+                    styles.filterChipSelected,
+                    { backgroundColor: getFilterColor(option.value) },
+                  ],
+                ]}
+                onPress={() => handleFilterChange(option.value)}
+              >
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    isSelected && styles.filterChipTextSelected,
+                  ]}
+                >
+                  {option.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
 
-      {allExtensionRequests && allExtensionRequests.length > 0 ? (
-        <FlatList
-          data={allExtensionRequests || []}
-          keyExtractor={(item) => item.id}
-          renderItem={renderExtensionRequest}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          ListFooterComponent={renderFooter}
-          showsVerticalScrollIndicator={false}
-        />
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No extension requests found</Text>
-          <Text style={styles.emptySubtext}>
-            Try changing the filter or check back later
-          </Text>
-        </View>
-      )}
-
-      {renderFilterModal()}
+      <FlatList
+        data={
+          loading && allExtensionRequests.length === 0
+            ? skeletonData
+            : allExtensionRequests
+        }
+        renderItem={
+          loading && allExtensionRequests.length === 0
+            ? renderSkeletonLoader
+            : renderExtensionRequest
+        }
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderLoadMoreButton}
+        ListEmptyComponent={loading ? null : renderEmpty}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -284,141 +297,100 @@ const ExtensionRequestsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: theme.spacing.xl,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    padding: 16,
-    backgroundColor: 'white',
+  filterContainer: {
+    backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: theme.colors.border.primary,
+    paddingVertical: theme.spacing.sm,
   },
-  filterButton: {
-    backgroundColor: '#1D1283',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+  filterScrollContent: {
+    paddingHorizontal: theme.spacing.md,
+    gap: theme.spacing.sm,
   },
-  filterButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
+  filterChip: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs + 2,
+    borderRadius: theme.radius.full,
+    backgroundColor: theme.colors.background.secondary,
+    borderWidth: 1,
+    borderColor: theme.colors.border.primary,
+    marginRight: theme.spacing.sm,
   },
-  footerLoader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 16,
+  filterChipSelected: {
+    borderColor: 'transparent',
   },
-  loadingText: {
-    marginLeft: 8,
-    color: '#666',
-    fontSize: 14,
-    fontWeight: '500',
+  filterChipText: {
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.text.secondary,
+  },
+  filterChipTextSelected: {
+    color: theme.colors.text.inverted,
+    fontFamily: theme.typography.fontFamily.bold,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: theme.spacing.xl,
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#666',
-    marginBottom: 8,
+    fontSize: theme.typography.fontSize.lg,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.sm,
   },
   emptySubtext: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text.secondary,
     textAlign: 'center',
   },
   errorText: {
-    fontSize: 16,
-    color: '#F44336',
+    fontSize: theme.typography.fontSize.base,
+    color: theme.colors.error[600],
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   retryButton: {
-    backgroundColor: '#1D1283',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: theme.colors.primary[600],
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.md,
     alignSelf: 'center',
     minWidth: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
   retryButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+    color: theme.colors.text.inverted,
+    fontFamily: theme.typography.fontFamily.bold,
+    fontSize: theme.typography.fontSize.base,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  loadingMoreContainer: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: theme.spacing.md,
   },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 24,
-    width: '80%',
-    maxWidth: 300,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  filterOption: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedFilterOption: {
-    backgroundColor: '#1D1283',
-    borderColor: '#1D1283',
-  },
-  filterOptionText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  selectedFilterOptionText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  closeButton: {
-    backgroundColor: '#666',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+  loadingMoreText: {
+    marginLeft: theme.spacing.sm,
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text.secondary,
   },
 });
 

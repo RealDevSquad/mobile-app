@@ -28,6 +28,7 @@ import AddProgressModal from '@/components/Modal/AddProgressModal';
 import ExtensionRequestDetailsModal from '@/components/Modal/ExtensionRequestDetailsModal';
 import ExtensionRequestModal from '@/components/Modal/ExtensionRequestModal';
 import UpdateTaskStatusModal from '@/components/Modal/UpdateTaskStatusModal';
+import { TaskDetailsSkeleton } from '@/components/SkeletonLoader';
 
 export default function TaskDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -257,9 +258,13 @@ export default function TaskDetailsScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary[600]} />
-        <Text style={styles.loadingText}>Loading task details...</Text>
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <TaskDetailsSkeleton />
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -517,7 +522,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
     paddingBottom: theme.spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
@@ -544,7 +549,8 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: theme.colors.surface.primary,
     borderRadius: theme.radius.sm,
-    padding: theme.spacing.sm,
+    padding: theme.spacing.md,
+
     marginBottom: theme.spacing.sm,
     ...theme.shadow.sm,
   },
@@ -652,16 +658,14 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary,
   },
   progressCard: {
-    backgroundColor: theme.colors.surface.primary,
-    borderRadius: theme.radius.md,
-    marginBottom: theme.spacing.xs,
+    padding: theme.spacing.sm,
     ...theme.shadow.md,
   },
   progressCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing.sm,
+    paddingVertical: theme.spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
   },

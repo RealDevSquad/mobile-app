@@ -1,5 +1,5 @@
 import { TaskRequestDTO } from '@/api/task-requests/task-request.dto';
-import { getRelativeTime } from '@/common/utils/dateUtils';
+import { formatTimeAgo, getRelativeFromNow } from '@/common/utils/dateUtils';
 import { theme } from '@/constants/theme';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React from 'react';
@@ -10,28 +10,22 @@ interface TaskRequestCardProps {
   onPress: (id: string) => void;
 }
 
+function getStatusColor(status: string): string {
+  switch (status.toUpperCase()) {
+    case 'PENDING':
+      return theme.colors.warning[500];
+    case 'APPROVED':
+      return theme.colors.success[500];
+    case 'REJECTED':
+    case 'DENIED':
+      return theme.colors.error[500];
+    default:
+      return theme.colors.text.secondary;
+  }
+}
+
 const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
   ({ request, onPress }) => {
-    const formatTimeAgo = (timestamp: number) => {
-      const unixTimestamp =
-        timestamp > 1000000000000 ? Math.floor(timestamp / 1000) : timestamp;
-      const currentUnix = Math.floor(Date.now() / 1000);
-      return getRelativeTime(unixTimestamp, currentUnix);
-    };
-
-    const getStatusColor = (status: string) => {
-      switch (status) {
-        case 'PENDING':
-          return theme.colors.warning[500];
-        case 'APPROVED':
-          return theme.colors.success[500];
-        case 'REJECTED':
-          return theme.colors.error[500];
-        default:
-          return theme.colors.gray[500];
-      }
-    };
-
     const getRequestorName = () => {
       if (request.users && request.users.length > 0) {
         const user = request.users[0];
@@ -43,10 +37,35 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
       return 'Unknown User';
     };
 
-    const truncateText = (text: string, maxLength: number) => {
-      if (text.length <= maxLength) return text;
-      return text.substring(0, maxLength) + '...';
+    const convertToSeconds = (timestamp: number): number => {
+      // If timestamp is in milliseconds (greater than year 2286 in seconds)
+      return timestamp > 1000000000000
+        ? Math.floor(timestamp / 1000)
+        : timestamp;
     };
+
+    const getProposedDates = () => {
+      if (request.users && request.users.length > 0) {
+        const user = request.users[0];
+        const startDate = user.proposedStartDate
+          ? getRelativeFromNow(convertToSeconds(user.proposedStartDate))
+          : null;
+        const deadline = user.proposedDeadline
+          ? getRelativeFromNow(convertToSeconds(user.proposedDeadline))
+          : null;
+        return { startDate, deadline };
+      }
+      return { startDate: null, deadline: null };
+    };
+
+    const formatCreatedAt = () => {
+      const timestamp = convertToSeconds(request.createdAt);
+      return formatTimeAgo(timestamp);
+    };
+
+    const { startDate, deadline } = getProposedDates();
+    const statusColor = getStatusColor(request.status);
+    const requestorName = getRequestorName();
 
     return (
       <TouchableOpacity
@@ -54,50 +73,62 @@ const TaskRequestCard: React.FC<TaskRequestCardProps> = React.memo(
         onPress={() => onPress(request.id)}
         activeOpacity={0.7}
       >
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <Text style={styles.title}>
-              {truncateText(request.taskTitle, 60)}
+        <View style={styles.headerRow}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+              {request.taskTitle || 'Untitled Request'}
+            </Text>
+          </View>
+          <View style={styles.rightColumn}>
+            <Text style={[styles.statusText, { color: statusColor }]}>
+              {request.status === 'DENIED' ? 'REJECTED' : request.status}
             </Text>
             <View
-              style={[
-                styles.statusBadge,
-                { backgroundColor: getStatusColor(request.status) },
-              ]}
-            >
-              <Text style={styles.statusText}>{request.status}</Text>
-            </View>
+              style={[styles.statusDot, { backgroundColor: statusColor }]}
+            />
           </View>
-          <FontAwesome
-            name="chevron-right"
-            size={16}
-            color="#666"
-            style={styles.arrowIcon}
-          />
         </View>
 
-        <Text style={styles.text}>
-          Requested by:{' '}
-          <Text style={styles.requestor}>{getRequestorName()}</Text>
-        </Text>
+        <View style={styles.contentRow}>
+          <View style={styles.leftColumn}>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>
+                Requested by <Text style={styles.strong}>{requestorName}</Text>
+              </Text>
+            </View>
 
-        <Text style={styles.text}>
-          Type: <Text style={styles.type}>{request.requestType}</Text>
-        </Text>
+            {startDate && (
+              <Text style={styles.subtle}>
+                Start <Text style={styles.strong}>{startDate}</Text>
+              </Text>
+            )}
 
-        <Text style={styles.text}>
-          Submitted:{' '}
-          <Text style={styles.timestamp}>
-            {formatTimeAgo(request.createdAt)}
-          </Text>
-        </Text>
+            {deadline && (
+              <Text style={styles.subtle}>
+                Deadline <Text style={styles.strong}>{deadline}</Text>
+              </Text>
+            )}
 
-        {request.usersCount > 1 && (
-          <Text style={styles.text}>
-            +{request.usersCount - 1} more user
-            {request.usersCount > 2 ? 's' : ''}
-          </Text>
-        )}
+            <View style={styles.metaRow}>
+              <Text style={styles.subtle}>
+                Submitted <Text style={styles.strong}>{formatCreatedAt()}</Text>
+              </Text>
+              {request.usersCount > 1 && (
+                <Text style={styles.userCount}>
+                  +{request.usersCount - 1} more
+                </Text>
+              )}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.arrowContainer}>
+          <FontAwesome
+            name="chevron-right"
+            size={14}
+            color={theme.colors.text.secondary}
+          />
+        </View>
       </TouchableOpacity>
     );
   }
@@ -111,63 +142,86 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.primary,
     borderRadius: theme.radius.md,
     padding: theme.spacing.md,
-    marginHorizontal: theme.spacing.md,
-    marginVertical: theme.spacing.sm,
+    marginHorizontal: theme.spacing.sm,
+    marginVertical: theme.spacing.xs,
     backgroundColor: theme.colors.background.primary,
     ...theme.shadow.md,
   },
-  header: {
+  headerRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm,
-    paddingVertical: 4,
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.xs,
   },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    flex: 1,
-    marginRight: theme.spacing.sm,
+  titleContainer: {
+    width: '60%',
+    paddingRight: theme.spacing.sm,
   },
   title: {
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.primary[700],
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs,
+  },
+  contentRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  leftColumn: {
     flex: 1,
-    marginRight: theme.spacing.sm,
   },
-  arrowIcon: {
-    marginLeft: theme.spacing.sm,
-  },
-  statusBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 4,
-    borderRadius: theme.radius.xl,
-    minWidth: 80,
-    alignItems: 'center',
+  rightColumn: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+    paddingLeft: theme.spacing.md,
   },
   statusText: {
-    color: theme.colors.text.inverted,
     fontSize: theme.typography.fontSize.xs,
-    fontFamily: theme.typography.fontFamily.bold,
-  },
-  text: {
-    fontSize: theme.typography.fontSize.sm,
-    marginBottom: 4,
-    fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
+    fontFamily: theme.typography.fontFamily.medium,
+    marginRight: theme.spacing.xs,
   },
-  requestor: {
+  statusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginTop: 2,
+  },
+  label: {
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.secondary,
+    marginBottom: 4,
     fontFamily: theme.typography.fontFamily.regular,
   },
-  type: {
+  strong: {
+    color: theme.colors.text.primary,
+    fontFamily: theme.typography.fontFamily.medium,
+  },
+  subtle: {
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.text.secondary,
+    marginBottom: 4,
     fontFamily: theme.typography.fontFamily.regular,
   },
-  timestamp: {
-    color: theme.colors.text.secondary,
-    fontFamily: theme.typography.fontFamily.regular,
+  infoRow: {
+    marginBottom: 2,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 2,
+  },
+  userCount: {
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.primary[600],
+    fontFamily: theme.typography.fontFamily.medium,
+    marginLeft: theme.spacing.xs,
+  },
+  arrowContainer: {
+    alignSelf: 'flex-end',
+    marginTop: theme.spacing.xs,
   },
 });
 

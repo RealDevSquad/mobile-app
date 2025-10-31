@@ -12,7 +12,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Tabs } from 'react-native-collapsible-tab-view';
+import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 export default function ProfileScreen() {
   const HEADER_HEIGHT = 250;
@@ -52,10 +52,23 @@ export default function ProfileScreen() {
     );
   }
 
+  const renderTabBar = (props: any) => (
+    <MaterialTabBar
+      {...props}
+      indicatorStyle={styles.tabIndicator}
+      style={styles.tabBar}
+      labelStyle={styles.tabLabel}
+      activeColor={theme.colors.primary[600]}
+      inactiveColor={theme.colors.text.secondary}
+    />
+  );
+
   return (
     <Tabs.Container
       renderHeader={() => <Header {...(userData || {})} />}
       headerHeight={HEADER_HEIGHT}
+      renderTabBar={renderTabBar}
+      tabBarHeight={50}
     >
       <Tabs.Tab name="Active Tasks">
         <Tabs.FlatList
@@ -100,5 +113,24 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  tabBar: {
+    backgroundColor: theme.colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+    paddingHorizontal: theme.spacing.md,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  tabLabel: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
+    textTransform: 'none',
+    marginHorizontal: theme.spacing.xs,
+  },
+  tabIndicator: {
+    backgroundColor: theme.colors.primary[600],
+    height: 3,
+    borderRadius: 2,
   },
 });

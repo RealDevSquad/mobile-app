@@ -12,7 +12,18 @@ import {
  * @returns Formatted date string
  */
 export const formatDate = (timestamp: number): string => {
-  return format(fromUnixTime(timestamp), 'MMM dd, yyyy');
+  if (!timestamp || timestamp <= 0 || Number.isNaN(timestamp))
+    return 'Invalid date';
+
+  try {
+    const date = fromUnixTime(timestamp);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    return format(date, 'MMM dd, yyyy');
+  } catch (error) {
+    return 'Invalid date';
+  }
 };
 
 /**
@@ -21,7 +32,18 @@ export const formatDate = (timestamp: number): string => {
  * @returns Formatted date and time string
  */
 export const formatDateTime = (timestamp: number): string => {
-  return format(fromUnixTime(timestamp), "MMM dd, yyyy 'at' h:mm a");
+  if (!timestamp || timestamp <= 0 || Number.isNaN(timestamp))
+    return 'Invalid date';
+
+  try {
+    const date = fromUnixTime(timestamp);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    return format(date, "MMM dd, yyyy 'at' h:mm a");
+  } catch (error) {
+    return 'Invalid date';
+  }
 };
 
 /**
@@ -30,7 +52,18 @@ export const formatDateTime = (timestamp: number): string => {
  * @returns Relative time string
  */
 export const formatTimeAgo = (timestamp: number): string => {
-  return formatDistanceToNow(fromUnixTime(timestamp), { addSuffix: true });
+  if (!timestamp || timestamp <= 0 || Number.isNaN(timestamp))
+    return 'Invalid date';
+
+  try {
+    const date = fromUnixTime(timestamp);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    return formatDistanceToNow(date, { addSuffix: true });
+  } catch (error) {
+    return 'Invalid date';
+  }
 };
 
 /**
@@ -39,9 +72,27 @@ export const formatTimeAgo = (timestamp: number): string => {
  * @returns Relative time string without suffix
  */
 export const getRelativeFromNow = (timestamp?: number): string => {
-  if (!timestamp) return 'Not set';
-  const date = fromUnixTime(timestamp);
-  return formatDistanceToNow(date, { addSuffix: false });
+  if (!timestamp || timestamp <= 0 || Number.isNaN(timestamp)) return 'Not set';
+
+  // Check if timestamp is valid (not too far in the past or future)
+  // Reasonable range: between 1970-01-01 and 2100-01-01
+  const minTimestamp = 0;
+  const maxTimestamp = 4102444800; // Jan 1, 2100
+
+  if (timestamp < minTimestamp || timestamp > maxTimestamp) {
+    return 'Not set';
+  }
+
+  try {
+    const date = fromUnixTime(timestamp);
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return 'Not set';
+    }
+    return formatDistanceToNow(date, { addSuffix: false });
+  } catch (error) {
+    return 'Not set';
+  }
 };
 
 /**
@@ -54,9 +105,22 @@ export const getRelativeTime = (
   timestamp: number,
   fromTimestamp?: number
 ): string => {
-  const date = fromUnixTime(timestamp);
-  const fromDate = fromTimestamp ? fromUnixTime(fromTimestamp) : new Date();
-  return formatDistance(date, fromDate, { addSuffix: false });
+  if (!timestamp || timestamp <= 0 || Number.isNaN(timestamp))
+    return 'Invalid date';
+
+  try {
+    const date = fromUnixTime(timestamp);
+    if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+    const fromDate = fromTimestamp ? fromUnixTime(fromTimestamp) : new Date();
+    if (fromTimestamp && isNaN(fromDate.getTime())) {
+      return 'Invalid date';
+    }
+    return formatDistance(date, fromDate, { addSuffix: false });
+  } catch (error) {
+    return 'Invalid date';
+  }
 };
 
 /**

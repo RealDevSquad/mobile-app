@@ -200,6 +200,141 @@ export const HomeScreenSkeleton: React.FC = () => (
   </View>
 );
 
+// Task Details Skeleton
+export const TaskDetailsSkeleton: React.FC = () => (
+  <View style={styles.taskDetailsContainer}>
+    {/* Header with title and status */}
+    <View style={styles.taskDetailsHeader}>
+      <SkeletonLoader
+        height={18}
+        width="70%"
+        style={styles.taskTitleSkeleton}
+      />
+      <SkeletonLoader height={24} width={80} borderRadius={theme.radius.lg} />
+    </View>
+
+    {/* Task Details Section */}
+    <View style={styles.taskDetailsSection}>
+      <View style={styles.taskDetailsSectionHeader}>
+        <SkeletonLoader height={16} width="40%" />
+        <SkeletonLoader height={24} width={90} borderRadius={theme.radius.sm} />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="25%" />
+        <SkeletonLoader height={14} width="60%" />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="20%" />
+        <SkeletonLoader height={14} width="55%" />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="30%" />
+        <SkeletonLoader height={14} width="50%" />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="35%" />
+        <SkeletonLoader height={14} width="65%" />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="45%" />
+        <SkeletonLoader height={14} width="60%" />
+      </View>
+    </View>
+
+    {/* Timeline Section */}
+    <View style={styles.taskDetailsSection}>
+      <View style={styles.taskDetailsSectionHeader}>
+        <SkeletonLoader height={16} width="30%" />
+        <SkeletonLoader
+          height={24}
+          width={100}
+          borderRadius={theme.radius.sm}
+        />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="35%" />
+        <SkeletonLoader height={14} width="50%" />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="30%" />
+        <SkeletonLoader height={14} width="55%" />
+      </View>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="35%" />
+        <SkeletonLoader height={14} width="20%" />
+      </View>
+    </View>
+
+    {/* GitHub Link Section */}
+    <View style={styles.taskDetailsSection}>
+      <View style={styles.taskDetailsInfoRow}>
+        <SkeletonLoader height={14} width="40%" />
+        <SkeletonLoader height={28} width={60} borderRadius={theme.radius.sm} />
+      </View>
+    </View>
+
+    {/* Dependencies Section */}
+    <View style={styles.taskDetailsSection}>
+      <SkeletonLoader
+        height={16}
+        width="50%"
+        style={styles.taskDetailsSectionTitle}
+      />
+      <View style={styles.taskDetailsDependencyItem}>
+        <SkeletonLoader height={14} width="100%" />
+      </View>
+      <View style={styles.taskDetailsDependencyItem}>
+        <SkeletonLoader height={14} width="85%" />
+      </View>
+    </View>
+
+    {/* Progress Updates Section */}
+    <View style={styles.taskDetailsSection}>
+      <View style={styles.taskDetailsSectionHeader}>
+        <SkeletonLoader height={16} width="45%" />
+        <SkeletonLoader
+          height={24}
+          width={110}
+          borderRadius={theme.radius.sm}
+        />
+      </View>
+      {/* Progress Card Skeletons */}
+      <View style={styles.taskDetailsProgressCard}>
+        <View style={styles.taskDetailsProgressCardHeader}>
+          <View style={styles.taskDetailsProgressCardTitle}>
+            <SkeletonLoader height={14} width="40%" />
+            <SkeletonLoader
+              height={12}
+              width="60%"
+              style={styles.taskDetailsProgressCardSubtitle}
+            />
+          </View>
+          <View style={styles.taskDetailsProgressCardActions}>
+            <SkeletonLoader width={24} height={24} borderRadius={12} />
+            <View style={styles.taskDetailsProgressCardChevron} />
+          </View>
+        </View>
+      </View>
+      <View style={styles.taskDetailsProgressCard}>
+        <View style={styles.taskDetailsProgressCardHeader}>
+          <View style={styles.taskDetailsProgressCardTitle}>
+            <SkeletonLoader height={14} width="45%" />
+            <SkeletonLoader
+              height={12}
+              width="55%"
+              style={styles.taskDetailsProgressCardSubtitle}
+            />
+          </View>
+          <View style={styles.taskDetailsProgressCardActions}>
+            <SkeletonLoader width={24} height={24} borderRadius={12} />
+            <View style={styles.taskDetailsProgressCardChevron} />
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.gray[200],
@@ -326,6 +461,81 @@ const styles = StyleSheet.create({
   gridItem: {
     flex: 1,
     marginHorizontal: theme.spacing.sm,
+  },
+  taskDetailsContainer: {
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background.secondary,
+  },
+  taskDetailsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+  },
+  taskTitleSkeleton: {
+    marginBottom: 0,
+  },
+  taskDetailsSection: {
+    backgroundColor: theme.colors.surface.primary,
+    borderRadius: theme.radius.sm,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
+    ...theme.shadow.sm,
+  },
+  taskDetailsSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  taskDetailsSectionTitle: {
+    marginBottom: theme.spacing.sm,
+  },
+  taskDetailsInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.xs,
+  },
+  taskDetailsDependencyItem: {
+    paddingVertical: 3,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+    marginBottom: theme.spacing.xs,
+  },
+  taskDetailsProgressCard: {
+    padding: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
+    ...theme.shadow.md,
+  },
+  taskDetailsProgressCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: theme.spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+  },
+  taskDetailsProgressCardTitle: {
+    flex: 1,
+    marginRight: theme.spacing.sm,
+  },
+  taskDetailsProgressCardSubtitle: {
+    marginTop: 2,
+  },
+  taskDetailsProgressCardActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  taskDetailsProgressCardChevron: {
+    width: 14,
+    height: 14,
+    marginLeft: theme.spacing.xs,
+    backgroundColor: theme.colors.gray[200],
+    borderRadius: 2,
   },
 });
 

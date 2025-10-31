@@ -1,6 +1,8 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import { UsersApi } from '@/api/users/users.api';
 import { formatDate, formatDateTime } from '@/common/utils/dateUtils';
+import { TaskDetailsSkeleton } from '@/components/SkeletonLoader';
+import { theme } from '@/constants/theme';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
@@ -19,13 +21,14 @@ import {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'PENDING':
-      return '#FFA500';
+      return theme.colors.warning[500];
     case 'APPROVED':
-      return '#4CAF50';
+      return theme.colors.success[500];
     case 'REJECTED':
-      return '#F44336';
+    case 'DENIED':
+      return theme.colors.error[500];
     default:
-      return '#666';
+      return theme.colors.text.secondary;
   }
 };
 
@@ -138,13 +141,19 @@ export default function TaskRequestDetailsScreen() {
     );
   };
 
-  const formatDateFromTimestamp = (timestamp: number) => {
+  const formatDateFromTimestamp = (timestamp?: number) => {
+    if (!timestamp || timestamp <= 0 || Number.isNaN(timestamp)) {
+      return 'Not set';
+    }
     const unixTimestamp =
       timestamp > 1000000000000 ? Math.floor(timestamp / 1000) : timestamp;
     return formatDate(unixTimestamp);
   };
 
-  const formatDateTimeFromTimestamp = (timestamp: number) => {
+  const formatDateTimeFromTimestamp = (timestamp?: number) => {
+    if (!timestamp || timestamp <= 0 || Number.isNaN(timestamp)) {
+      return 'Not set';
+    }
     const unixTimestamp =
       timestamp > 1000000000000 ? Math.floor(timestamp / 1000) : timestamp;
     return formatDateTime(unixTimestamp);
@@ -156,9 +165,13 @@ export default function TaskRequestDetailsScreen() {
 
   if (loading || userLoading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={styles.loadingText}>Loading task request...</Text>
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <TaskDetailsSkeleton />
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -296,7 +309,10 @@ export default function TaskRequestDetailsScreen() {
             disabled={updateTaskRequestMutation.isPending}
           >
             {updateTaskRequestMutation.isPending ? (
-              <ActivityIndicator color="#fff" size="small" />
+              <ActivityIndicator
+                color={theme.colors.text.inverted}
+                size="small"
+              />
             ) : (
               <Text style={styles.actionButtonText}>Reject</Text>
             )}
@@ -312,7 +328,10 @@ export default function TaskRequestDetailsScreen() {
             disabled={updateTaskRequestMutation.isPending}
           >
             {updateTaskRequestMutation.isPending ? (
-              <ActivityIndicator color="#fff" size="small" />
+              <ActivityIndicator
+                color={theme.colors.text.inverted}
+                size="small"
+              />
             ) : (
               <Text style={styles.actionButtonText}>Approve</Text>
             )}
@@ -326,173 +345,162 @@ export default function TaskRequestDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: '#666',
+    backgroundColor: theme.colors.background.secondary,
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: theme.spacing.md,
   },
   errorText: {
-    fontSize: 16,
-    color: '#F44336',
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.error[600],
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: theme.spacing.md,
+    fontFamily: theme.typography.fontFamily.regular,
   },
   retryButton: {
-    backgroundColor: '#1D1283',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: theme.colors.primary[600],
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.md,
   },
   retryButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.bold,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 16,
+    padding: theme.spacing.md,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 24,
-    paddingBottom: 16,
+    marginBottom: theme.spacing.md,
+    paddingBottom: theme.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: theme.colors.border.primary,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
     flex: 1,
-    marginRight: 12,
+    marginRight: theme.spacing.sm,
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    minWidth: 80,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radius.full,
+    minWidth: 70,
     alignItems: 'center',
   },
   statusText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.xs,
+    fontFamily: theme.typography.fontFamily.bold,
   },
   section: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    backgroundColor: theme.colors.background.primary,
+    borderRadius: theme.radius.sm,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
+    ...theme.shadow.sm,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 12,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.md,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: theme.spacing.xs,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
+    fontSize: theme.typography.fontSize.xs,
+    fontFamily: theme.typography.fontFamily.medium,
+    color: theme.colors.text.secondary,
     flex: 1,
   },
   value: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: theme.typography.fontSize.xs,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.primary,
     flex: 2,
     textAlign: 'right',
   },
   description: {
-    fontSize: 14,
-    color: '#333',
-    lineHeight: 20,
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.text.primary,
+    lineHeight:
+      theme.typography.lineHeight.normal * theme.typography.fontSize.xs,
   },
   linkButton: {
-    backgroundColor: '#1D1283',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginBottom: 8,
+    backgroundColor: theme.colors.primary[600],
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs + 2,
+    borderRadius: theme.radius.sm,
+    marginBottom: theme.spacing.sm,
   },
   linkText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.xs,
+    fontFamily: theme.typography.fontFamily.bold,
     textAlign: 'center',
   },
   userItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: theme.spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: theme.colors.border.primary,
   },
   userName: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.text.primary,
+    fontFamily: theme.typography.fontFamily.medium,
   },
   userStatus: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.text.secondary,
+    fontFamily: theme.typography.fontFamily.regular,
     textTransform: 'uppercase',
   },
   actionContainer: {
     flexDirection: 'row',
-    padding: 16,
-    backgroundColor: '#FFFFFF',
+    padding: theme.spacing.sm,
+    backgroundColor: theme.colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    gap: 12,
+    borderTopColor: theme.colors.border.primary,
+    gap: theme.spacing.sm,
   },
   actionButton: {
     flex: 1,
-    paddingVertical: 16,
-    borderRadius: 8,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
   approveButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: theme.colors.success[500],
   },
   rejectButton: {
-    backgroundColor: '#F44336',
+    backgroundColor: theme.colors.error[500],
   },
   actionButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.bold,
   },
   disabledButton: {
     opacity: 0.6,
