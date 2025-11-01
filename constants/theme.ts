@@ -1,16 +1,16 @@
 export const theme = {
   colors: {
     primary: {
-      50: '#F3F0FF',
-      100: '#E9E5FF',
-      200: '#D6CCFF',
-      300: '#B8A3FF',
-      400: '#9B7AFF',
-      500: '#7E3AF2',
-      600: '#6B2CD9',
-      700: '#5A21C0',
-      800: '#4A1BA7',
-      900: '#3A168E',
+      50: '#EDEBF7',
+      100: '#DBD7EF',
+      200: '#B7AFDF',
+      300: '#9387CF',
+      400: '#6F5FBF',
+      500: '#1D1283',
+      600: '#170E6A',
+      700: '#110B51',
+      800: '#0B0738',
+      900: '#05041F',
     },
     secondary: {
       50: '#FEF3C7',
@@ -104,10 +104,10 @@ export const theme = {
     border: {
       primary: '#E5E7EB',
       secondary: '#D1D5DB',
-      focus: '#7E3AF2',
+      focus: '#1D1283',
     },
     legacy: {
-      primary: '#7E3AF2',
+      primary: '#1D1283',
       secondary: '#F59E0B',
       success: '#10B981',
       error: '#EF4444',

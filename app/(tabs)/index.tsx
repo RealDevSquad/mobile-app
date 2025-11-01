@@ -91,7 +91,7 @@ const AuthScreen = () => {
   };
 
   const githubAuthUrl = buildUrl(
-    'https://api.realdevsquad.com/auth/github/login',
+    'https://staging-api.realdevsquad.com/auth/github/login',
     queryParams
   );
   const handleNavigationStateChange = async (navState: any) => {
@@ -251,6 +251,10 @@ const AuthScreen = () => {
           />
           <Text style={styles.title}>Welcome to</Text>
           <Text style={styles.title1}>REAL DEV SQUAD</Text>
+          <Text style={styles.subtitle}>
+            Community of developers, designers, PMs, and others who collaborate
+            to build Real software
+          </Text>
 
           <TouchableOpacity
             style={[styles.button, styles.githubButton]}
@@ -281,28 +285,36 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.gray[900],
+    backgroundColor: theme.colors.background.primary,
   },
   content: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   logo: {
-    width: 200,
-    height: 200,
-    marginBottom: theme.spacing.lg,
+    width: 120,
+    height: 120,
+    marginBottom: theme.spacing.sm,
   },
   title: {
-    fontSize: theme.typography.fontSize['3xl'],
+    fontSize: theme.typography.fontSize['xl'],
     fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.primary[500],
-    marginBottom: 5,
+    color: theme.colors.text.primary,
+    marginBottom: 4,
   },
   title1: {
-    fontSize: theme.typography.fontSize['4xl'],
+    fontSize: theme.typography.fontSize['2xl'],
     fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.text.inverted,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.md,
+  },
+  subtitle: {
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.secondary || theme.colors.text.primary,
+    textAlign: 'center',
     marginBottom: theme.spacing['2xl'],
+    paddingHorizontal: theme.spacing.lg,
   },
   button: {
     flexDirection: 'row',
@@ -312,7 +324,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
     borderRadius: theme.radius.sm,
     marginBottom: theme.spacing.md,
-    width: 250,
+    width: 320,
     ...theme.shadow.lg,
   },
   githubButton: {

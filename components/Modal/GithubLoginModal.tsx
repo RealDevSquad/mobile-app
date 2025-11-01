@@ -1,7 +1,13 @@
 import { theme } from '@/constants/theme';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import React from 'react';
-import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import WebView from 'react-native-webview';
 
 type GitHubLoginModalProps = {
@@ -35,6 +41,7 @@ const GitHubLoginModal: React.FC<GitHubLoginModalProps> = ({
         style={styles.closeButton}
         onPress={onClose}
         testID="close-button"
+        activeOpacity={0.7}
       >
         <FontAwesome name="times" size={24} color={theme.colors.text.primary} />
       </TouchableOpacity>
@@ -58,14 +65,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: theme.colors.background.primary,
+    borderTopLeftRadius: theme.radius.xl,
+    borderTopRightRadius: theme.radius.xl,
+    ...theme.shadow.xl,
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    zIndex: 1,
-    backgroundColor: theme.colors.primary[500],
-    borderRadius: 50,
-    padding: 5,
+    top: theme.spacing.md,
+    right: theme.spacing.md,
+    zIndex: 10,
+    padding: theme.spacing.xs,
   },
 });
