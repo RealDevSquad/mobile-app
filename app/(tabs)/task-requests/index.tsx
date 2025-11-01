@@ -1,5 +1,6 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import TaskRequestCard from '@/components/TaskRequestCard';
+import { TaskRequestCardSkeleton } from '@/components/SkeletonLoader';
 import { theme } from '@/constants/theme';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -141,10 +142,56 @@ export default function TaskRequestsScreen() {
     }
   };
 
+  const renderSkeletonLoader = () => {
+    return Array.from({ length: 5 }).map((_, index) => (
+      <TaskRequestCardSkeleton key={index} />
+    ));
+  };
+
   if (loading && allTaskRequests.length === 0) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary[600]} />
+      <View style={styles.container}>
+        <View style={styles.filterContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterScrollContent}
+          >
+            {filterOptions.map((option) => {
+              const isSelected = taskRequestsFilter === option.value;
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.filterChip,
+                    isSelected && [
+                      styles.filterChipSelected,
+                      { backgroundColor: getFilterColor(option.value) },
+                    ],
+                  ]}
+                  onPress={() => handleFilterChange(option.value)}
+                >
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      isSelected && styles.filterChipTextSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+        >
+          {renderSkeletonLoader()}
+        </ScrollView>
       </View>
     );
   }

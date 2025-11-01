@@ -174,6 +174,55 @@ export const CreateNewTaskCardSkeleton: React.FC = () => (
   </View>
 );
 
+export const TaskRequestCardSkeleton: React.FC = () => (
+  <View style={styles.taskRequestCard}>
+    <View style={styles.taskRequestHeaderRow}>
+      <SkeletonLoader
+        height={16}
+        width="60%"
+        style={styles.taskRequestTitleSkeleton}
+      />
+      <View style={styles.taskRequestRightColumn}>
+        <SkeletonLoader
+          height={12}
+          width={60}
+          style={styles.taskRequestStatusSkeleton}
+        />
+        <SkeletonLoader width={10} height={10} borderRadius={5} />
+      </View>
+    </View>
+    <View style={styles.taskRequestContentRow}>
+      <View style={styles.taskRequestLeftColumn}>
+        <SkeletonLoader
+          height={14}
+          width="70%"
+          style={styles.taskRequestTextSkeleton}
+        />
+        <SkeletonLoader
+          height={14}
+          width="50%"
+          style={styles.taskRequestTextSkeleton}
+        />
+        <SkeletonLoader
+          height={14}
+          width="55%"
+          style={styles.taskRequestTextSkeleton}
+        />
+        <View style={styles.taskRequestMetaRow}>
+          <SkeletonLoader height={14} width="45%" />
+          <SkeletonLoader height={14} width={40} />
+        </View>
+      </View>
+    </View>
+    <SkeletonLoader
+      height={14}
+      width={14}
+      borderRadius={2}
+      style={styles.taskRequestArrowSkeleton}
+    />
+  </View>
+);
+
 export const HomeScreenSkeleton: React.FC = () => (
   <View style={styles.homeScreenSkeletonContainer}>
     <HomeHeaderSkeleton />
@@ -536,6 +585,53 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.xs,
     backgroundColor: theme.colors.gray[200],
     borderRadius: 2,
+  },
+  taskRequestCard: {
+    borderWidth: 1,
+    borderColor: theme.colors.border.primary,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    marginHorizontal: theme.spacing.sm,
+    marginVertical: theme.spacing.xs,
+    backgroundColor: theme.colors.background.primary,
+    ...theme.shadow.md,
+  },
+  taskRequestHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.xs,
+  },
+  taskRequestTitleSkeleton: {
+    marginBottom: 0,
+  },
+  taskRequestRightColumn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+  },
+  taskRequestStatusSkeleton: {
+    marginRight: theme.spacing.xs,
+  },
+  taskRequestContentRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  taskRequestLeftColumn: {
+    flex: 1,
+  },
+  taskRequestTextSkeleton: {
+    marginBottom: 4,
+  },
+  taskRequestMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 2,
+  },
+  taskRequestArrowSkeleton: {
+    alignSelf: 'flex-end',
+    marginTop: theme.spacing.xs,
   },
 });
 
