@@ -88,10 +88,9 @@ const ExtensionRequestsScreen: React.FC = () => {
 
   // Approve extension request mutation
   const approveMutation = useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+    mutationFn: ({ id }: { id: string }) =>
       ExtensionRequestsApi.updateExtensionRequestStatus.fn(id, {
         status: 'APPROVED',
-        reason,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -101,18 +100,16 @@ const ExtensionRequestsScreen: React.FC = () => {
       });
       Alert.alert('Success', 'Extension request approved successfully');
     },
-    onError: (error) => {
-      console.error('Error approving extension request:', error);
+    onError: () => {
       Alert.alert('Error', 'Failed to approve extension request');
     },
   });
 
   // Reject extension request mutation
   const rejectMutation = useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+    mutationFn: ({ id }: { id: string }) =>
       ExtensionRequestsApi.updateExtensionRequestStatus.fn(id, {
         status: 'DENIED',
-        reason,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -122,8 +119,7 @@ const ExtensionRequestsScreen: React.FC = () => {
       });
       Alert.alert('Success', 'Extension request rejected successfully');
     },
-    onError: (error) => {
-      console.error('Error rejecting extension request:', error);
+    onError: () => {
       Alert.alert('Error', 'Failed to reject extension request');
     },
   });
@@ -214,8 +210,8 @@ const ExtensionRequestsScreen: React.FC = () => {
               setIsRetrying(true);
               try {
                 await refetchRequests();
-              } catch (error) {
-                console.error('Error retrying:', error);
+              } catch {
+                // Error handled silently
               } finally {
                 setIsRetrying(false);
               }

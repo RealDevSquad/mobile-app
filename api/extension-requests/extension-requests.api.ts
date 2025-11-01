@@ -59,10 +59,12 @@ export const ExtensionRequestsApi = {
       id: string,
       statusData: TUpdateExtensionRequestStatusDto
     ): Promise<TUpdateExtensionRequestStatusResponse> => {
+      const url = `/extension-requests/${id}/status`;
+      const payload = { status: statusData.status };
       const { data } =
         await apiClient.patch<TUpdateExtensionRequestStatusResponse>(
-          `/extension-requests/${id}`,
-          statusData
+          url,
+          payload
         );
       return data;
     },
