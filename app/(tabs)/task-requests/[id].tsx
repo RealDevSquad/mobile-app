@@ -36,6 +36,9 @@ export default function TaskRequestDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [pendingAction, setPendingAction] = React.useState<
+    'approve' | 'reject' | null
+  >(null);
 
   const {
     data: taskRequest,
@@ -71,6 +74,7 @@ export default function TaskRequestDetailsScreen() {
       });
     },
     onSuccess: (data, variables) => {
+      setPendingAction(null);
       queryClient.invalidateQueries({
         queryKey: TaskRequestsApi.getTaskRequestById.key(id || ''),
       });
@@ -84,6 +88,7 @@ export default function TaskRequestDetailsScreen() {
       router.back();
     },
     onError: (error: any, variables) => {
+      setPendingAction(null);
       const actionText = variables.action === 'approve' ? 'approve' : 'reject';
       Alert.alert('Error', `Failed to ${actionText} task request`);
     },
@@ -108,6 +113,7 @@ export default function TaskRequestDetailsScreen() {
         {
           text: 'Approve',
           onPress: () => {
+            setPendingAction('approve');
             updateTaskRequestMutation.mutate({
               taskRequestId: taskRequest.id,
               userId,
@@ -131,6 +137,7 @@ export default function TaskRequestDetailsScreen() {
           text: 'Reject',
           style: 'destructive',
           onPress: () => {
+            setPendingAction('reject');
             updateTaskRequestMutation.mutate({
               taskRequestId: taskRequest.id,
               action: 'reject',
@@ -303,12 +310,17 @@ export default function TaskRequestDetailsScreen() {
             style={[
               styles.actionButton,
               styles.rejectButton,
-              updateTaskRequestMutation.isPending && styles.disabledButton,
+              (updateTaskRequestMutation.isPending ||
+                pendingAction === 'reject') &&
+                styles.disabledButton,
             ]}
             onPress={handleReject}
-            disabled={updateTaskRequestMutation.isPending}
+            disabled={
+              updateTaskRequestMutation.isPending || pendingAction === 'reject'
+            }
           >
-            {updateTaskRequestMutation.isPending ? (
+            {pendingAction === 'reject' &&
+            updateTaskRequestMutation.isPending ? (
               <ActivityIndicator
                 color={theme.colors.text.inverted}
                 size="small"
@@ -322,12 +334,17 @@ export default function TaskRequestDetailsScreen() {
             style={[
               styles.actionButton,
               styles.approveButton,
-              updateTaskRequestMutation.isPending && styles.disabledButton,
+              (updateTaskRequestMutation.isPending ||
+                pendingAction === 'approve') &&
+                styles.disabledButton,
             ]}
             onPress={handleApprove}
-            disabled={updateTaskRequestMutation.isPending}
+            disabled={
+              updateTaskRequestMutation.isPending || pendingAction === 'approve'
+            }
           >
-            {updateTaskRequestMutation.isPending ? (
+            {pendingAction === 'approve' &&
+            updateTaskRequestMutation.isPending ? (
               <ActivityIndicator
                 color={theme.colors.text.inverted}
                 size="small"
@@ -447,7 +464,7 @@ const styles = StyleSheet.create({
   linkButton: {
     backgroundColor: theme.colors.primary[600],
     paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs + 2,
+    paddingVertical: theme.spacing.xs + 12,
     borderRadius: theme.radius.sm,
     marginBottom: theme.spacing.sm,
   },
@@ -486,7 +503,7 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: theme.spacing.md,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
     justifyContent: 'center',

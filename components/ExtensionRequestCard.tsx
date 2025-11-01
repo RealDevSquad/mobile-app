@@ -53,7 +53,6 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = ({
   const oldEndDate = getRelativeFromNow(request.oldEndsOn);
   const submittedAgo = formatTimeAgo(request.timestamp);
 
-  // Enable LayoutAnimation on Android
   if (
     Platform.OS === 'android' &&
     UIManager.setLayoutAnimationEnabledExperimental
@@ -62,7 +61,6 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = ({
   }
 
   useEffect(() => {
-    // Configure smooth layout animation
     LayoutAnimation.configureNext({
       duration: 300,
       create: {
@@ -392,7 +390,7 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     borderRadius: theme.radius.sm,
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
@@ -405,7 +403,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: theme.colors.text.inverted,
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: theme.typography.fontSize.sm,
     fontFamily: theme.typography.fontFamily.bold,
   },
   disabledButton: {
