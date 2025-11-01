@@ -233,15 +233,14 @@ const AuthScreen = () => {
 
   return (
     <View style={styles.container}>
-      {githubLogin ? (
-        <GitHubLoginModal
-          visible={githubLogin}
-          animation={modalAnimation}
-          url={githubAuthUrl}
-          onClose={closeModal}
-          onNavigationStateChange={handleNavigationStateChange}
-        />
-      ) : (
+      <GitHubLoginModal
+        visible={githubLogin}
+        animation={modalAnimation}
+        url={githubAuthUrl}
+        onClose={closeModal}
+        onNavigationStateChange={handleNavigationStateChange}
+      />
+      {!githubLogin && (
         <View style={styles.content}>
           <Image
             source={require('../../assets/images/rdsLogo.png')}
