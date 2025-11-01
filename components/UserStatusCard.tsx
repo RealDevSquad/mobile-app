@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     borderRadius: 8,
     minWidth: 90,
     alignItems: 'center',

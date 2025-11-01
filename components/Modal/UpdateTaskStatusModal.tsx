@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 400,
     maxHeight: '80%',
+    padding: theme.spacing.md,
     ...theme.shadow.lg,
   },
   header: {
@@ -396,7 +397,8 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    padding: theme.spacing.lg,
+    padding: theme.spacing.sm,
+    paddingTop: theme.spacing.lg,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.primary,
     gap: theme.spacing.md,

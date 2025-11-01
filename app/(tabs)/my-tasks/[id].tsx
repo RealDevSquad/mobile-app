@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
   githubLinkButton: {
     backgroundColor: theme.colors.primary[600],
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
     minWidth: 60,
     alignItems: 'center',
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   addProgressButton: {
     backgroundColor: theme.colors.primary[600],
     paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
   },
@@ -727,9 +727,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   extensionRequestButton: {
-    backgroundColor: '#FF6B35', // Orange color
+    backgroundColor: '#FF6B35',
     paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
   },
@@ -745,7 +745,7 @@ const styles = StyleSheet.create({
   updateStatusButton: {
     backgroundColor: theme.colors.primary[600],
     paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.radius.sm,
     alignItems: 'center',
   },

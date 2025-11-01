@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.lg,
     width: '100%',
     maxHeight: '80%',
+    padding: theme.spacing.md,
     ...theme.shadow.lg,
   },
   header: {
