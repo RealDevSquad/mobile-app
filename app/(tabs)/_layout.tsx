@@ -53,6 +53,22 @@ export default function TabLayout() {
         }}
       />
 
+      {/* Manage tab */}
+      <Tabs.Screen
+        name="manage"
+        options={{
+          tabBarLabel: 'Manage',
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome
+              name="cog"
+              size={28}
+              color={color}
+              style={{ marginBottom: -3 }}
+            />
+          ),
+        }}
+      />
+
       {/* Profile tab */}
       <Tabs.Screen
         name="profile"

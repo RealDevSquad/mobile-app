@@ -1,16 +1,12 @@
 import { UsersApi } from '@/api/users/users.api';
 import Avatar from '@/components/Avatar';
-import CreateNewTaskCard from '@/components/CreateNewTaskCard';
+import InfoCarousel from '@/components/InfoCarousel';
 import OOOModal from '@/components/Modal/OOOModal';
-import QuickActionCard from '@/components/QuickActionCard';
 import { HomeScreenSkeleton } from '@/components/SkeletonLoader';
 import UserStatusCard from '@/components/UserStatusCard';
 import { theme } from '@/constants/theme';
 import { useOOOModal } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import {
   Alert,
@@ -19,12 +15,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
 export default function HomeScreen() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const {
     isOpen: isOOOModalVisible,
@@ -131,25 +125,26 @@ export default function HomeScreen() {
     closeOOOModal();
   };
 
-  const handleExtensionRequestsPress = () => {
-    router.push('/extension-requests');
-  };
-
-  const handleTaskRequestsPress = () => {
-    router.push('/task-requests');
-  };
-
-  const handleCalendarPress = () => {
-    router.push('/calendar');
-  };
-
-  const handleCreateNewTaskPress = () => {
-    router.push('/create-task');
-  };
-
-  const handlePromoImagePress = () => {
-    WebBrowser.openBrowserAsync('https://todo.realdevsquad.com/');
-  };
+  const infoCards = [
+    {
+      title: 'What is RDS',
+      description:
+        'Real Dev Squad is a community-driven platform that helps developers grow their skills through real-world projects and collaboration.',
+      url: 'https://www.realdevsquad.com/',
+    },
+    {
+      title: 'Stride by RDS',
+      description:
+        'Task Management Made Effortless. The task manager that adapts to how you work. Perfect for solo projects or team collaboration with crystal-clear organization.',
+      url: 'https://todo.realdevsquad.com/',
+    },
+    {
+      title: 'URL Shortener by RDS',
+      description:
+        'A simple and powerful URL shortening service built by the RDS community.',
+      url: 'https://tiny.realdevsquad.com/',
+    },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -190,49 +185,8 @@ export default function HomeScreen() {
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.promoImageContainer}
-          onPress={handlePromoImagePress}
-          activeOpacity={0.7}
-        >
-          <Image
-            source={require('../../../assets/images/rdstodo.png')}
-            style={styles.promoImage}
-            contentFit="contain"
-            placeholder="blurhash"
-          />
-        </TouchableOpacity>
-
-        {/* Quick Actions Grid */}
-        <View style={styles.quickActionsContainer}>
-          <View style={styles.gridRow}>
-            <View style={styles.gridItem}>
-              <QuickActionCard
-                icon="file-text-o"
-                label="Extension Requests"
-                onPress={handleExtensionRequestsPress}
-              />
-            </View>
-            <View style={styles.gridItem}>
-              <QuickActionCard
-                icon="tasks"
-                label="Task Requests"
-                onPress={handleTaskRequestsPress}
-              />
-            </View>
-          </View>
-          <View style={styles.gridRow}>
-            <View style={styles.gridItem}>
-              <QuickActionCard
-                icon="calendar"
-                label="Calendar"
-                onPress={handleCalendarPress}
-              />
-            </View>
-          </View>
-          <View>
-            <CreateNewTaskCard onPress={handleCreateNewTaskPress} />
-          </View>
+        <View style={styles.carouselContainer}>
+          <InfoCarousel cards={infoCards} />
         </View>
       </ScrollView>
 
@@ -269,12 +223,6 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.sm,
     marginTop: 2,
   },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.surface.secondary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   scrollView: {
     flex: 1,
   },
@@ -288,58 +236,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
   },
-  logo: {
-    width: 40,
-    height: 40,
-  },
-  greetingSection: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing['2xl'],
-    backgroundColor: theme.colors.background.primary,
-    marginBottom: theme.spacing.md,
-  },
-  greeting: {
-    fontSize: theme.typography.fontSize['2xl'],
-    fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.text.primary,
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.secondary,
-  },
-  quickActionsContainer: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingBottom: theme.spacing.md,
-  },
-  gridRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing.sm,
-  },
-  gridItem: {
-    flex: 1,
-    marginHorizontal: theme.spacing.sm,
-  },
   userStatusContainer: {
     marginTop: theme.spacing.sm,
   },
-  promoImageContainer: {
-    marginHorizontal: theme.spacing.md,
-    borderRadius: theme.radius.md,
+  carouselContainer: {
     marginVertical: theme.spacing.sm,
-    overflow: 'hidden',
-    ...theme.shadow.sm,
-  },
-  promoImage: {
-    height: 100,
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border.secondary,
-  },
-  cardsContainer: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingBottom: theme.spacing.md,
   },
 });

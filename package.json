@@ -16,7 +16,7 @@
     "prepare": "husky",
     "build:android:preview": "pnpm eas build --platform android --profile preview",
     "build:android:production": "pnpm eas build --platform android --profile production",
-    "build:android:local": "EXPO_PUBLIC_API_URL=https://api.example.com APP_ENV=staging ANDROID_ABI_FILTERS=arm64-v8a pnpm eas build --platform android --profile preview --local"
+    "build:android:local": "EXPO_PUBLIC_API_URL=https://realdevsquad.com APP_ENV=staging ANDROID_ABI_FILTERS=arm64-v8a pnpm eas build --platform android --profile preview --local"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -50,6 +50,7 @@
     "react-native-collapsible-tab-view": "^8.0.1",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
+    "react-native-reanimated-carousel": "^4.0.3",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-svg": "^15.11.2",
