@@ -18,22 +18,6 @@ export default function ProfileLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="details"
-        options={{
-          title: 'Details',
-          headerLeft: () => (
-            <FontAwesome
-              testID="icon-arrow-left"
-              name="arrow-left"
-              size={25}
-              color="black"
-              onPress={() => router.back()}
-              style={{ marginRight: 10 }}
-            />
-          ),
-        }}
-      />
     </Stack>
   );
 }

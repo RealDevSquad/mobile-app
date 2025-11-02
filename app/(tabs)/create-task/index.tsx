@@ -66,7 +66,7 @@ export default function CreateTaskScreen() {
       Alert.alert('Success', 'Task request created successfully!', [
         {
           text: 'OK',
-          onPress: () => router.push('/home'),
+          onPress: () => router.push('/(tabs)/home'),
         },
       ]);
     },

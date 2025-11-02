@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "scheme": "rdsapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
     "assetBundlePatterns": ["assets/fonts/*"],
     "ios": {
       "supportsTablet": true

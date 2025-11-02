@@ -103,7 +103,7 @@ const AuthScreen = () => {
           await secureStorage.setItem('auth_token', token);
           setToken(token);
           setGithubLogin(false);
-          router.replace('/home');
+          router.replace('/(tabs)/home');
         }
       } catch (error) {
         console.error('Error parsing URL or saving token:', error);
@@ -136,7 +136,7 @@ const AuthScreen = () => {
         await secureStorage.setItem('auth_token', userInfoJson.data.token);
         setToken(userInfoJson.data.token);
         setCameraVisible(false);
-        router.replace('/home');
+        router.replace('/(tabs)/home');
       } else {
         Toast.show({
           type: 'error',
@@ -202,14 +202,14 @@ const AuthScreen = () => {
   useFocusEffect(
     useCallback(() => {
       if (token) {
-        router.replace('/home');
+        router.replace('/(tabs)/home');
       }
     }, [token, router])
   );
 
   useEffect(() => {
     if (token) {
-      router.replace('/home');
+      router.replace('/(tabs)/home');
     }
   }, [token, router]);
 

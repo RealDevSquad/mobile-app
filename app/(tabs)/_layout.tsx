@@ -103,21 +103,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="manage"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
-
-      <Tabs.Screen
-        name="calendar"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen
         name="my-tasks"
         options={{
           href: null,
