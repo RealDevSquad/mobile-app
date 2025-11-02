@@ -6,8 +6,8 @@ import {
   Animated,
   StyleSheet,
   TouchableOpacity,
-  useColorScheme,
   View,
+  useColorScheme,
 } from 'react-native';
 import WebView from 'react-native-webview';
 

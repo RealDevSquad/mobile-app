@@ -22,6 +22,9 @@ const InfoCarousel: React.FC<InfoCarouselProps> = ({
   autoScrollInterval = AUTO_SCROLL_INTERVAL,
 }) => {
   const screenWidth = Dimensions.get('window').width;
+  const cardHeight = 160;
+  const horizontalPadding = theme.spacing.md;
+  const cardWidth = screenWidth - horizontalPadding * 2;
 
   if (cards.length === 0) {
     return null;
@@ -32,20 +35,24 @@ const InfoCarousel: React.FC<InfoCarouselProps> = ({
       <Carousel
         loop
         width={screenWidth}
-        height={160}
+        height={cardHeight}
         autoPlay={cards.length > 1}
         autoPlayInterval={autoScrollInterval}
         data={cards}
         scrollAnimationDuration={500}
         renderItem={({ item, index }) => (
           <View
-            style={styles.cardWrapper}
+            style={[
+              styles.cardWrapper,
+              { width: screenWidth, height: cardHeight },
+            ]}
             accessibilityLabel={`Information card ${index + 1} of ${cards.length}`}
           >
             <InfoCard
               title={item.title}
               description={item.description}
               url={item.url}
+              cardWidth={cardWidth}
             />
           </View>
         )}
@@ -61,6 +68,7 @@ const styles = StyleSheet.create({
   cardWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: theme.spacing.md,
   },
 });
 

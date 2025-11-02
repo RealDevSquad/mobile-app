@@ -66,7 +66,7 @@ export default {
       package: 'com.rds.mobileapp',
       versionCode: 1,
       adaptiveIcon: {
-        foregroundImage: './assets/images/rdsLogo.png',
+        foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,

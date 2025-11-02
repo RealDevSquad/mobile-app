@@ -51,8 +51,10 @@ const SocialLinks = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: theme.spacing.lg,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: theme.spacing.lg,
+    flexWrap: 'wrap',
   },
 });
 

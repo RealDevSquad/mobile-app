@@ -22,6 +22,17 @@ const Avatar = ({ uri, size }: { uri: string; size: number }) => {
         contentFit="cover"
         transition={1000}
       />
+      <View
+        style={[
+          styles.border,
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            borderWidth: 2,
+          },
+        ]}
+      />
     </View>
   );
 };
@@ -30,9 +41,15 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
   image: {
     backgroundColor: theme.colors.surface.secondary,
+  },
+  border: {
+    position: 'absolute',
+    borderColor: theme.colors.gray[300],
+    pointerEvents: 'none',
   },
 });
 

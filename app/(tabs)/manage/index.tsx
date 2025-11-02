@@ -64,6 +64,17 @@ export default function ManageScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <View style={styles.headerText}>
+            <Text style={styles.headerTitle}>Manage</Text>
+            <Text style={styles.headerSubtitle}>
+              Manage tasks, requests, and extensions
+            </Text>
+          </View>
+        </View>
+      </View>
+
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -71,7 +82,7 @@ export default function ManageScreen() {
       >
         <ManageActionCard
           icon="file-text-o"
-          title="Manage Extension Requests"
+          title="Extension Requests"
           description="Review and manage extension requests for tasks"
           onPress={handleExtensionRequestsPress}
         />
@@ -98,6 +109,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.surface.secondary,
+  },
+  header: {
+    backgroundColor: theme.colors.background.primary,
+    paddingTop: 24,
+    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    borderBottomWidth: 1,
+    textAlign: 'center',
+    borderBottomColor: theme.colors.border.primary,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: theme.typography.fontSize['2xl'],
+    fontFamily: theme.typography.fontFamily.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: theme.typography.fontSize.sm,
+    fontFamily: theme.typography.fontFamily.regular,
+    color: theme.colors.text.secondary,
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,

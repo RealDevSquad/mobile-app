@@ -115,18 +115,6 @@ export default function TasksScreen() {
     await refetchSelfTasks();
   }, [refetchSelfTasks]);
 
-  if (loadingTasks && allTasks.length === 0 && loadingSelfTasks) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.skeletonContainer}>
-          {Array.from({ length: 6 }).map((_, idx) => (
-            <TaskCardSkeleton key={`task-skeleton-${idx + 1}`} />
-          ))}
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   if (isError || isSelfTasksError) {
     return (
       <SafeAreaView style={styles.container}>
@@ -194,63 +182,79 @@ export default function TasksScreen() {
         tabBarHeight={50}
       >
         <Tabs.Tab name="Tasks">
-          <Tabs.FlatList
-            data={allTasks}
-            keyExtractor={(item) => item?.id || `task-${Math.random()}`}
-            contentContainerStyle={styles.listContent}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => handleTaskPress(item)}
-                activeOpacity={0.7}
-              >
-                <TaskCard task={item} />
-              </TouchableOpacity>
-            )}
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.1}
-            ListFooterComponent={() => renderFooter(isFetchingNextPage)}
-            ListEmptyComponent={
-              loadingTasks ? null : (
-                <Text style={styles.emptyView}>No tasks found...</Text>
-              )
-            }
-            refreshControl={
-              <RefreshControl
-                refreshing={loadingTasks}
-                onRefresh={handleRefreshTasks}
-                colors={[theme.colors.primary[500]]}
-                tintColor={theme.colors.primary[500]}
-              />
-            }
-          />
+          {loadingTasks && allTasks.length === 0 ? (
+            <View style={styles.skeletonContainer}>
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <TaskCardSkeleton key={`task-skeleton-${idx + 1}`} />
+              ))}
+            </View>
+          ) : (
+            <Tabs.FlatList
+              data={allTasks}
+              keyExtractor={(item) => item?.id || `task-${Math.random()}`}
+              contentContainerStyle={styles.listContent}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => handleTaskPress(item)}
+                  activeOpacity={0.7}
+                >
+                  <TaskCard task={item} />
+                </TouchableOpacity>
+              )}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.1}
+              ListFooterComponent={() => renderFooter(isFetchingNextPage)}
+              ListEmptyComponent={
+                loadingTasks ? null : (
+                  <Text style={styles.emptyView}>No tasks found...</Text>
+                )
+              }
+              refreshControl={
+                <RefreshControl
+                  refreshing={loadingTasks}
+                  onRefresh={handleRefreshTasks}
+                  colors={[theme.colors.primary[500]]}
+                  tintColor={theme.colors.primary[500]}
+                />
+              }
+            />
+          )}
         </Tabs.Tab>
         <Tabs.Tab name="My Tasks">
-          <Tabs.FlatList
-            data={myTasks}
-            keyExtractor={(item) => item?.id || `my-task-${Math.random()}`}
-            contentContainerStyle={styles.listContent}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => handleTaskPress(item)}
-                activeOpacity={0.7}
-              >
-                <TaskCard task={item} />
-              </TouchableOpacity>
-            )}
-            ListEmptyComponent={
-              loadingSelfTasks ? null : (
-                <Text style={styles.emptyView}>No tasks found...</Text>
-              )
-            }
-            refreshControl={
-              <RefreshControl
-                refreshing={loadingSelfTasks}
-                onRefresh={handleRefreshMyTasks}
-                colors={[theme.colors.primary[500]]}
-                tintColor={theme.colors.primary[500]}
-              />
-            }
-          />
+          {loadingSelfTasks && myTasks.length === 0 ? (
+            <View style={styles.skeletonContainer}>
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <TaskCardSkeleton key={`my-task-skeleton-${idx + 1}`} />
+              ))}
+            </View>
+          ) : (
+            <Tabs.FlatList
+              data={myTasks}
+              keyExtractor={(item) => item?.id || `my-task-${Math.random()}`}
+              contentContainerStyle={styles.listContent}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => handleTaskPress(item)}
+                  activeOpacity={0.7}
+                >
+                  <TaskCard task={item} />
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={
+                loadingSelfTasks ? null : (
+                  <Text style={styles.emptyView}>No tasks found...</Text>
+                )
+              }
+              refreshControl={
+                <RefreshControl
+                  refreshing={loadingSelfTasks}
+                  onRefresh={handleRefreshMyTasks}
+                  colors={[theme.colors.primary[500]]}
+                  tintColor={theme.colors.primary[500]}
+                />
+              }
+            />
+          )}
         </Tabs.Tab>
       </Tabs.Container>
 

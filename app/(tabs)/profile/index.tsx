@@ -1,7 +1,6 @@
-import { TasksApi } from '@/api/tasks/tasks.api';
 import { UsersApi } from '@/api/users/users.api';
+import ExpandedUserInfo from '@/components/ExpandedUserInfo';
 import Header from '@/components/ProfileHeader';
-import Task from '@/components/Task';
 import { theme } from '@/constants/theme';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
@@ -9,14 +8,13 @@ import {
   ActivityIndicator,
   RefreshControl,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
+  View,
 } from 'react-native';
-import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 export default function ProfileScreen() {
-  const HEADER_HEIGHT = 250;
-
   const {
     data: userData,
     isLoading: loadingUserData,
@@ -27,102 +25,59 @@ export default function ProfileScreen() {
     enabled: true,
   });
 
-  const {
-    data: tasks,
-    isLoading: loadingTasks,
-    refetch: refetchTasks,
-  } = useQuery({
-    queryKey: TasksApi.getSelfTasks.key,
-    queryFn: () => TasksApi.getSelfTasks.fn(),
-    enabled: true,
-  });
-
-  const loading = loadingUserData || loadingTasks;
-
   const handleRefresh = async () => {
-    await Promise.all([refetchUserData(), refetchTasks()]);
+    await refetchUserData();
   };
 
-  if (loading) {
+  if (loadingUserData) {
     return (
       <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color={theme.colors.primary[600]} />
+        <Text style={styles.loadingText}>Loading...</Text>
       </SafeAreaView>
     );
   }
 
-  const renderTabBar = (props: any) => (
-    <MaterialTabBar
-      {...props}
-      indicatorStyle={styles.tabIndicator}
-      style={styles.tabBar}
-      labelStyle={styles.tabLabel}
-      activeColor={theme.colors.primary[600]}
-      inactiveColor={theme.colors.text.secondary}
-    />
-  );
+  if (!userData) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>Failed to load user data</Text>
+      </SafeAreaView>
+    );
+  }
 
-  const headerProps = userData || {
-    first_name: '',
-    last_name: '',
-    username: '',
-    designation: '',
-    company: '',
-    picture: { url: '' },
-    github_id: '',
-    twitter_id: '',
-    linkedin_id: '',
+  const headerProps = {
+    first_name: userData.first_name || '',
+    last_name: userData.last_name || '',
+    username: userData.username || '',
+    designation: userData.designation || '',
+    company: userData.company || '',
+    picture: userData.picture || { url: '' },
+    github_id: userData.github_id || '',
+    twitter_id: userData.twitter_id || '',
+    linkedin_id: userData.linkedin_id || '',
+    // Note: location field may not be in UserData DTO, but will be displayed if available
   };
-
-  const activeTasks = (tasks || []).filter(
-    (task: any) => task && task.id && task.percentCompleted !== 100
-  );
-  const completedTasks = (tasks || []).filter(
-    (task: any) => task && task.id && task.percentCompleted === 100
-  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <Tabs.Container
-        renderHeader={() => <Header {...headerProps} />}
-        headerHeight={HEADER_HEIGHT}
-        renderTabBar={renderTabBar}
-        tabBarHeight={50}
+      <View style={styles.headerContainer}>
+        <Header {...headerProps} />
+      </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={loadingUserData}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary[500]]}
+            tintColor={theme.colors.primary[500]}
+          />
+        }
       >
-        <Tabs.Tab name="Active Tasks">
-          <Tabs.FlatList
-            data={activeTasks}
-            keyExtractor={(item) => item?.id || `active-task-${Math.random()}`}
-            renderItem={({ item }) => <Task tasks={[item]} />}
-            refreshControl={
-              <RefreshControl
-                refreshing={loading}
-                onRefresh={handleRefresh}
-                colors={[theme.colors.primary[500]]}
-                tintColor={theme.colors.primary[500]}
-              />
-            }
-          />
-        </Tabs.Tab>
-        <Tabs.Tab name="Completed Tasks">
-          <Tabs.FlatList
-            data={completedTasks}
-            keyExtractor={(item) =>
-              item?.id || `completed-task-${Math.random()}`
-            }
-            renderItem={({ item }) => <Task tasks={[item]} />}
-            refreshControl={
-              <RefreshControl
-                refreshing={loading}
-                onRefresh={handleRefresh}
-                colors={[theme.colors.primary[500]]}
-                tintColor={theme.colors.primary[500]}
-              />
-            }
-          />
-        </Tabs.Tab>
-      </Tabs.Container>
+        <ExpandedUserInfo userData={userData} />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -130,26 +85,25 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: theme.colors.background.secondary,
   },
-  tabBar: {
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.primary,
-    paddingHorizontal: theme.spacing.md,
-    elevation: 0,
-    shadowOpacity: 0,
+  headerContainer: {
+    backgroundColor: theme.colors.background.secondary,
   },
-  tabLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
-    textTransform: 'none',
-    marginHorizontal: theme.spacing.xs,
+  scrollView: {
+    flex: 1,
   },
-  tabIndicator: {
-    backgroundColor: theme.colors.primary[600],
-    height: 3,
-    borderRadius: 2,
+  scrollContent: {
+    paddingBottom: theme.spacing.xl,
+  },
+  loadingText: {
+    marginTop: theme.spacing.md,
+    fontSize: theme.typography.fontSize.base,
+    color: theme.colors.text.secondary,
+  },
+  errorText: {
+    fontSize: theme.typography.fontSize.base,
+    color: theme.colors.error[500],
+    textAlign: 'center',
   },
 });

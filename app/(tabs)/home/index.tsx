@@ -18,6 +18,27 @@ import {
   View,
 } from 'react-native';
 
+const infoCards = [
+  {
+    title: 'What is RDS',
+    description:
+      'Real Dev Squad is a community-driven platform that helps developers grow their skills through real-world projects.',
+    url: 'https://www.realdevsquad.com/',
+  },
+  {
+    title: 'Stride by RDS',
+    description:
+      'Task Management Made Effortless. The task manager that adapts to how you work. Perfect for solo or team projects.',
+    url: 'https://todo.realdevsquad.com/',
+  },
+  {
+    title: 'URL Shortener by RDS',
+    description:
+      'A simple and powerful URL shortening service built by the RDS community. Create short links and track URLs easily.',
+    url: 'https://tiny.realdevsquad.com/',
+  },
+];
+
 export default function HomeScreen() {
   const queryClient = useQueryClient();
   const {
@@ -125,27 +146,6 @@ export default function HomeScreen() {
     closeOOOModal();
   };
 
-  const infoCards = [
-    {
-      title: 'What is RDS',
-      description:
-        'Real Dev Squad is a community-driven platform that helps developers grow their skills through real-world projects and collaboration.',
-      url: 'https://www.realdevsquad.com/',
-    },
-    {
-      title: 'Stride by RDS',
-      description:
-        'Task Management Made Effortless. The task manager that adapts to how you work. Perfect for solo projects or team collaboration with crystal-clear organization.',
-      url: 'https://todo.realdevsquad.com/',
-    },
-    {
-      title: 'URL Shortener by RDS',
-      description:
-        'A simple and powerful URL shortening service built by the RDS community.',
-      url: 'https://tiny.realdevsquad.com/',
-    },
-  ];
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -169,7 +169,7 @@ export default function HomeScreen() {
             <Text style={styles.welcomeText}>Welcome to RDS</Text>
           </View>
           {userData?.picture?.url && (
-            <Avatar uri={userData.picture.url} size={32} />
+            <Avatar uri={userData.picture.url} size={40} />
           )}
         </View>
 
@@ -211,13 +211,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   usernameText: {
-    fontSize: theme.typography.fontSize.base,
+    fontSize: theme.typography.fontSize.lg,
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.primary,
     marginLeft: theme.spacing.sm,
   },
   welcomeText: {
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: theme.typography.fontSize.sm,
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.secondary,
     marginLeft: theme.spacing.sm,
@@ -234,6 +234,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
+    paddingTop: 20,
     borderBottomColor: theme.colors.border.primary,
   },
   userStatusContainer: {

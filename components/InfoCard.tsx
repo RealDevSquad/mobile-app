@@ -7,22 +7,32 @@ type InfoCardProps = {
   title: string;
   description: string;
   url: string;
+  cardWidth: number;
 };
 
-const InfoCard: React.FC<InfoCardProps> = ({ title, description, url }) => {
+const InfoCard: React.FC<InfoCardProps> = ({
+  title,
+  description,
+  url,
+  cardWidth,
+}) => {
   const handlePress = () => {
     WebBrowser.openBrowserAsync(url);
   };
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, { width: cardWidth }]}
       onPress={handlePress}
       activeOpacity={0.7}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+          {title}
+        </Text>
+        <Text style={styles.description} numberOfLines={4} ellipsizeMode="tail">
+          {description}
+        </Text>
         <View style={styles.viewMoreContainer}>
           <Text style={styles.viewMoreText}>View more →</Text>
         </View>
@@ -33,39 +43,44 @@ const InfoCard: React.FC<InfoCardProps> = ({ title, description, url }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.background.primary,
     borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
+    padding: theme.spacing.lg,
     ...theme.shadow.md,
     height: 160,
-    marginHorizontal: theme.spacing.md,
+    backgroundColor: theme.colors.gray[900],
+    overflow: 'hidden',
   },
   content: {
     flex: 1,
     justifyContent: 'space-between',
+    width: '100%',
   },
   title: {
     fontSize: theme.typography.fontSize.lg,
     fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.text.primary,
+    color: theme.colors.text.inverted,
     marginBottom: theme.spacing.sm,
+    width: '100%',
   },
   description: {
     fontSize: theme.typography.fontSize.sm,
     fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.secondary,
+    color: theme.colors.text.inverted,
     lineHeight:
       theme.typography.fontSize.sm * theme.typography.lineHeight.normal,
     flex: 1,
+    width: '100%',
+    marginBottom: theme.spacing.sm,
   },
   viewMoreContainer: {
     alignItems: 'flex-end',
-    marginTop: theme.spacing.sm,
+    width: '100%',
+    flexShrink: 0,
   },
   viewMoreText: {
     fontSize: theme.typography.fontSize.xs,
     fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.primary[600],
+    color: theme.colors.primary[200],
   },
 });
 

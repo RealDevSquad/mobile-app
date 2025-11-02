@@ -7,6 +7,7 @@ export interface UserRoles {
   archived: boolean;
   in_discord: boolean;
   member: boolean;
+  super_user?: boolean;
 }
 
 export interface CurrentStatus {
