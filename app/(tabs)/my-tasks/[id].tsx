@@ -24,10 +24,10 @@ import {
 } from 'react-native';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
-import AddProgressModal from '@/modules/profile/AddProgressModal';
+import AddProgressModal from '@/modules/task-details/AddProgressModal';
 import ExtensionRequestDetailsModal from '@/modules/extension-request/ExtensionRequestDetailsModal';
 import ExtensionRequestModal from '@/modules/extension-request/ExtensionRequestModal';
-import UpdateTaskStatusModal from '@/modules/profile/UpdateTaskStatusModal';
+import UpdateTaskStatusModal from '@/modules/task-details/UpdateTaskStatusModal';
 import { TaskDetailsSkeleton } from '@/components/SkeletonLoader';
 
 export default function TaskDetailsScreen() {
