@@ -6,6 +6,7 @@ import {
   Animated,
   StyleSheet,
   TouchableOpacity,
+  useColorScheme,
   View,
 } from 'react-native';
 import WebView from 'react-native-webview';
@@ -25,6 +26,7 @@ const GitHubLoginModal: React.FC<GitHubLoginModalProps> = ({
   onClose,
   onNavigationStateChange,
 }) => {
+  const colorScheme = useColorScheme();
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -65,7 +67,15 @@ const GitHubLoginModal: React.FC<GitHubLoginModalProps> = ({
         testID="close-button"
         activeOpacity={0.7}
       >
-        <FontAwesome name="times" size={24} color={theme.colors.text.primary} />
+        <FontAwesome
+          name="times"
+          size={24}
+          color={
+            colorScheme === 'dark'
+              ? theme.colors.text.inverted
+              : theme.colors.text.primary
+          }
+        />
       </TouchableOpacity>
       {isLoading && visible && (
         <View style={styles.loadingOverlay}>

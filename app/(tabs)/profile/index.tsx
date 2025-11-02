@@ -8,9 +8,9 @@ import React from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
+  SafeAreaView,
   StyleSheet,
   Text,
-  View,
 } from 'react-native';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
@@ -45,10 +45,10 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ActivityIndicator size="large" color="#0000ff" />
         <Text>Loading...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -63,48 +63,67 @@ export default function ProfileScreen() {
     />
   );
 
+  const headerProps = userData || {
+    first_name: '',
+    last_name: '',
+    username: '',
+    designation: '',
+    company: '',
+    picture: { url: '' },
+    github_id: '',
+    twitter_id: '',
+    linkedin_id: '',
+  };
+
+  const activeTasks = (tasks || []).filter(
+    (task: any) => task && task.id && task.percentCompleted !== 100
+  );
+  const completedTasks = (tasks || []).filter(
+    (task: any) => task && task.id && task.percentCompleted === 100
+  );
+
   return (
-    <Tabs.Container
-      renderHeader={() => <Header {...(userData || {})} />}
-      headerHeight={HEADER_HEIGHT}
-      renderTabBar={renderTabBar}
-      tabBarHeight={50}
-    >
-      <Tabs.Tab name="Active Tasks">
-        <Tabs.FlatList
-          data={(tasks || []).filter(
-            (task: any) => task.percentCompleted !== 100
-          )}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <Task tasks={[item]} />}
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={handleRefresh}
-              colors={[theme.colors.primary[500]]}
-              tintColor={theme.colors.primary[500]}
-            />
-          }
-        />
-      </Tabs.Tab>
-      <Tabs.Tab name="Completed Tasks">
-        <Tabs.FlatList
-          data={(tasks || []).filter(
-            (task: any) => task.percentCompleted === 100
-          )}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <Task tasks={[item]} />}
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={handleRefresh}
-              colors={[theme.colors.primary[500]]}
-              tintColor={theme.colors.primary[500]}
-            />
-          }
-        />
-      </Tabs.Tab>
-    </Tabs.Container>
+    <SafeAreaView style={styles.container}>
+      <Tabs.Container
+        renderHeader={() => <Header {...headerProps} />}
+        headerHeight={HEADER_HEIGHT}
+        renderTabBar={renderTabBar}
+        tabBarHeight={50}
+      >
+        <Tabs.Tab name="Active Tasks">
+          <Tabs.FlatList
+            data={activeTasks}
+            keyExtractor={(item) => item?.id || `active-task-${Math.random()}`}
+            renderItem={({ item }) => <Task tasks={[item]} />}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={handleRefresh}
+                colors={[theme.colors.primary[500]]}
+                tintColor={theme.colors.primary[500]}
+              />
+            }
+          />
+        </Tabs.Tab>
+        <Tabs.Tab name="Completed Tasks">
+          <Tabs.FlatList
+            data={completedTasks}
+            keyExtractor={(item) =>
+              item?.id || `completed-task-${Math.random()}`
+            }
+            renderItem={({ item }) => <Task tasks={[item]} />}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={handleRefresh}
+                colors={[theme.colors.primary[500]]}
+                tintColor={theme.colors.primary[500]}
+              />
+            }
+          />
+        </Tabs.Tab>
+      </Tabs.Container>
+    </SafeAreaView>
   );
 }
 

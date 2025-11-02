@@ -196,7 +196,7 @@ export default function TasksScreen() {
         <Tabs.Tab name="Tasks">
           <Tabs.FlatList
             data={allTasks}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item?.id || `task-${Math.random()}`}
             contentContainerStyle={styles.listContent}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -227,7 +227,7 @@ export default function TasksScreen() {
         <Tabs.Tab name="My Tasks">
           <Tabs.FlatList
             data={myTasks}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item?.id || `my-task-${Math.random()}`}
             contentContainerStyle={styles.listContent}
             renderItem={({ item }) => (
               <TouchableOpacity
