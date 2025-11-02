@@ -352,6 +352,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   listContentAndroid: {
-    paddingTop: theme.spacing.lg,
+    paddingTop: theme.spacing['4xl'],
   },
 });

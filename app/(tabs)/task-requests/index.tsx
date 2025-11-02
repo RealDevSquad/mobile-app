@@ -1,20 +1,22 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
-import TaskRequestCard from '@/components/TaskRequestCard';
 import { TaskRequestCardSkeleton } from '@/components/SkeletonLoader';
+import TaskRequestCard from '@/components/TaskRequestCard';
 import { theme } from '@/constants/theme';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
+  Platform,
   RefreshControl,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 export default function TaskRequestsScreen() {
   const router = useRouter();
@@ -142,159 +144,139 @@ export default function TaskRequestsScreen() {
     }
   };
 
-  const renderSkeletonLoader = () => {
-    return Array.from({ length: 5 }).map((_, index) => (
-      <TaskRequestCardSkeleton key={index} />
-    ));
-  };
-
-  if (loading && allTaskRequests.length === 0) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.filterContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterScrollContent}
-          >
-            {filterOptions.map((option) => {
-              const isSelected = taskRequestsFilter === option.value;
-              return (
-                <TouchableOpacity
-                  key={option.value}
-                  style={[
-                    styles.filterChip,
-                    isSelected && [
-                      styles.filterChipSelected,
-                      { backgroundColor: getFilterColor(option.value) },
-                    ],
-                  ]}
-                  onPress={() => handleFilterChange(option.value)}
-                >
-                  <Text
-                    style={[
-                      styles.filterChipText,
-                      isSelected && styles.filterChipTextSelected,
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
-        >
-          {renderSkeletonLoader()}
-        </ScrollView>
-      </View>
-    );
-  }
+  const renderTabBar = (props: any) => (
+    <MaterialTabBar
+      {...props}
+      indicatorStyle={styles.tabIndicator}
+      style={styles.tabBar}
+      labelStyle={styles.tabLabel}
+      activeColor={theme.colors.primary[600]}
+      inactiveColor={theme.colors.text.secondary}
+    />
+  );
 
   if (isError) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>
-          Error: {error?.message || 'Failed to load task requests'}
-        </Text>
-        <TouchableOpacity
-          style={styles.retryButton}
-          onPress={async () => {
-            if (!isRetrying) {
-              setIsRetrying(true);
-              try {
-                await refetchTasks();
-              } catch (error) {
-                console.error('Error retrying:', error);
-              } finally {
-                setIsRetrying(false);
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>
+            Error: {error?.message || 'Failed to load task requests'}
+          </Text>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={async () => {
+              if (!isRetrying) {
+                setIsRetrying(true);
+                try {
+                  await refetchTasks();
+                } catch (error) {
+                  console.error('Error retrying:', error);
+                } finally {
+                  setIsRetrying(false);
+                }
               }
-            }
-          }}
-          disabled={isRetrying}
-        >
-          {isRetrying ? (
-            <ActivityIndicator color="#fff" size="small" />
-          ) : (
-            <Text style={styles.retryButtonText}>Retry</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+            }}
+            disabled={isRetrying}
+          >
+            {isRetrying ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              <Text style={styles.retryButtonText}>Retry</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.filterContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterScrollContent}
-        >
-          {filterOptions.map((option) => {
-            const isSelected = taskRequestsFilter === option.value;
-            return (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.filterChip,
-                  isSelected && [
-                    styles.filterChipSelected,
-                    { backgroundColor: getFilterColor(option.value) },
-                  ],
-                ]}
-                onPress={() => handleFilterChange(option.value)}
-              >
-                <Text
-                  style={[
-                    styles.filterChipText,
-                    isSelected && styles.filterChipTextSelected,
-                  ]}
-                >
-                  {option.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
-
-      <FlatList
-        data={allTaskRequests}
-        renderItem={renderTaskRequest}
-        keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderLoadMoreButton}
-        ListEmptyComponent={loading ? null : renderEmpty}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
+        <Tabs.Tab name="Task Requests">
+          <View style={styles.filterContainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScrollContent}
+            >
+              {filterOptions.map((option) => {
+                const isSelected = taskRequestsFilter === option.value;
+                return (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[
+                      styles.filterChip,
+                      isSelected && [
+                        styles.filterChipSelected,
+                        { backgroundColor: getFilterColor(option.value) },
+                      ],
+                    ]}
+                    onPress={() => handleFilterChange(option.value)}
+                  >
+                    <Text
+                      style={[
+                        styles.filterChipText,
+                        isSelected && styles.filterChipTextSelected,
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+          {loading && allTaskRequests.length === 0 ? (
+            <View style={styles.skeletonContainer}>
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <TaskRequestCardSkeleton
+                  key={`task-request-skeleton-${idx + 1}`}
+                />
+              ))}
+            </View>
+          ) : (
+            <Tabs.FlatList
+              data={allTaskRequests}
+              renderItem={renderTaskRequest}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={[
+                styles.listContent,
+                Platform.OS === 'android' && styles.listContentAndroid,
+              ]}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                  colors={[theme.colors.primary[500]]}
+                  tintColor={theme.colors.primary[500]}
+                />
+              }
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.1}
+              ListFooterComponent={renderLoadMoreButton}
+              ListEmptyComponent={loading ? null : renderEmpty}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
+        </Tabs.Tab>
+      </Tabs.Container>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     padding: theme.spacing.xl,
@@ -390,5 +372,33 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.sm,
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.secondary,
+  },
+  skeletonContainer: {
+    padding: theme.spacing.sm,
+  },
+  tabBar: {
+    backgroundColor: theme.colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+    paddingHorizontal: theme.spacing.md,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  tabLabel: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
+    textTransform: 'none',
+    marginHorizontal: theme.spacing.xs,
+  },
+  tabIndicator: {
+    backgroundColor: theme.colors.primary[600],
+    height: 3,
+    borderRadius: 2,
+  },
+  listContent: {
+    paddingTop: theme.spacing.md,
+  },
+  listContentAndroid: {
+    paddingTop: theme.spacing.lg,
   },
 });

@@ -43,7 +43,6 @@ const STATUS_OPTIONS = [
   'RELEASED',
   'VERIFIED',
   'DONE',
-  'COMPLETED',
   'BACKLOG',
   'OVERDUE',
 ];

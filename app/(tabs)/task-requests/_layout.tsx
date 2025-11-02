@@ -8,14 +8,14 @@ export default function TaskRequestsLayout() {
         name="index"
         options={{
           title: 'Task Requests',
-          headerShown: true,
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="[id]"
         options={{
           title: 'Task Request Details',
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>

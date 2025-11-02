@@ -8,7 +8,7 @@ export default function ExtensionRequestsLayout() {
         name="index"
         options={{
           title: 'Extension Requests',
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>

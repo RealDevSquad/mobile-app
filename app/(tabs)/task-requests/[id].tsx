@@ -11,12 +11,12 @@ import {
   Alert,
   Linking,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -170,15 +170,30 @@ export default function TaskRequestDetailsScreen() {
     Linking.openURL(url);
   };
 
+  const renderTabBar = (props: any) => (
+    <MaterialTabBar
+      {...props}
+      indicatorStyle={styles.tabIndicator}
+      style={styles.tabBar}
+      labelStyle={styles.tabLabel}
+      activeColor={theme.colors.primary[600]}
+      inactiveColor={theme.colors.text.secondary}
+    />
+  );
+
   if (loading || userLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-        >
-          <TaskDetailsSkeleton />
-        </ScrollView>
+        <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
+          <Tabs.Tab name="Task Request">
+            <Tabs.ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}
+            >
+              <TaskDetailsSkeleton />
+            </Tabs.ScrollView>
+          </Tabs.Tab>
+        </Tabs.Container>
       </SafeAreaView>
     );
   }
@@ -205,97 +220,101 @@ export default function TaskRequestDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.title}>{taskRequest.taskTitle}</Text>
-            <View
-              style={[
-                styles.statusBadge,
-                { backgroundColor: getStatusColor(taskRequest.status) },
-              ]}
-            >
-              <Text style={styles.statusText}>{taskRequest.status}</Text>
-            </View>
-          </View>
+      <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
+        <Tabs.Tab name="Task Request">
+          <Tabs.ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.content}>
+              <View style={styles.header}>
+                <Text style={styles.title}>{taskRequest.taskTitle}</Text>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: getStatusColor(taskRequest.status) },
+                  ]}
+                >
+                  <Text style={styles.statusText}>{taskRequest.status}</Text>
+                </View>
+              </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Request Details</Text>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Requested by:</Text>
-              <Text style={styles.value}>
-                {primaryUserDetails?.user.username}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Request Type:</Text>
-              <Text style={styles.value}>{taskRequest.requestType}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Created:</Text>
-              <Text style={styles.value}>
-                {formatDateTimeFromTimestamp(taskRequest.createdAt)}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Last Modified:</Text>
-              <Text style={styles.value}>
-                {formatDateTimeFromTimestamp(taskRequest.lastModifiedAt)}
-              </Text>
-            </View>
-          </View>
-
-          {taskRequest.users[0]?.proposedStartDate &&
-            taskRequest.users[0]?.proposedDeadline && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Proposed Timeline</Text>
+                <Text style={styles.sectionTitle}>Request Details</Text>
                 <View style={styles.infoRow}>
-                  <Text style={styles.label}>Start Date:</Text>
+                  <Text style={styles.label}>Requested by:</Text>
                   <Text style={styles.value}>
-                    {formatDateFromTimestamp(
-                      taskRequest.users[0].proposedStartDate
-                    )}
+                    {primaryUserDetails?.user.username}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Text style={styles.label}>Deadline:</Text>
+                  <Text style={styles.label}>Request Type:</Text>
+                  <Text style={styles.value}>{taskRequest.requestType}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Created:</Text>
                   <Text style={styles.value}>
-                    {formatDateFromTimestamp(
-                      taskRequest.users[0].proposedDeadline
-                    )}
+                    {formatDateTimeFromTimestamp(taskRequest.createdAt)}
+                  </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Last Modified:</Text>
+                  <Text style={styles.value}>
+                    {formatDateTimeFromTimestamp(taskRequest.lastModifiedAt)}
                   </Text>
                 </View>
               </View>
-            )}
 
-          {taskRequest.externalIssueUrl && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>External Links</Text>
-              <TouchableOpacity
-                style={styles.linkButton}
-                onPress={() =>
-                  handleExternalLink(taskRequest.externalIssueUrl!)
-                }
-              >
-                <Text style={styles.linkText}>View GitHub Issue</Text>
-              </TouchableOpacity>
-              {taskRequest.externalIssueHtmlUrl && (
-                <TouchableOpacity
-                  style={styles.linkButton}
-                  onPress={() =>
-                    handleExternalLink(taskRequest.externalIssueHtmlUrl!)
-                  }
-                >
-                  <Text style={styles.linkText}>View on GitHub</Text>
-                </TouchableOpacity>
+              {taskRequest.users[0]?.proposedStartDate &&
+                taskRequest.users[0]?.proposedDeadline && (
+                  <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Proposed Timeline</Text>
+                    <View style={styles.infoRow}>
+                      <Text style={styles.label}>Start Date:</Text>
+                      <Text style={styles.value}>
+                        {formatDateFromTimestamp(
+                          taskRequest.users[0].proposedStartDate
+                        )}
+                      </Text>
+                    </View>
+                    <View style={styles.infoRow}>
+                      <Text style={styles.label}>Deadline:</Text>
+                      <Text style={styles.value}>
+                        {formatDateFromTimestamp(
+                          taskRequest.users[0].proposedDeadline
+                        )}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+              {taskRequest.externalIssueUrl && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>External Links</Text>
+                  <TouchableOpacity
+                    style={styles.linkButton}
+                    onPress={() =>
+                      handleExternalLink(taskRequest.externalIssueUrl!)
+                    }
+                  >
+                    <Text style={styles.linkText}>View GitHub Issue</Text>
+                  </TouchableOpacity>
+                  {taskRequest.externalIssueHtmlUrl && (
+                    <TouchableOpacity
+                      style={styles.linkButton}
+                      onPress={() =>
+                        handleExternalLink(taskRequest.externalIssueHtmlUrl!)
+                      }
+                    >
+                      <Text style={styles.linkText}>View on GitHub</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               )}
             </View>
-          )}
-        </View>
-      </ScrollView>
+          </Tabs.ScrollView>
+        </Tabs.Tab>
+      </Tabs.Container>
 
       {taskRequest.status === 'PENDING' && (
         <View style={styles.actionContainer}>
@@ -355,7 +374,7 @@ export default function TaskRequestDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
+    backgroundColor: '#f5f5f5',
   },
   errorContainer: {
     flex: 1,
@@ -514,5 +533,24 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.6,
+  },
+  tabBar: {
+    backgroundColor: theme.colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+    paddingHorizontal: theme.spacing.md,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  tabLabel: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
+    textTransform: 'none',
+    marginHorizontal: theme.spacing.xs,
+  },
+  tabIndicator: {
+    backgroundColor: theme.colors.primary[600],
+    height: 3,
+    borderRadius: 2,
   },
 });

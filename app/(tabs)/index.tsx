@@ -5,6 +5,7 @@ import { theme } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthProvider';
 import { secureStorage } from '@/utils/storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useFocusEffect } from '@react-navigation/native';
 import { Camera } from 'expo-camera';
 import * as Device from 'expo-device';
 import { useRouter } from 'expo-router';
@@ -91,7 +92,7 @@ const AuthScreen = () => {
   };
 
   const githubAuthUrl = buildUrl(
-    'https://staging-api.realdevsquad.com/auth/github/login',
+    'https://api.realdevsquad.com/auth/github/login',
     queryParams
   );
   const handleNavigationStateChange = async (navState: any) => {
@@ -200,11 +201,24 @@ const AuthScreen = () => {
     }
   }, [scannedUserId, getAuthStatus]);
 
+  useFocusEffect(
+    useCallback(() => {
+      if (token) {
+        router.replace('/home');
+      }
+    }, [token, router])
+  );
+
   useEffect(() => {
     if (token) {
       router.replace('/home');
     }
   }, [token, router]);
+
+  // Early return to prevent rendering if user is authenticated
+  if (token) {
+    return null;
+  }
 
   if (cameraVisible) {
     if (!hasPermission) {

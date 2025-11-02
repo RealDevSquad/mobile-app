@@ -17,12 +17,12 @@ import {
   ActivityIndicator,
   Linking,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 import AddProgressModal from '@/components/Modal/AddProgressModal';
 import ExtensionRequestDetailsModal from '@/components/Modal/ExtensionRequestDetailsModal';
@@ -162,6 +162,17 @@ export default function TaskDetailsScreen() {
     return 'Progress Update';
   };
 
+  const renderTabBar = (props: any) => (
+    <MaterialTabBar
+      {...props}
+      indicatorStyle={styles.tabIndicator}
+      style={styles.tabBar}
+      labelStyle={styles.tabLabel}
+      activeColor={theme.colors.primary[600]}
+      inactiveColor={theme.colors.text.secondary}
+    />
+  );
+
   const renderProgressContent = () => {
     if (progressLoading) {
       return (
@@ -278,12 +289,16 @@ export default function TaskDetailsScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-        >
-          <TaskDetailsSkeleton />
-        </ScrollView>
+        <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
+          <Tabs.Tab name="Task Details">
+            <Tabs.ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}
+            >
+              <TaskDetailsSkeleton />
+            </Tabs.ScrollView>
+          </Tabs.Tab>
+        </Tabs.Container>
       </SafeAreaView>
     );
   }
@@ -317,143 +332,155 @@ export default function TaskDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.title}>{task.title}</Text>
-            <View
-              style={[
-                styles.statusBadge,
-                { backgroundColor: getStatusColor(task.status) },
-              ]}
-            >
-              <Text style={styles.statusText}>{task.status}</Text>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <View style={styles.taskDetailsHeader}>
-              <Text style={styles.sectionTitle}>Task Details</Text>
-              {isOwner && (
-                <TouchableOpacity
-                  style={styles.updateStatusButton}
-                  onPress={() => setShowUpdateStatusModal(true)}
-                >
-                  <Text style={styles.updateStatusButtonText}>Update Task</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Assignee:</Text>
-              <Text style={styles.value}>{task.assignee}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Type:</Text>
-              <Text style={styles.value}>{task.type}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Priority:</Text>
-              <Text style={styles.value}>{task.priority}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Created:</Text>
-              <Text style={styles.value}>{formatDateTime(task.createdAt)}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Last Updated:</Text>
-              <Text style={styles.value}>{formatDateTime(task.updatedAt)}</Text>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <View style={styles.timelineHeader}>
-              <Text style={styles.sectionTitle}>Timeline</Text>
-              {isOwner && (
-                <TouchableOpacity
+      <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
+        <Tabs.Tab name="Task Details">
+          <Tabs.ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.content}>
+              <View style={styles.header}>
+                <Text style={styles.title}>{task.title}</Text>
+                <View
                   style={[
-                    styles.extensionRequestButton,
-                    extensionRequestsLoading &&
-                      styles.extensionRequestButtonDisabled,
+                    styles.statusBadge,
+                    { backgroundColor: getStatusColor(task.status) },
                   ]}
-                  onPress={handleExtensionRequestClick}
-                  disabled={extensionRequestsLoading}
                 >
-                  {extensionRequestsLoading ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={theme.colors.text.inverted}
-                    />
-                  ) : (
-                    <Text style={styles.extensionRequestButtonText}>
-                      {hasPendingExtension ? 'ER Pending' : 'Raise an ER'}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              )}
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Started On:</Text>
-              <Text style={styles.value}>{formatDate(task.startedOn)}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Deadline:</Text>
-              <Text style={styles.value}>{formatDate(task.endsOn)}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Progress:</Text>
-              <Text style={[styles.value, styles.progressText]}>
-                {task.percentCompleted}%
-              </Text>
-            </View>
-          </View>
+                  <Text style={styles.statusText}>{task.status}</Text>
+                </View>
+              </View>
 
-          {task.github?.issue?.url && (
-            <View style={styles.section}>
-              <View style={styles.githubLinkRow}>
-                <Text style={styles.githubLinkLabel}>GitHub Link</Text>
-                <TouchableOpacity
-                  style={styles.githubLinkButton}
-                  onPress={() => handleExternalLink(task.github.issue.url)}
-                >
-                  <Text style={styles.githubLinkButtonText}>Open</Text>
-                </TouchableOpacity>
+              <View style={styles.section}>
+                <View style={styles.taskDetailsHeader}>
+                  <Text style={styles.sectionTitle}>Task Details</Text>
+                  {isOwner && (
+                    <TouchableOpacity
+                      style={styles.updateStatusButton}
+                      onPress={() => setShowUpdateStatusModal(true)}
+                    >
+                      <Text style={styles.updateStatusButtonText}>
+                        Update Task
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Assignee:</Text>
+                  <Text style={styles.value}>{task.assignee}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Type:</Text>
+                  <Text style={styles.value}>{task.type}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Priority:</Text>
+                  <Text style={styles.value}>{task.priority}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Created:</Text>
+                  <Text style={styles.value}>
+                    {formatDateTime(task.createdAt)}
+                  </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Last Updated:</Text>
+                  <Text style={styles.value}>
+                    {formatDateTime(task.updatedAt)}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.section}>
+                <View style={styles.timelineHeader}>
+                  <Text style={styles.sectionTitle}>Timeline</Text>
+                  {isOwner && (
+                    <TouchableOpacity
+                      style={[
+                        styles.extensionRequestButton,
+                        extensionRequestsLoading &&
+                          styles.extensionRequestButtonDisabled,
+                      ]}
+                      onPress={handleExtensionRequestClick}
+                      disabled={extensionRequestsLoading}
+                    >
+                      {extensionRequestsLoading ? (
+                        <ActivityIndicator
+                          size="small"
+                          color={theme.colors.text.inverted}
+                        />
+                      ) : (
+                        <Text style={styles.extensionRequestButtonText}>
+                          {hasPendingExtension ? 'ER Pending' : 'Raise an ER'}
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Started On:</Text>
+                  <Text style={styles.value}>{formatDate(task.startedOn)}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Deadline:</Text>
+                  <Text style={styles.value}>{formatDate(task.endsOn)}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Progress:</Text>
+                  <Text style={[styles.value, styles.progressText]}>
+                    {task.percentCompleted}%
+                  </Text>
+                </View>
+              </View>
+
+              {task.github?.issue?.url && (
+                <View style={styles.section}>
+                  <View style={styles.githubLinkRow}>
+                    <Text style={styles.githubLinkLabel}>GitHub Link</Text>
+                    <TouchableOpacity
+                      style={styles.githubLinkButton}
+                      onPress={() => handleExternalLink(task.github.issue.url)}
+                    >
+                      <Text style={styles.githubLinkButtonText}>Open</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+
+              {task.dependsOn && task.dependsOn.length > 0 && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>
+                    Dependencies ({task.dependsOn.length})
+                  </Text>
+                  {task.dependsOn.map((dependency) => (
+                    <View key={dependency} style={styles.dependencyItem}>
+                      <Text style={styles.dependencyText}>{dependency}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              <View style={styles.section}>
+                <View style={styles.progressHeader}>
+                  <Text style={styles.sectionTitle}>Progress Updates</Text>
+                  {isOwner && (
+                    <TouchableOpacity
+                      style={styles.addProgressButton}
+                      onPress={() => setShowAddProgressModal(true)}
+                    >
+                      <Text style={styles.addProgressButtonText}>
+                        Add Progress
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+
+                {renderProgressContent()}
               </View>
             </View>
-          )}
-
-          {task.dependsOn && task.dependsOn.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                Dependencies ({task.dependsOn.length})
-              </Text>
-              {task.dependsOn.map((dependency) => (
-                <View key={dependency} style={styles.dependencyItem}>
-                  <Text style={styles.dependencyText}>{dependency}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-
-          <View style={styles.section}>
-            <View style={styles.progressHeader}>
-              <Text style={styles.sectionTitle}>Progress Updates</Text>
-              {isOwner && (
-                <TouchableOpacity
-                  style={styles.addProgressButton}
-                  onPress={() => setShowAddProgressModal(true)}
-                >
-                  <Text style={styles.addProgressButtonText}>Add Progress</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {renderProgressContent()}
-          </View>
-        </View>
-      </ScrollView>
+          </Tabs.ScrollView>
+        </Tabs.Tab>
+      </Tabs.Container>
 
       {showExtensionModal && (
         <ExtensionRequestModal
@@ -494,7 +521,7 @@ export default function TaskDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
@@ -773,5 +800,24 @@ const styles = StyleSheet.create({
     color: theme.colors.text.inverted,
     fontSize: theme.typography.fontSize.xs,
     fontWeight: theme.typography.fontWeight.semibold,
+  },
+  tabBar: {
+    backgroundColor: theme.colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.primary,
+    paddingHorizontal: theme.spacing.md,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  tabLabel: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.semibold,
+    textTransform: 'none',
+    marginHorizontal: theme.spacing.xs,
+  },
+  tabIndicator: {
+    backgroundColor: theme.colors.primary[600],
+    height: 3,
+    borderRadius: 2,
   },
 });
