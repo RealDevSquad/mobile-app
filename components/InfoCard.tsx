@@ -31,7 +31,6 @@ const InfoCard: React.FC<InfoCardProps> = ({
           <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
             {title}
           </Text>
-          <View style={styles.underline} />
         </View>
         <Text style={styles.description} numberOfLines={4} ellipsizeMode="tail">
           {description}
@@ -62,14 +61,11 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.lg,
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.inverted,
-    marginBottom: theme.spacing.xs,
+    marginBottom: theme.spacing.md,
+    textDecorationLine: 'underline',
+    textDecorationColor: theme.colors.text.inverted,
+    lineHeight: theme.typography.fontSize.lg,
     width: '100%',
-  },
-  underline: {
-    height: 2,
-    backgroundColor: theme.colors.primary[200],
-    width: '100%',
-    marginBottom: theme.spacing.sm,
   },
   description: {
     fontSize: theme.typography.fontSize.sm,
