@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     paddingBottom: theme.spacing.md,
   },
   listContentAndroid: {
-    paddingTop: theme.spacing.lg,
+    paddingTop: theme.spacing.sm,
   },
 });
 

@@ -8,7 +8,7 @@ export default function CreateTaskLayout() {
         name="index"
         options={{
           title: 'Create New Task',
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>
