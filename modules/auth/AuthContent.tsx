@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     color: theme.colors.text.secondary || theme.colors.text.primary,
     textAlign: 'center',
     marginBottom: 160,
+    maxWidth: 320,
     paddingHorizontal: theme.spacing.lg,
   },
   button: {
