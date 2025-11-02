@@ -43,7 +43,25 @@ export default {
     apiUrl: validatedEnv.EXPO_PUBLIC_API_URL,
     apiKey: validatedEnv.EXPO_PUBLIC_API_KEY,
     environment: ENV,
-    plugins: ['expo-router', 'expo-web-browser'],
+    plugins: [
+      'expo-router',
+      'expo-web-browser',
+      [
+        'expo-build-properties',
+        {
+          android: {
+            abiFilters: ['arm64-v8a'],
+            enableProguardInReleaseBuilds: true,
+            enableShrinkResourcesInReleaseBuilds: true,
+            usesCleartextTraffic: false,
+            packagingOptions: {
+              pickFirst: ['**/libc++_shared.so'],
+            },
+          },
+        },
+      ],
+      './plugins/with-disable-apk-splits',
+    ],
     android: {
       package: 'com.rds.mobileapp',
       versionCode: 1,

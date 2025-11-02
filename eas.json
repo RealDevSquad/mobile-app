@@ -3,7 +3,7 @@
     "version": ">= 7.8.6"
   },
   "build": {
-    "preview": {
+    "development": {
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease",
@@ -13,6 +13,20 @@
       "env": {
         "ANDROID_ABI_FILTERS": "arm64-v8a",
         "ANDROID_ENABLE_PROGUARD": "true"
+      }
+    },
+    "preview": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease",
+        "withoutCredentials": true,
+        "image": "latest"
+      },
+      "distribution": "internal",
+      "env": {
+        "ANDROID_ABI_FILTERS": "arm64-v8a",
+        "ANDROID_ENABLE_PROGUARD": "true",
+        "ANDROID_NDK_VERSION": "26.1.10909125"
       }
     },
     "production": {
