@@ -16,11 +16,11 @@ import {
   View,
 } from 'react-native';
 
-interface ExtensionRequestCardProps {
+type ExtensionRequestCardProps = {
   request: ExtensionRequestDTO;
   onApprove: (id: string) => Promise<void>;
   onReject: (id: string) => Promise<void>;
-}
+};
 
 function getStatusColor(status: string): string {
   switch (status.toUpperCase()) {

@@ -1,9 +1,9 @@
-export interface GithubIssue {
+export type GithubIssue = {
   url: string;
   html_url: string;
-}
+};
 
-export interface TaskDTO {
+export type TaskDTO = {
   assignee: string;
   assigneeId: string;
   createdAt: number;
@@ -20,9 +20,9 @@ export interface TaskDTO {
   type: string;
   updatedAt: number;
   dependsOn: string[];
-}
+};
 
-export interface TaskDetailsDTO {
+export type TaskDetailsDTO = {
   message: string;
   taskData: {
     assignee: string;
@@ -43,9 +43,9 @@ export interface TaskDetailsDTO {
     updated_at: number;
     dependsOn: string[];
   };
-}
+};
 
-export interface ProgressUpdateDTO {
+export type ProgressUpdateDTO = {
   id: string;
   type: string;
   taskId: string;
@@ -87,10 +87,10 @@ export interface ProgressUpdateDTO {
     updated_at: number;
     id: string;
   };
-}
+};
 
-export interface ProgressUpdatesResponseDTO {
+export type ProgressUpdatesResponseDTO = {
   message: string;
   count: number;
   data: ProgressUpdateDTO[];
-}
+};

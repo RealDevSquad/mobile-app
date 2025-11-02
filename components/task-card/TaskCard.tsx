@@ -5,9 +5,9 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export interface TaskCardProps {
+export type TaskCardProps = {
   task: TaskDTO;
-}
+};
 
 function getStatusColor(status?: string): string {
   const normalized = (status || '').toUpperCase();

@@ -1,4 +1,4 @@
-export interface TGithubLoginResponse {
+export type TGithubLoginResponse = {
   token: string;
   user: {
     id: string;
@@ -7,9 +7,9 @@ export interface TGithubLoginResponse {
     last_name: string;
     email: string;
   };
-}
+};
 
-export interface TQRAuthResponse {
+export type TQRAuthResponse = {
   data: {
     token: string;
     user: {
@@ -21,10 +21,10 @@ export interface TQRAuthResponse {
     };
   };
   message: string;
-}
+};
 
-export interface TQRAuthRequest {
+export type TQRAuthRequest = {
   device_info: string;
   user_id: string;
   device_id: string;
-}
+};

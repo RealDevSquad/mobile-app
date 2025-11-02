@@ -1,4 +1,4 @@
-export interface ExtensionRequestDTO {
+export type ExtensionRequestDTO = {
   id: string;
   taskId: string;
   title: string;
@@ -10,10 +10,10 @@ export interface ExtensionRequestDTO {
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'DENIED';
   requestNumber: number;
   timestamp: number;
-}
+};
 
-export interface ExtensionRequestsResponse {
+export type ExtensionRequestsResponse = {
   message: string;
   allExtensionRequests: ExtensionRequestDTO[];
   next: string;
-}
+};

@@ -26,16 +26,16 @@ import {
   View,
 } from 'react-native';
 
-interface ExtensionRequestModalProps {
+type ExtensionRequestModalProps = {
   visible: boolean;
   onClose: () => void;
   onSubmit: () => void;
   taskId: string;
   oldEndsOn: number;
   assignee: string;
-}
+};
 
-interface ExtensionRequestData {
+type ExtensionRequestData = {
   assignee: string;
   newEndsOn: number;
   oldEndsOn: number;
@@ -43,7 +43,7 @@ interface ExtensionRequestData {
   status: 'PENDING';
   taskId: string;
   title: string;
-}
+};
 
 const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
   visible,

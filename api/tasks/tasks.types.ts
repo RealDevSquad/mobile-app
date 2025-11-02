@@ -62,7 +62,7 @@ export type TUpdateTaskResponse = TaskDTO;
 export type TUpdateTaskStatusResponse = TaskDTO;
 export type TSubmitProgressResponse = TApiResponse<ProgressUpdateDTO>;
 
-export interface TGithubUser {
+export type TGithubUser = {
   login: string;
   id: number;
   node_id: string;
@@ -82,9 +82,9 @@ export interface TGithubUser {
   type: string;
   user_view_type: string;
   site_admin: boolean;
-}
+};
 
-export interface TGithubLabel {
+export type TGithubLabel = {
   id: number;
   node_id: string;
   url: string;
@@ -92,9 +92,9 @@ export interface TGithubLabel {
   color: string;
   default: boolean;
   description: string;
-}
+};
 
-export interface TGithubIssue {
+export type TGithubIssue = {
   url: string;
   repository_url: string;
   labels_url: string;
@@ -147,12 +147,12 @@ export interface TGithubIssue {
   timeline_url: string;
   performed_via_github_app: any;
   state_reason: any;
-}
+};
 
-export interface TGithubIssuesResponse {
+export type TGithubIssuesResponse = {
   message: string;
   issues: TGithubIssue[];
-}
+};
 
 export type TGetGithubIssueDto = {
   githubUrl: string;

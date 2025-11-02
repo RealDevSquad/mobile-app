@@ -19,12 +19,12 @@ import {
   View,
 } from 'react-native';
 
-interface AddProgressModalProps {
+type AddProgressModalProps = {
   visible: boolean;
   onClose: () => void;
   onSubmit: () => void;
   taskId: string;
-}
+};
 
 export default function AddProgressModal({
   visible,

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { create } from 'zustand';
 
-// Modal state interface
-interface ModalState {
+// Modal state type
+export type ModalState = {
   // Home screen modals
   oooModal: boolean;
 
@@ -23,16 +23,16 @@ interface ModalState {
 
   // Generic modal state
   isAnyModalOpen: boolean;
-}
+};
 
-// UI state interface
-interface UIState extends ModalState {
+// UI state type
+export type UIState = ModalState & {
   // Actions
   setModal: (modal: keyof ModalState, visible: boolean) => void;
   closeAllModals: () => void;
   openModal: (modal: keyof ModalState) => void;
   closeModal: (modal: keyof ModalState) => void;
-}
+};
 
 // Initial modal state
 const initialModalState: ModalState = {

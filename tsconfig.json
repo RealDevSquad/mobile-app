@@ -23,6 +23,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.d.ts",
     "jest.setup.ts",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"

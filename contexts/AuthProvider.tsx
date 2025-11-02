@@ -11,7 +11,7 @@ import React, {
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 // Auth context types
-interface AuthContextType {
+type AuthContextType = {
   token: string | null;
   user: User | null;
   isAuthenticated: boolean;
@@ -20,15 +20,15 @@ interface AuthContextType {
   logout: () => void;
   setToken: (token: string | null) => void;
   setUser: (user: User | null) => void;
-}
+};
 
 // Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Auth provider props
-interface AuthProviderProps {
+type AuthProviderProps = {
   children: ReactNode;
-}
+};
 
 // Loading screen component
 const AuthLoadingScreen = () => (

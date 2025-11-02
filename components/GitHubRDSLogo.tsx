@@ -2,9 +2,9 @@ import { theme } from '@/constants/theme';
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
-interface GitHubRDSLogoProps {
+type GitHubRDSLogoProps = {
   size?: number;
-}
+};
 
 const GitHubRDSLogo: React.FC<GitHubRDSLogoProps> = ({ size = 120 }) => {
   return (

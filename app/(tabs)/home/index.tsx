@@ -1,10 +1,10 @@
 import { UsersApi } from '@/api/users/users.api';
 import Avatar from '@/components/Avatar';
 import InfoCarousel from '@/components/InfoCarousel';
-import OOOModal from '@/components/Modal/OOOModal';
 import { HomeScreenSkeleton } from '@/components/SkeletonLoader';
 import UserStatusCard from '@/components/UserStatusCard';
 import { theme } from '@/constants/theme';
+import OOOModal from '@/modules/home/OOOModal';
 import { useOOOModal } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';

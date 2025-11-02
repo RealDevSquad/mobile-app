@@ -1,17 +1,16 @@
 import { AuthApi } from '@/api/auth/auth.api';
-import CameraModal from '@/components/Modal/CameraModal';
-import GitHubLoginModal from '@/components/Modal/GithubLoginModal';
 import { theme } from '@/constants/theme';
 import { useAuth } from '@/contexts/AuthProvider';
+import { AuthCameraPermission } from '@/modules/auth/AuthCameraPermission';
+import { AuthContent } from '@/modules/auth/AuthContent';
+import CameraModal from '@/modules/auth/CameraModal';
+import GitHubLoginModal from '@/modules/auth/GithubLoginModal';
 import { secureStorage } from '@/utils/storage';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFocusEffect } from '@react-navigation/native';
 import { Camera } from 'expo-camera';
 import * as Device from 'expo-device';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-
-import { Image } from 'expo-image';
 import {
   Alert,
   Animated,
@@ -19,7 +18,6 @@ import {
   Easing,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import ToastManager, { Toast } from 'toastify-react-native';
@@ -222,13 +220,7 @@ const AuthScreen = () => {
 
   if (cameraVisible) {
     if (!hasPermission) {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.message}>
-            Camera permission is required to scan QR codes.
-          </Text>
-        </View>
-      );
+      return <AuthCameraPermission />;
     }
 
     return (
@@ -255,36 +247,10 @@ const AuthScreen = () => {
         onNavigationStateChange={handleNavigationStateChange}
       />
       {!githubLogin && (
-        <View style={styles.content}>
-          <Image
-            source={require('../../assets/images/rdsLogo.png')}
-            style={styles.logo}
-            contentFit="contain"
-            placeholder="blurhash"
-          />
-          <Text style={styles.title}>Welcome to</Text>
-          <Text style={styles.title1}>REAL DEV SQUAD</Text>
-          <Text style={styles.subtitle}>
-            Community of developers, designers, PMs, and others who collaborate
-            to build Real software
-          </Text>
-
-          <TouchableOpacity
-            style={[styles.button, styles.githubButton]}
-            onPress={handleSignIn}
-          >
-            <FontAwesome name="github" size={24} color="#fff" />
-            <Text style={styles.buttonText}>GitHub Login</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.webButton]}
-            onPress={handleSignInWithWeb}
-          >
-            <FontAwesome name="qrcode" size={24} color="#fff" />
-            <Text style={styles.buttonText}>Web Login </Text>
-          </TouchableOpacity>
-        </View>
+        <AuthContent
+          onGitHubLogin={handleSignIn}
+          onWebLogin={handleSignInWithWeb}
+        />
       )}
       <ToastManager config={toastConfig} />
     </View>
@@ -299,64 +265,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.colors.background.primary,
-  },
-  content: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: theme.spacing.sm,
-  },
-  title: {
-    fontSize: theme.typography.fontSize['xl'],
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.text.primary,
-    marginBottom: 4,
-  },
-  title1: {
-    fontSize: theme.typography.fontSize['2xl'],
-    fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
-  },
-  subtitle: {
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.secondary || theme.colors.text.primary,
-    textAlign: 'center',
-    marginBottom: 160,
-    paddingHorizontal: theme.spacing.lg,
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.radius.sm,
-    marginBottom: theme.spacing.md,
-    width: 280,
-    ...theme.shadow.lg,
-  },
-  githubButton: {
-    backgroundColor: theme.colors.gray[800],
-  },
-  webButton: {
-    backgroundColor: theme.colors.primary[500],
-  },
-  buttonText: {
-    color: theme.colors.text.inverted,
-    fontSize: theme.typography.fontSize.lg,
-    fontFamily: theme.typography.fontFamily.medium,
-    marginLeft: theme.spacing.sm,
-  },
-  message: {
-    color: theme.colors.text.inverted,
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.regular,
-    textAlign: 'center',
-    marginBottom: theme.spacing.sm,
   },
 });

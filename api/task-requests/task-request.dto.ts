@@ -1,4 +1,4 @@
-export interface TaskRequestUser {
+export type TaskRequestUser = {
   userId: string;
   username: string;
   first_name: string;
@@ -12,9 +12,9 @@ export interface TaskRequestUser {
   description?: string;
   status: string;
   markdownEnabled?: boolean;
-}
+};
 
-export interface TaskRequestDTO {
+export type TaskRequestDTO = {
   id: string;
   createdAt: number;
   lastModifiedAt: number;
@@ -29,16 +29,16 @@ export interface TaskRequestDTO {
   status: string;
   usersCount: number;
   url?: string;
-}
+};
 
-export interface TaskRequestsResponse {
+export type TaskRequestsResponse = {
   message: string;
   data: TaskRequestDTO[];
   next: string;
   prev: string;
-}
+};
 
-export interface TaskRequestDetailsResponse {
+export type TaskRequestDetailsResponse = {
   message: string;
   data: TaskRequestDTO;
-}
+};

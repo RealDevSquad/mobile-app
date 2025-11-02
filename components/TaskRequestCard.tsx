@@ -5,10 +5,10 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface TaskRequestCardProps {
+type TaskRequestCardProps = {
   request: TaskRequestDTO;
   onPress: (id: string) => void;
-}
+};
 
 function getStatusColor(status: string): string {
   switch (status.toUpperCase()) {

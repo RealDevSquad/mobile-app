@@ -3,23 +3,13 @@ import { TasksApi } from '@/api/tasks/tasks.api';
 import { TTaskRequestFormData } from '@/api/tasks/tasks.schema';
 import { TGithubIssue } from '@/api/tasks/tasks.types';
 import { UsersApi } from '@/api/users/users.api';
-import Avatar from '@/components/Avatar';
-import GitHubRDSLogo from '@/components/GitHubRDSLogo';
-import TaskRequestModal from '@/components/Modal/TaskRequestModal';
-import FormInput from '@/components/form/FormInput';
-import FormSubmitButton from '@/components/form/FormSubmitButton';
-import { theme } from '@/constants/theme';
+import { CreateTaskInput } from '@/modules/create-task/CreateTaskInput';
+import { CreateTaskPreview } from '@/modules/create-task/CreateTaskPreview';
+import TaskRequestModal from '@/modules/create-task/TaskRequestModal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert } from 'react-native';
 
 type PageState = 'input' | 'preview';
 
@@ -68,7 +58,7 @@ export default function CreateTaskScreen() {
 
       return TaskRequestsApi.createTaskRequest.fn(requestPayload);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['TaskRequestsApi.getTaskRequests'],
       });
@@ -148,124 +138,35 @@ export default function CreateTaskScreen() {
     setSelectedIssue(null);
   };
 
-  const renderInputState = () => (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <GitHubRDSLogo size={80} />
-        <Text style={styles.title}>Create New Task</Text>
-      </View>
+  const renderContent = () => {
+    if (pageState === 'input') {
+      return (
+        <CreateTaskInput
+          githubUrl={githubUrl}
+          onUrlChange={setGithubUrl}
+          onSubmit={handleSubmitUrl}
+          isLoadingIssue={isLoadingIssue}
+          isLoadingUser={isLoadingUser}
+        />
+      );
+    }
 
-      {isLoadingUser ? (
-        <View
-          style={[
-            styles.container,
-            { justifyContent: 'center', alignItems: 'center' },
-          ]}
-        >
-          <Text style={styles.title}>Loading user data...</Text>
-        </View>
-      ) : (
-        <View style={styles.form}>
-          <FormInput
-            label="GitHub Issue URL"
-            placeholder="https://github.com/owner/repo/issues/123"
-            value={githubUrl}
-            onChangeText={setGithubUrl}
-            icon="link"
-            required
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="url"
-          />
+    if (selectedIssue) {
+      return (
+        <CreateTaskPreview
+          issue={selectedIssue}
+          onChangeUrl={handleChangeUrl}
+          onCreateTask={handleRequestAsTask}
+        />
+      );
+    }
 
-          <FormSubmitButton
-            text="Fetch Issue Details"
-            onPress={handleSubmitUrl}
-            isLoading={isLoadingIssue}
-            isDisabled={!githubUrl.trim() || isLoadingIssue}
-          />
-        </View>
-      )}
-    </View>
-  );
-
-  const renderPreviewState = () => {
-    if (!selectedIssue) return null;
-
-    return (
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <GitHubRDSLogo size={60} />
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Issue Preview</Text>
-            <TouchableOpacity
-              onPress={handleChangeUrl}
-              style={styles.changeUrlButton}
-            >
-              <Text style={styles.changeUrlText}>Change URL</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.issueCard}>
-          <Text style={styles.issueTitle}>{selectedIssue.title}</Text>
-
-          <View style={styles.issueMeta}>
-            <View style={styles.assigneeContainer}>
-              <Text style={styles.metaLabel}>Assignee:</Text>
-              {selectedIssue.assignee ? (
-                <View style={styles.assigneeInfo}>
-                  <Avatar uri={selectedIssue.assignee.avatar_url} size={24} />
-                  <Text style={styles.assigneeName}>
-                    {selectedIssue.assignee.login}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.noAssignee}>No assignee</Text>
-              )}
-            </View>
-
-            <View style={styles.labelsContainer}>
-              <Text style={styles.metaLabel}>Labels:</Text>
-              <View style={styles.labelsList}>
-                {selectedIssue.labels.map((label) => (
-                  <View
-                    key={label.id}
-                    style={[
-                      styles.labelChip,
-                      { backgroundColor: `#${label.color}` },
-                    ]}
-                  >
-                    <Text style={styles.labelText}>{label.name}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.bodyContainer}>
-            <Text style={styles.bodyLabel}>Description:</Text>
-            <Text style={styles.bodyText} numberOfLines={6}>
-              {selectedIssue.body || 'No description available'}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.actionContainer}>
-          <FormSubmitButton
-            text="Create Task"
-            onPress={handleRequestAsTask}
-            isLoading={false}
-            isDisabled={false}
-          />
-        </View>
-      </ScrollView>
-    );
+    return null;
   };
 
   return (
     <>
-      {pageState === 'input' ? renderInputState() : renderPreviewState()}
+      {renderContent()}
 
       <TaskRequestModal
         isVisible={isModalVisible}
@@ -276,127 +177,3 @@ export default function CreateTaskScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.surface.secondary,
-    padding: theme.spacing.md,
-  },
-  header: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing.xl,
-  },
-  titleContainer: {
-    alignItems: 'center',
-    marginTop: theme.spacing.md,
-  },
-  title: {
-    fontSize: theme.typography.fontSize.xl,
-    fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
-  },
-  subtitle: {
-    fontSize: theme.typography.fontSize.base,
-    fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.secondary,
-  },
-  form: {
-    flex: 1,
-  },
-  changeUrlButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-  },
-  changeUrlText: {
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.primary[600],
-  },
-  issueCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.lg,
-    ...theme.shadow.md,
-  },
-  issueTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
-  },
-  issueMeta: {
-    marginBottom: theme.spacing.md,
-  },
-  assigneeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.sm,
-  },
-  metaLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.text.secondary,
-    marginRight: theme.spacing.sm,
-    minWidth: 80,
-  },
-  assigneeInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  assigneeName: {
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.primary,
-    marginLeft: theme.spacing.sm,
-  },
-  noAssignee: {
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.tertiary,
-    fontStyle: 'italic',
-  },
-  labelsContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  labelsList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    flex: 1,
-  },
-  labelChip: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.radius.sm,
-    marginRight: theme.spacing.xs,
-    marginBottom: theme.spacing.xs,
-  },
-  labelText: {
-    fontSize: theme.typography.fontSize.xs,
-    fontFamily: theme.typography.fontFamily.medium,
-    color: '#FFFFFF',
-  },
-  bodyContainer: {
-    marginTop: theme.spacing.sm,
-  },
-  bodyLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs,
-  },
-  bodyText: {
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.regular,
-    color: theme.colors.text.primary,
-    lineHeight: 20,
-  },
-  actionContainer: {
-    marginTop: theme.spacing.lg,
-  },
-});

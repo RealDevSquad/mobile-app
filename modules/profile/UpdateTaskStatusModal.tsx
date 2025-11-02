@@ -20,14 +20,14 @@ import {
   View,
 } from 'react-native';
 
-interface UpdateTaskStatusModalProps {
+type UpdateTaskStatusModalProps = {
   visible: boolean;
   onClose: () => void;
   onSubmit: () => void;
   taskId: string;
   currentStatus: string;
   currentProgress: number;
-}
+};
 
 const STATUS_OPTIONS = [
   'ASSIGNED',

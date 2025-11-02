@@ -12,12 +12,12 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface TaskRequestModalProps {
+type TaskRequestModalProps = {
   onSubmit: (data: TTaskRequestFormData) => void;
   onClose: () => void;
   isVisible: boolean;
   isLoading?: boolean;
-}
+};
 
 const TaskRequestModal: React.FC<TaskRequestModalProps> = ({
   onSubmit,

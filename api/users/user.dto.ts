@@ -1,36 +1,36 @@
-export interface UserPicture {
+export type UserPicture = {
   publicId: string;
   url: string;
-}
+};
 
-export interface UserRoles {
+export type UserRoles = {
   archived: boolean;
   in_discord: boolean;
   member: boolean;
   super_user?: boolean;
-}
+};
 
-export interface CurrentStatus {
+export type CurrentStatus = {
   state: string;
   from: number;
   until: number;
   message: string;
   updatedAt: number;
-}
+};
 
-export interface UserStatus {
+export type UserStatus = {
   data: {
     currentStatus: CurrentStatus;
   };
-}
+};
 
-export interface UserRolesExtended {
+export type UserRolesExtended = {
   archived: boolean;
   in_discord: boolean;
   designer: boolean;
-}
+};
 
-export interface UserDetails {
+export type UserDetails = {
   github_id: string;
   github_display_name: string | null;
   github_created_at: number;
@@ -45,14 +45,14 @@ export interface UserDetails {
   roles: UserRolesExtended;
   updated_at: number;
   id: string;
-}
+};
 
-export interface TGetUserByIdResponse {
+export type TGetUserByIdResponse = {
   message: string;
   user: UserDetails;
-}
+};
 
-export interface UserData {
+export type UserData = {
   github_created_at: number;
   github_display_name: string;
   github_id: string;
@@ -76,4 +76,4 @@ export interface UserData {
   roles: UserRoles;
   profileStatus: string;
   updated_at: number;
-}
+};

@@ -8,12 +8,12 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface OOOModalProps {
+type OOOModalProps = {
   onSubmit: (fromDate: Date, toDate: Date, reason: string) => void;
   onClose: () => void;
   isVisible: boolean;
   isLoading?: boolean;
-}
+};
 
 const OOOModal: React.FC<OOOModalProps> = ({
   onSubmit,

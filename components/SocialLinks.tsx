@@ -5,11 +5,11 @@ import { theme } from '@/constants/theme';
 import React from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
-interface SocialLinksProps {
+type SocialLinksProps = {
   github_id: string;
   twitter_id: string;
   linkedin_id: string;
-}
+};
 
 const SocialLinks = ({
   github_id,

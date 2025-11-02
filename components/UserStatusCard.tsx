@@ -3,12 +3,12 @@ import { theme } from '@/constants/theme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface UserStatusCardProps {
+type UserStatusCardProps = {
   userStatus: UserStatus | null;
   onApplyOOO: () => void;
   onCancelOOO: () => void;
   isLoading?: boolean;
-}
+};
 
 const UserStatusCard: React.FC<UserStatusCardProps> = React.memo(
   ({ userStatus, onApplyOOO, onCancelOOO, isLoading = false }) => {

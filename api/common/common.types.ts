@@ -1,18 +1,18 @@
-export interface TApiResponse<T> {
+export type TApiResponse<T> = {
   data: T;
   message: string;
   success: boolean;
-}
+};
 
-export interface PaginatedResponse<T> {
+export type PaginatedResponse<T> = {
   data: T[];
   next?: string;
   hasMore: boolean;
   total?: number;
-}
+};
 
-export interface ApiError {
+export type ApiError = {
   message: string;
   status: number;
   code?: string;
-}
+};

@@ -169,7 +169,7 @@ import { theme } from '@/constants/theme';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export interface TaskCardProps {
+export type TaskCardProps = {
   task: TaskDTO;
 }
 
@@ -230,7 +230,7 @@ export default function TabLayout() {
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface AuthState {
+type AuthState = {
   token: string | null;
   user: User | null;
   isAuthenticated: boolean;
@@ -274,8 +274,8 @@ import TaskCard from '@/components/task-card/TaskCard';
 
 #### 6. **TypeScript Conventions**
 
-- Interfaces prefixed with `T` for API types (e.g., `TGetTasksDto`, `TUserResponse`)
-- Use interfaces for component props
+- Type prefixed with `T` for API types (e.g., `TGetTasksDto`, `TUserResponse`)
+- Use type for component props
 - Strict TypeScript enabled in `tsconfig.json`
 - All API responses and requests are typed
 - Optional properties use `?` modifier
@@ -283,16 +283,16 @@ import TaskCard from '@/components/task-card/TaskCard';
 **Example:**
 
 ```typescript
-export interface TGetTasksDto {
+export type TGetTasksDto = {
   message: string;
   tasks: TaskDTO[];
   count: number;
-}
+};
 
-export interface TaskCardProps {
+export type TaskCardProps = {
   task: TaskDTO;
   onPress?: () => void;
-}
+};
 ```
 
 #### 7. **Styling Patterns**

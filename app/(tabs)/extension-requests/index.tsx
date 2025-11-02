@@ -1,25 +1,17 @@
 import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
-import ExtensionRequestCard from '@/components/ExtensionRequestCard';
-import { TaskCardSkeleton } from '@/components/SkeletonLoader';
+import { EmptyState } from '@/components/EmptyState';
+import { ErrorState } from '@/components/ErrorState';
 import { theme } from '@/constants/theme';
+import { ExtensionRequestFilters } from '@/modules/extension-request/ExtensionRequestFilters';
+import { ExtensionRequestList } from '@/modules/extension-request/ExtensionRequestList';
+import { ExtensionRequestLoadMore } from '@/modules/extension-request/ExtensionRequestLoadMore';
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
 import React, { useCallback, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Platform,
-  RefreshControl,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, SafeAreaView, StyleSheet } from 'react-native';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 const ExtensionRequestsScreen: React.FC = () => {
@@ -29,7 +21,6 @@ const ExtensionRequestsScreen: React.FC = () => {
   const [extensionRequestsFilter, setExtensionRequestsFilter] =
     useState('PENDING');
 
-  // Fetch extension requests with infinite scroll
   const {
     data,
     isLoading: loading,
@@ -88,7 +79,6 @@ const ExtensionRequestsScreen: React.FC = () => {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Approve extension request mutation
   const approveMutation = useMutation({
     mutationFn: ({ id }: { id: string }) =>
       ExtensionRequestsApi.updateExtensionRequestStatus.fn(id, {
@@ -107,7 +97,6 @@ const ExtensionRequestsScreen: React.FC = () => {
     },
   });
 
-  // Reject extension request mutation
   const rejectMutation = useMutation({
     mutationFn: ({ id }: { id: string }) =>
       ExtensionRequestsApi.updateExtensionRequestStatus.fn(id, {
@@ -138,56 +127,36 @@ const ExtensionRequestsScreen: React.FC = () => {
     setExtensionRequestsFilter(filter);
   };
 
-  const renderExtensionRequest = ({ item }: { item: any }) => (
-    <ExtensionRequestCard
-      request={item}
-      onApprove={handleApprove}
-      onReject={handleReject}
-    />
+  const handleRetry = useCallback(async () => {
+    if (!isRetrying) {
+      setIsRetrying(true);
+      try {
+        await refetchRequests();
+      } catch {
+      } finally {
+        setIsRetrying(false);
+      }
+    }
+  }, [isRetrying, refetchRequests]);
+
+  const renderLoadMoreButton = () => (
+    <ExtensionRequestLoadMore isLoading={isFetchingNextPage} />
   );
 
-  const renderLoadMoreButton = () => {
-    if (isFetchingNextPage) {
-      return (
-        <View style={styles.loadingMoreContainer}>
-          <ActivityIndicator size="small" color={theme.colors.primary[600]} />
-          <Text style={styles.loadingMoreText}>Loading more...</Text>
-        </View>
-      );
-    }
-    return null;
-  };
+  const renderEmpty = () => {
+    const getSubtext = () => {
+      if (extensionRequestsFilter === 'PENDING') {
+        return 'No pending requests at the moment';
+      }
+      if (extensionRequestsFilter === 'DENIED') {
+        return 'No rejected requests found';
+      }
+      return `No ${extensionRequestsFilter.toLowerCase()} requests found`;
+    };
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>No extension requests found</Text>
-      <Text style={styles.emptySubtext}>
-        {extensionRequestsFilter === 'PENDING'
-          ? 'No pending requests at the moment'
-          : extensionRequestsFilter === 'DENIED'
-            ? 'No rejected requests found'
-            : `No ${extensionRequestsFilter.toLowerCase()} requests found`}
-      </Text>
-    </View>
-  );
-
-  const filterOptions = [
-    { label: 'Pending', value: 'PENDING' },
-    { label: 'Approved', value: 'APPROVED' },
-    { label: 'Rejected', value: 'DENIED' },
-  ];
-
-  const getFilterColor = (value: string) => {
-    switch (value) {
-      case 'PENDING':
-        return theme.colors.warning[500];
-      case 'APPROVED':
-        return theme.colors.success[500];
-      case 'DENIED':
-        return theme.colors.error[500];
-      default:
-        return theme.colors.primary[600];
-    }
+    return (
+      <EmptyState title="No extension requests found" subtitle={getSubtext()} />
+    );
   };
 
   const renderTabBar = (props: any) => (
@@ -203,35 +172,12 @@ const ExtensionRequestsScreen: React.FC = () => {
 
   if (isError) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            Error: {error?.message || 'Failed to load extension requests'}
-          </Text>
-          <TouchableOpacity
-            style={styles.retryButton}
-            onPress={async () => {
-              if (!isRetrying) {
-                setIsRetrying(true);
-                try {
-                  await refetchRequests();
-                } catch {
-                  // Error handled silently
-                } finally {
-                  setIsRetrying(false);
-                }
-              }
-            }}
-            disabled={isRetrying}
-          >
-            {isRetrying ? (
-              <ActivityIndicator color="#fff" size="small" />
-            ) : (
-              <Text style={styles.retryButtonText}>Retry</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+      <ErrorState
+        errorMessage={error?.message}
+        defaultMessage="Failed to load extension requests"
+        onRetry={handleRetry}
+        isRetrying={isRetrying}
+      />
     );
   }
 
@@ -239,71 +185,22 @@ const ExtensionRequestsScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
         <Tabs.Tab name="Extension Requests">
-          <View style={styles.filterContainer}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.filterScrollContent}
-            >
-              {filterOptions.map((option) => {
-                const isSelected = extensionRequestsFilter === option.value;
-                return (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.filterChip,
-                      isSelected && [
-                        styles.filterChipSelected,
-                        { backgroundColor: getFilterColor(option.value) },
-                      ],
-                    ]}
-                    onPress={() => handleFilterChange(option.value)}
-                  >
-                    <Text
-                      style={[
-                        styles.filterChipText,
-                        isSelected && styles.filterChipTextSelected,
-                      ]}
-                    >
-                      {option.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
-          {loading && allExtensionRequests.length === 0 ? (
-            <View style={styles.skeletonContainer}>
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <TaskCardSkeleton
-                  key={`extension-request-skeleton-${idx + 1}`}
-                />
-              ))}
-            </View>
-          ) : (
-            <Tabs.FlatList
-              data={allExtensionRequests}
-              renderItem={renderExtensionRequest}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={[
-                styles.listContent,
-                Platform.OS === 'android' && styles.listContentAndroid,
-              ]}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  colors={[theme.colors.primary[500]]}
-                  tintColor={theme.colors.primary[500]}
-                />
-              }
-              onEndReached={handleLoadMore}
-              onEndReachedThreshold={0.1}
-              ListFooterComponent={renderLoadMoreButton}
-              ListEmptyComponent={loading ? null : renderEmpty}
-              showsVerticalScrollIndicator={false}
-            />
-          )}
+          <ExtensionRequestFilters
+            selectedFilter={extensionRequestsFilter}
+            onFilterChange={handleFilterChange}
+          />
+          <ExtensionRequestList
+            data={allExtensionRequests}
+            isLoading={loading}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            onLoadMore={handleLoadMore}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            isEmpty={!loading && allExtensionRequests.length === 0}
+            renderEmpty={renderEmpty}
+            renderLoadMore={renderLoadMoreButton}
+          />
         </Tabs.Tab>
       </Tabs.Container>
     </SafeAreaView>
@@ -314,101 +211,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing.xl,
-  },
-  filterContainer: {
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.primary,
-    paddingVertical: theme.spacing.sm,
-  },
-  filterScrollContent: {
-    paddingHorizontal: theme.spacing.md,
-    gap: theme.spacing.sm,
-  },
-  filterChip: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs + 2,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.background.secondary,
-    borderWidth: 1,
-    borderColor: theme.colors.border.primary,
-    marginRight: theme.spacing.sm,
-  },
-  filterChipSelected: {
-    borderColor: 'transparent',
-  },
-  filterChipText: {
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.text.secondary,
-  },
-  filterChipTextSelected: {
-    color: theme.colors.text.inverted,
-    fontFamily: theme.typography.fontFamily.bold,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing.xl,
-  },
-  emptyText: {
-    fontSize: theme.typography.fontSize.lg,
-    fontFamily: theme.typography.fontFamily.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
-  },
-  emptySubtext: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
-    textAlign: 'center',
-  },
-  errorText: {
-    fontSize: theme.typography.fontSize.base,
-    color: theme.colors.error[600],
-    textAlign: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  retryButton: {
-    backgroundColor: theme.colors.primary[600],
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.md,
-    alignSelf: 'center',
-    minWidth: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  retryButtonText: {
-    color: theme.colors.text.inverted,
-    fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.fontSize.base,
-  },
-  loadingMoreContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.md,
-  },
-  loadingMoreText: {
-    marginLeft: theme.spacing.sm,
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
-  },
-  skeletonContainer: {
-    padding: theme.spacing.sm,
   },
   tabBar: {
     backgroundColor: theme.colors.background.primary,
@@ -428,12 +230,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary[600],
     height: 3,
     borderRadius: 2,
-  },
-  listContent: {
-    paddingBottom: theme.spacing.md,
-  },
-  listContentAndroid: {
-    paddingTop: theme.spacing.sm,
   },
 });
 

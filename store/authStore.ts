@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 // User type definition
-export interface User {
+export type User = {
   id: string;
   username: string;
   first_name?: string;
@@ -32,10 +32,10 @@ export interface User {
   status?: string;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-// Auth state interface
-interface AuthState {
+// Auth state type
+export type AuthState = {
   // State
   token: string | null;
   user: User | null;
@@ -46,7 +46,7 @@ interface AuthState {
   setUser: (user: User | null) => void;
   login: (token: string, user: User) => void;
   logout: () => void;
-}
+};
 
 // Custom storage adapter for Zustand persist
 const secureStorageAdapter = {

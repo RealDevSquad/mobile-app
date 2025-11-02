@@ -2,16 +2,16 @@ import { theme } from '@/constants/theme';
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface Props {
+type Props = {
   children: ReactNode;
   fallback?: ReactNode;
-}
+};
 
-interface State {
+type State = {
   hasError: boolean;
   error?: Error;
   errorInfo?: ErrorInfo;
-}
+};
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {

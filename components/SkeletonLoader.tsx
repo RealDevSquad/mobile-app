@@ -2,13 +2,13 @@ import { theme } from '@/constants/theme';
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
 
-interface SkeletonLoaderProps {
+type SkeletonLoaderProps = {
   width?: number | string;
   height?: number | string;
   borderRadius?: number;
   style?: ViewStyle;
   children?: React.ReactNode;
-}
+};
 
 const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   width = '100%',
@@ -162,18 +162,6 @@ export const PromoImageSkeleton: React.FC = () => (
   </View>
 );
 
-export const QuickActionCardSkeleton: React.FC = () => (
-  <View style={styles.quickActionCard}>
-    <SkeletonLoader height={120} width="100%" borderRadius={theme.radius.md} />
-  </View>
-);
-
-export const CreateNewTaskCardSkeleton: React.FC = () => (
-  <View style={styles.createNewTaskCard}>
-    <SkeletonLoader height={70} width="100%" borderRadius={theme.radius.md} />
-  </View>
-);
-
 export const TaskRequestCardSkeleton: React.FC = () => (
   <View style={styles.taskRequestCard}>
     <View style={styles.taskRequestHeaderRow}>
@@ -229,22 +217,6 @@ export const HomeScreenSkeleton: React.FC = () => (
     <View style={styles.homeSkeletonContent}>
       <UserStatusCardSkeleton />
       <PromoImageSkeleton />
-      <View style={styles.quickActionsGrid}>
-        <View style={styles.gridRow}>
-          <View style={styles.gridItem}>
-            <QuickActionCardSkeleton />
-          </View>
-          <View style={styles.gridItem}>
-            <QuickActionCardSkeleton />
-          </View>
-        </View>
-        <View style={styles.gridRow}>
-          <View style={styles.gridItem}>
-            <QuickActionCardSkeleton />
-          </View>
-        </View>
-        <CreateNewTaskCardSkeleton />
-      </View>
     </View>
   </View>
 );
@@ -469,39 +441,10 @@ const styles = StyleSheet.create({
     ...theme.shadow.sm,
   },
   promoImageSkeleton: {},
-  quickActionCard: {
-    backgroundColor: theme.colors.background.primary,
-    borderRadius: theme.radius.md,
-    padding: 0,
-    ...theme.shadow.md,
-    overflow: 'hidden',
-  },
-  createNewTaskCard: {
-    backgroundColor: theme.colors.background.primary,
-    marginHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-    borderRadius: theme.radius.md,
-    padding: 0,
-    ...theme.shadow.md,
-    overflow: 'hidden',
-  },
   homeScreenSkeletonContainer: {
     backgroundColor: theme.colors.surface.secondary,
   },
   homeSkeletonContent: {},
-  quickActionsGrid: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingBottom: theme.spacing.lg,
-  },
-  gridRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing.md,
-  },
-  gridItem: {
-    flex: 1,
-    marginHorizontal: theme.spacing.sm,
-  },
   taskDetailsContainer: {
     padding: theme.spacing.md,
     backgroundColor: theme.colors.background.secondary,

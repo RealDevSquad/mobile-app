@@ -3,13 +3,13 @@ import { theme } from '@/constants/theme';
 import React from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
-interface ProfileHeaderProps {
+type ProfileHeaderProps = {
   first_name?: string;
   last_name?: string;
   username?: string;
   designation?: string;
   picture?: { url: string };
-}
+};
 
 const Header: React.FC<ProfileHeaderProps> = (props) => {
   const fullName = `${props.first_name || ''} ${props.last_name || ''}`.trim();

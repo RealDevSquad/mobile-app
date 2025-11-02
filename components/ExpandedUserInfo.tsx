@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import SocialLinks from './SocialLinks';
 
-interface ExpandedUserInfoProps {
+type ExpandedUserInfoProps = {
   userData: UserData;
-}
+};
 
 const ExpandedUserInfo: React.FC<ExpandedUserInfoProps> = ({ userData }) => {
   const formatTimestamp = (timestamp: number) => {

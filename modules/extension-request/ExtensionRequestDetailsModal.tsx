@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 
-interface ExtensionRequestDetailsModalProps {
+type ExtensionRequestDetailsModalProps = {
   visible: boolean;
   onClose: () => void;
   extensionDetails: {
@@ -22,7 +22,7 @@ interface ExtensionRequestDetailsModalProps {
     requestNumber: number;
     timestamp: number;
   } | null;
-}
+};
 
 const ExtensionRequestDetailsModal: React.FC<
   ExtensionRequestDetailsModalProps

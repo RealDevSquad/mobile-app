@@ -1,25 +1,20 @@
 import { TasksApi } from '@/api/tasks/tasks.api';
-import { TaskCardSkeleton } from '@/components/SkeletonLoader';
-import { TaskCard } from '@/components/task-card/TaskCard';
-
+import { EmptyState } from '@/components/EmptyState';
+import { ErrorState } from '@/components/ErrorState';
 import { theme } from '@/constants/theme';
+import { TaskList } from '@/modules/tasks/TaskList';
+import { TaskLoadMore } from '@/modules/tasks/TaskLoadMore';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo } from 'react';
-import {
-  ActivityIndicator,
-  Platform,
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 export default function TasksScreen() {
   const router = useRouter();
+  const [refreshingTasks, setRefreshingTasks] = useState(false);
+  const [refreshingMyTasks, setRefreshingMyTasks] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   const {
     data,
@@ -91,39 +86,36 @@ export default function TasksScreen() {
   );
 
   const handleRefreshTasks = useCallback(async () => {
+    setRefreshingTasks(true);
     await refetchTasks();
+    setRefreshingTasks(false);
   }, [refetchTasks]);
 
   const handleRefreshMyTasks = useCallback(async () => {
+    setRefreshingMyTasks(true);
     await refetchSelfTasks();
+    setRefreshingMyTasks(false);
   }, [refetchSelfTasks]);
 
-  if (isError || isSelfTasksError) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            Error:{' '}
-            {error?.message ||
-              selfTasksError?.message ||
-              'Failed to load tasks'}
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  const renderFooter = (loading: boolean) => {
-    if (loading) {
-      return (
-        <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={theme.colors.primary[500]} />
-          <Text style={styles.loadingText}>Loading more tasks...</Text>
-        </View>
-      );
+  const handleRetry = useCallback(async () => {
+    if (!isRetrying) {
+      setIsRetrying(true);
+      try {
+        await Promise.all([refetchTasks(), refetchSelfTasks()]);
+      } catch {
+      } finally {
+        setIsRetrying(false);
+      }
     }
-    return null;
-  };
+  }, [isRetrying, refetchTasks, refetchSelfTasks]);
+
+  const renderLoadMore = () => <TaskLoadMore isLoading={isFetchingNextPage} />;
+
+  const renderTasksEmpty = () => <EmptyState title="No tasks found..." />;
+
+  const renderMyTasksEmpty = () => (
+    <EmptyState title="No tasks assigned to you yet" />
+  );
 
   const renderTabBar = (props: any) => (
     <MaterialTabBar
@@ -136,89 +128,45 @@ export default function TasksScreen() {
     />
   );
 
+  if (isError || isSelfTasksError) {
+    return (
+      <ErrorState
+        errorMessage={error?.message || selfTasksError?.message}
+        defaultMessage="Failed to load tasks"
+        onRetry={handleRetry}
+        isRetrying={isRetrying}
+      />
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
         <Tabs.Tab name="Tasks">
-          {loadingTasks && allTasks.length === 0 ? (
-            <View style={styles.skeletonContainer}>
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <TaskCardSkeleton key={`task-skeleton-${idx + 1}`} />
-              ))}
-            </View>
-          ) : (
-            <Tabs.FlatList
-              data={allTasks}
-              keyExtractor={(item) => item?.id || `task-${Math.random()}`}
-              contentContainerStyle={[
-                styles.listContent,
-                Platform.OS === 'android' && styles.listContentAndroid,
-              ]}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleTaskPress(item)}
-                  activeOpacity={0.7}
-                >
-                  <TaskCard task={item} />
-                </TouchableOpacity>
-              )}
-              onEndReached={handleLoadMore}
-              onEndReachedThreshold={0.1}
-              ListFooterComponent={() => renderFooter(isFetchingNextPage)}
-              ListEmptyComponent={
-                loadingTasks ? null : (
-                  <Text style={styles.emptyView}>No tasks found...</Text>
-                )
-              }
-              refreshControl={
-                <RefreshControl
-                  refreshing={loadingTasks}
-                  onRefresh={handleRefreshTasks}
-                  colors={[theme.colors.primary[500]]}
-                  tintColor={theme.colors.primary[500]}
-                />
-              }
-            />
-          )}
+          <TaskList
+            data={allTasks}
+            isLoading={loadingTasks}
+            refreshing={refreshingTasks}
+            onRefresh={handleRefreshTasks}
+            onLoadMore={handleLoadMore}
+            onTaskPress={handleTaskPress}
+            isEmpty={!loadingTasks && allTasks.length === 0}
+            renderEmpty={renderTasksEmpty}
+            renderLoadMore={renderLoadMore}
+          />
         </Tabs.Tab>
         <Tabs.Tab name="My Tasks">
-          {loadingSelfTasks && myTasks.length === 0 ? (
-            <View style={styles.skeletonContainer}>
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <TaskCardSkeleton key={`my-task-skeleton-${idx + 1}`} />
-              ))}
-            </View>
-          ) : (
-            <Tabs.FlatList
-              data={myTasks}
-              keyExtractor={(item) => item?.id || `my-task-${Math.random()}`}
-              contentContainerStyle={[
-                styles.listContent,
-                Platform.OS === 'android' && styles.listContentAndroid,
-              ]}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleTaskPress(item)}
-                  activeOpacity={0.7}
-                >
-                  <TaskCard task={item} />
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={
-                loadingSelfTasks ? null : (
-                  <Text style={styles.emptyView}>No tasks found...</Text>
-                )
-              }
-              refreshControl={
-                <RefreshControl
-                  refreshing={loadingSelfTasks}
-                  onRefresh={handleRefreshMyTasks}
-                  colors={[theme.colors.primary[500]]}
-                  tintColor={theme.colors.primary[500]}
-                />
-              }
-            />
-          )}
+          <TaskList
+            data={myTasks}
+            isLoading={loadingSelfTasks}
+            refreshing={refreshingMyTasks}
+            onRefresh={handleRefreshMyTasks}
+            onLoadMore={() => {}}
+            onTaskPress={handleTaskPress}
+            isEmpty={!loadingSelfTasks && myTasks.length === 0}
+            renderEmpty={renderMyTasksEmpty}
+            renderLoadMore={() => null}
+          />
         </Tabs.Tab>
       </Tabs.Container>
     </SafeAreaView>
@@ -229,108 +177,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333333',
-    flex: 1,
-  },
-  actionsRow: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  searchButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    alignSelf: 'flex-end',
-  },
-  searchButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#E3F2FD',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#BBDEFB',
-  },
-  filterText: {
-    fontSize: 14,
-    color: '#1976D2',
-    flex: 1,
-  },
-  filterUser: {
-    fontWeight: 'bold',
-  },
-  clearButton: {
-    backgroundColor: '#FF5722',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-  },
-  clearButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#e74c3c',
-    textAlign: 'center',
-  },
-  skeletonContainer: {
-    padding: theme.spacing.sm,
-    marginTop: theme.spacing['2xl'],
-  },
-  footerLoader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.lg,
-  },
-  loadingText: {
-    marginLeft: theme.spacing.sm,
-    color: theme.colors.text.secondary,
-    fontSize: theme.typography.fontSize.sm,
-    fontFamily: theme.typography.fontFamily.regular,
-  },
-  emptyView: {
-    color: theme.colors.text.primary,
-    marginTop: theme.spacing.lg,
-    textAlign: 'center',
-  },
-  listContent: {
-    paddingTop: theme.spacing.md,
-    paddingBottom: theme.spacing.md,
   },
   tabBar: {
     backgroundColor: theme.colors.background.primary,
@@ -350,8 +196,5 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary[600],
     height: 3,
     borderRadius: 2,
-  },
-  listContentAndroid: {
-    paddingTop: theme.spacing['4xl'],
   },
 });

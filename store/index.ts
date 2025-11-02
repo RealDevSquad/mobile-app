@@ -3,7 +3,6 @@
 // Auth store exports
 export {
   useAuthActions,
-  useAuthLoading,
   useAuthStore,
   useAuthToken,
   useAuthUser,
