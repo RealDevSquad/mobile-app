@@ -1,3 +1,3 @@
 export const appConfig = {
-  backendBaseUrl: 'https://api.realdevsquad.com',
+  backendBaseUrl: 'https://staging-api.realdevsquad.com',
 } as const;

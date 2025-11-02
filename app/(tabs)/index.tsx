@@ -90,7 +90,7 @@ const AuthScreen = () => {
   };
 
   const githubAuthUrl = buildUrl(
-    'https://api.realdevsquad.com/auth/github/login',
+    'https://staging-api.realdevsquad.com/auth/github/login',
     queryParams
   );
   const handleNavigationStateChange = async (navState: any) => {

@@ -15,6 +15,7 @@ type TaskRequestListProps = {
   isEmpty: boolean;
   renderEmpty: () => React.ReactElement;
   renderLoadMore: () => React.ReactElement | null;
+  renderFilter?: () => React.ReactElement | null;
 };
 
 export const TaskRequestList: React.FC<TaskRequestListProps> = ({
@@ -27,6 +28,7 @@ export const TaskRequestList: React.FC<TaskRequestListProps> = ({
   isEmpty,
   renderEmpty,
   renderLoadMore,
+  renderFilter,
 }) => {
   const renderTaskRequest = ({ item }: { item: any }) => (
     <TaskRequestCard request={item} onPress={onCardPress} />
@@ -61,6 +63,7 @@ export const TaskRequestList: React.FC<TaskRequestListProps> = ({
       }
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.1}
+      ListHeaderComponent={renderFilter ? renderFilter() : null}
       ListFooterComponent={renderLoadMore}
       ListEmptyComponent={isEmpty ? renderEmpty() : null}
       showsVerticalScrollIndicator={false}

@@ -16,6 +16,7 @@ type ExtensionRequestListProps = {
   isEmpty: boolean;
   renderEmpty: () => React.ReactElement;
   renderLoadMore: () => React.ReactElement | null;
+  renderFilter?: () => React.ReactElement | null;
 };
 
 export const ExtensionRequestList: React.FC<ExtensionRequestListProps> = ({
@@ -29,6 +30,7 @@ export const ExtensionRequestList: React.FC<ExtensionRequestListProps> = ({
   isEmpty,
   renderEmpty,
   renderLoadMore,
+  renderFilter,
 }) => {
   const renderExtensionRequest = ({ item }: { item: any }) => (
     <ExtensionRequestCard
@@ -67,6 +69,7 @@ export const ExtensionRequestList: React.FC<ExtensionRequestListProps> = ({
       }
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.1}
+      ListHeaderComponent={renderFilter ? renderFilter() : null}
       ListFooterComponent={renderLoadMore}
       ListEmptyComponent={isEmpty ? renderEmpty() : null}
       showsVerticalScrollIndicator={false}

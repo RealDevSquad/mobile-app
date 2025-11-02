@@ -157,11 +157,6 @@ export default function TaskRequestsScreen() {
     <SafeAreaView style={styles.container}>
       <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
         <Tabs.Tab name="Task Requests">
-          <TaskRequestFilters
-            selectedFilter={taskRequestsFilter}
-            onFilterChange={handleFilterChange}
-            filterOptions={FILTER_OPTIONS}
-          />
           <TaskRequestList
             data={allTaskRequests}
             isLoading={loading}
@@ -172,6 +167,13 @@ export default function TaskRequestsScreen() {
             isEmpty={!loading && allTaskRequests.length === 0}
             renderEmpty={renderEmpty}
             renderLoadMore={renderLoadMore}
+            renderFilter={() => (
+              <TaskRequestFilters
+                selectedFilter={taskRequestsFilter}
+                onFilterChange={handleFilterChange}
+                filterOptions={FILTER_OPTIONS}
+              />
+            )}
           />
         </Tabs.Tab>
       </Tabs.Container>

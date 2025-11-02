@@ -185,10 +185,6 @@ const ExtensionRequestsScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
         <Tabs.Tab name="Extension Requests">
-          <ExtensionRequestFilters
-            selectedFilter={extensionRequestsFilter}
-            onFilterChange={handleFilterChange}
-          />
           <ExtensionRequestList
             data={allExtensionRequests}
             isLoading={loading}
@@ -200,6 +196,12 @@ const ExtensionRequestsScreen: React.FC = () => {
             isEmpty={!loading && allExtensionRequests.length === 0}
             renderEmpty={renderEmpty}
             renderLoadMore={renderLoadMoreButton}
+            renderFilter={() => (
+              <ExtensionRequestFilters
+                selectedFilter={extensionRequestsFilter}
+                onFilterChange={handleFilterChange}
+              />
+            )}
           />
         </Tabs.Tab>
       </Tabs.Container>
