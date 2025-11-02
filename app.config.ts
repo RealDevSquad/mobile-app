@@ -70,6 +70,7 @@ export default {
         backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,
+      allowBackup: false,
       permissions: [
         'android.permission.CAMERA',
         'android.permission.INTERNET',

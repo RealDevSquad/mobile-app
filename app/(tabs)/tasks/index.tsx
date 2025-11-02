@@ -1,14 +1,14 @@
 import { TasksApi } from '@/api/tasks/tasks.api';
 import { TaskCardSkeleton } from '@/components/SkeletonLoader';
 import { TaskCard } from '@/components/task-card/TaskCard';
-import UserSearchModal from '@/components/UserSearchModal';
+
 import { theme } from '@/constants/theme';
-import { useSearchModal } from '@/store/uiStore';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   ActivityIndicator,
+  Platform,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
@@ -20,12 +20,6 @@ import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 export default function TasksScreen() {
   const router = useRouter();
-  const {
-    isOpen: showSearchModal,
-
-    close: closeSearchModal,
-  } = useSearchModal();
-  const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
 
   const {
     data,
@@ -37,12 +31,9 @@ export default function TasksScreen() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: TasksApi.getTasks.key({
-      assignee: selectedAssignee || undefined,
-    }),
+    queryKey: TasksApi.getTasks.key(),
     queryFn: ({ pageParam }) =>
       TasksApi.getTasks.fn({
-        assignee: selectedAssignee || undefined,
         next: pageParam,
       }),
     enabled: true,
@@ -92,14 +83,6 @@ export default function TasksScreen() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const handleUserSelect = useCallback((username: string) => {
-    setSelectedAssignee(username);
-  }, []);
-
-  const handleClearFilter = useCallback(() => {
-    setSelectedAssignee(null);
-  }, []);
-
   const handleTaskPress = useCallback(
     (task: any) => {
       if (task?.id) router.push(`/my-tasks/${task.id}`);
@@ -130,27 +113,6 @@ export default function TasksScreen() {
     );
   }
 
-  const renderHeader = () => (
-    <View>
-      <View style={styles.header}></View>
-
-      {selectedAssignee && (
-        <View style={styles.filterContainer}>
-          <Text style={styles.filterText}>
-            Showing tasks for:{' '}
-            <Text style={styles.filterUser}>{selectedAssignee}</Text>
-          </Text>
-          <TouchableOpacity
-            onPress={handleClearFilter}
-            style={styles.clearButton}
-          >
-            <Text style={styles.clearButtonText}>Clear</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  );
-
   const renderFooter = (loading: boolean) => {
     if (loading) {
       return (
@@ -176,11 +138,7 @@ export default function TasksScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Tabs.Container
-        renderHeader={renderHeader}
-        renderTabBar={renderTabBar}
-        tabBarHeight={50}
-      >
+      <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
         <Tabs.Tab name="Tasks">
           {loadingTasks && allTasks.length === 0 ? (
             <View style={styles.skeletonContainer}>
@@ -192,7 +150,10 @@ export default function TasksScreen() {
             <Tabs.FlatList
               data={allTasks}
               keyExtractor={(item) => item?.id || `task-${Math.random()}`}
-              contentContainerStyle={styles.listContent}
+              contentContainerStyle={[
+                styles.listContent,
+                Platform.OS === 'android' && styles.listContentAndroid,
+              ]}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleTaskPress(item)}
@@ -231,7 +192,10 @@ export default function TasksScreen() {
             <Tabs.FlatList
               data={myTasks}
               keyExtractor={(item) => item?.id || `my-task-${Math.random()}`}
-              contentContainerStyle={styles.listContent}
+              contentContainerStyle={[
+                styles.listContent,
+                Platform.OS === 'android' && styles.listContentAndroid,
+              ]}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleTaskPress(item)}
@@ -257,12 +221,6 @@ export default function TasksScreen() {
           )}
         </Tabs.Tab>
       </Tabs.Container>
-
-      <UserSearchModal
-        visible={showSearchModal}
-        onClose={closeSearchModal}
-        onUserSelect={handleUserSelect}
-      />
     </SafeAreaView>
   );
 }
@@ -371,7 +329,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   listContent: {
-    paddingTop: theme.spacing.sm,
+    paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
   },
   tabBar: {
     backgroundColor: theme.colors.background.primary,
@@ -391,5 +350,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary[600],
     height: 3,
     borderRadius: 2,
+  },
+  listContentAndroid: {
+    paddingTop: theme.spacing.lg,
   },
 });

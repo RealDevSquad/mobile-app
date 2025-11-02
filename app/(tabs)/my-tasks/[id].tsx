@@ -143,6 +143,25 @@ export default function TaskDetailsScreen() {
     setShowAddProgressModal(false);
   };
 
+  const truncateText = (text: string, maxLength: number = 60): string => {
+    if (!text || text.trim().length === 0) return '';
+    if (text.length <= maxLength) return text.trim();
+    return text.trim().substring(0, maxLength).trim() + '...';
+  };
+
+  const getProgressUpdateTitle = (update: any): string => {
+    if (update.completed && update.completed.trim()) {
+      return truncateText(update.completed, 60);
+    }
+    if (update.planned && update.planned.trim()) {
+      return truncateText(update.planned, 60);
+    }
+    if (update.blockers && update.blockers.trim()) {
+      return truncateText(update.blockers, 60);
+    }
+    return 'Progress Update';
+  };
+
   const renderProgressContent = () => {
     if (progressLoading) {
       return (
@@ -168,8 +187,8 @@ export default function TaskDetailsScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.progressCardTitle}>
-              <Text style={styles.progressCardTitleText}>
-                Progress Update {progressUpdates.length - index}
+              <Text style={styles.progressCardTitleText} numberOfLines={2}>
+                {getProgressUpdateTitle(update)}
               </Text>
               <Text style={styles.progressCardSubtitle}>
                 {formatTimeAgo(update.createdAt)} • {update.userData.first_name}{' '}
@@ -524,8 +543,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: theme.spacing.md,
     paddingBottom: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
     borderBottomWidth: 1,
-    marginTop: 8,
+    marginTop: 16,
     borderBottomColor: theme.colors.border.primary,
   },
   title: {
@@ -678,7 +698,6 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.primary,
-    marginBottom: 2,
   },
   progressCardSubtitle: {
     fontSize: theme.typography.fontSize.xs,
@@ -699,7 +718,7 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.xs,
   },
   progressCardContent: {
-    padding: theme.spacing.sm,
+    paddingVertical: theme.spacing.sm,
   },
   progressDetailItem: {
     marginBottom: theme.spacing.sm,
@@ -716,9 +735,9 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.xs,
   },
   progressDetailText: {
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text.secondary,
-    lineHeight: 14,
+    lineHeight: 20,
   },
   noProgressText: {
     fontSize: theme.typography.fontSize.sm,

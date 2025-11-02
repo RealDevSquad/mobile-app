@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     width: '100%',
-    backgroundColor: theme.colors.error[500],
+    backgroundColor: theme.colors.error[600],
     paddingVertical: theme.spacing.md,
     borderRadius: theme.radius.md,
     alignItems: 'center',
