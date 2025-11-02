@@ -58,7 +58,6 @@ const ExpandedUserInfo: React.FC<ExpandedUserInfoProps> = ({ userData }) => {
 
   return (
     <View style={styles.container}>
-      {/* Roles Section - Show at top if available */}
       {roleBadges.length > 0 && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -89,7 +88,6 @@ const ExpandedUserInfo: React.FC<ExpandedUserInfoProps> = ({ userData }) => {
         </View>
       )}
 
-      {/* Basic Information Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <FontAwesome
@@ -159,7 +157,6 @@ const ExpandedUserInfo: React.FC<ExpandedUserInfoProps> = ({ userData }) => {
         </View>
       </View>
 
-      {/* GitHub Information Section */}
       {(!!userData.github_display_name || !!userData.website) && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -216,7 +213,6 @@ const ExpandedUserInfo: React.FC<ExpandedUserInfoProps> = ({ userData }) => {
         </View>
       )}
 
-      {/* Discord Information Section */}
       {hasDiscordInfo && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -262,7 +258,6 @@ const ExpandedUserInfo: React.FC<ExpandedUserInfoProps> = ({ userData }) => {
         </View>
       )}
 
-      {/* Social Links Section */}
       {hasSocialLinks && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -283,7 +278,6 @@ const ExpandedUserInfo: React.FC<ExpandedUserInfoProps> = ({ userData }) => {
         </View>
       )}
 
-      {/* Account Information Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <FontAwesome

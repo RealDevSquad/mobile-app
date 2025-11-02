@@ -32,12 +32,10 @@ const CameraModal: React.FC<CameraModalProps> = ({
             and scan the QR code to log in.
           </Text>
         </View>
-        {/* Scanner Frame */}
         <View style={styles.scannerFrame}>
           <View style={styles.scannerBorder} />
         </View>
 
-        {/* Close Button */}
         <TouchableOpacity
           style={[styles.closeButton, { top: 80, right: 20 }]}
           onPress={onClose}
@@ -51,7 +49,6 @@ const CameraModal: React.FC<CameraModalProps> = ({
           />
         </TouchableOpacity>
 
-        {/* Modal */}
         {showModal && (
           <View style={styles.modalContainer} testID="modal-container">
             <View style={styles.modalContent}>

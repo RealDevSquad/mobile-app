@@ -249,10 +249,8 @@ export const HomeScreenSkeleton: React.FC = () => (
   </View>
 );
 
-// Task Details Skeleton
 export const TaskDetailsSkeleton: React.FC = () => (
   <View style={styles.taskDetailsContainer}>
-    {/* Header with title and status */}
     <View style={styles.taskDetailsHeader}>
       <SkeletonLoader
         height={18}
@@ -261,8 +259,6 @@ export const TaskDetailsSkeleton: React.FC = () => (
       />
       <SkeletonLoader height={24} width={80} borderRadius={theme.radius.lg} />
     </View>
-
-    {/* Task Details Section */}
     <View style={styles.taskDetailsSection}>
       <View style={styles.taskDetailsSectionHeader}>
         <SkeletonLoader height={16} width="40%" />
@@ -290,7 +286,6 @@ export const TaskDetailsSkeleton: React.FC = () => (
       </View>
     </View>
 
-    {/* Timeline Section */}
     <View style={styles.taskDetailsSection}>
       <View style={styles.taskDetailsSectionHeader}>
         <SkeletonLoader height={16} width="30%" />
@@ -314,7 +309,6 @@ export const TaskDetailsSkeleton: React.FC = () => (
       </View>
     </View>
 
-    {/* GitHub Link Section */}
     <View style={styles.taskDetailsSection}>
       <View style={styles.taskDetailsInfoRow}>
         <SkeletonLoader height={14} width="40%" />
@@ -322,7 +316,6 @@ export const TaskDetailsSkeleton: React.FC = () => (
       </View>
     </View>
 
-    {/* Dependencies Section */}
     <View style={styles.taskDetailsSection}>
       <SkeletonLoader
         height={16}
@@ -337,7 +330,6 @@ export const TaskDetailsSkeleton: React.FC = () => (
       </View>
     </View>
 
-    {/* Progress Updates Section */}
     <View style={styles.taskDetailsSection}>
       <View style={styles.taskDetailsSectionHeader}>
         <SkeletonLoader height={16} width="45%" />
@@ -347,7 +339,6 @@ export const TaskDetailsSkeleton: React.FC = () => (
           borderRadius={theme.radius.sm}
         />
       </View>
-      {/* Progress Card Skeletons */}
       <View style={styles.taskDetailsProgressCard}>
         <View style={styles.taskDetailsProgressCardHeader}>
           <View style={styles.taskDetailsProgressCardTitle}>

@@ -51,7 +51,6 @@ const OOOModal: React.FC<OOOModalProps> = ({
   return (
     <View style={styles.overlay}>
       <View style={styles.modalContainer}>
-        {/* Close Icon */}
         <TouchableOpacity
           style={styles.closeIcon}
           onPress={handleClose}
@@ -63,7 +62,6 @@ const OOOModal: React.FC<OOOModalProps> = ({
         <Text style={styles.title}>Apply for OOO</Text>
 
         <View style={styles.form}>
-          {/* Start Date Picker */}
           <Controller
             control={control}
             name="fromDate"
@@ -82,7 +80,6 @@ const OOOModal: React.FC<OOOModalProps> = ({
             )}
           />
 
-          {/* End Date Picker */}
           <Controller
             control={control}
             name="toDate"
@@ -101,7 +98,6 @@ const OOOModal: React.FC<OOOModalProps> = ({
             )}
           />
 
-          {/* Reason Input */}
           <Controller
             control={control}
             name="reason"
@@ -123,7 +119,6 @@ const OOOModal: React.FC<OOOModalProps> = ({
           />
         </View>
 
-        {/* Action Buttons */}
         <View style={styles.actions}>
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}

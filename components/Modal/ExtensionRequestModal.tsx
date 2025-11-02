@@ -3,6 +3,11 @@ import {
   extensionRequestSchema,
   TExtensionRequestFormData,
 } from '@/api/extension-requests/extension-requests.schema';
+import {
+  addDaysToUnix,
+  dateToUnix,
+  formatDate,
+} from '@/common/utils/dateUtils';
 import FormDatePicker from '@/components/form/FormDatePicker';
 import FormInput from '@/components/form/FormInput';
 import FormSubmitButton from '@/components/form/FormSubmitButton';
@@ -10,11 +15,6 @@ import { theme } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  formatDate,
-  dateToUnix,
-  addDaysToUnix,
-} from '@/common/utils/dateUtils';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -140,7 +140,6 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
     >
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          {/* Close Icon */}
           <TouchableOpacity
             style={styles.closeIcon}
             onPress={handleClose}
@@ -156,14 +155,12 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
 
           <Text style={styles.title}>Raise Extension Request</Text>
 
-          {/* Current Deadline Info */}
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>Current Deadline:</Text>
             <Text style={styles.infoValue}>{oldDeadlineDate}</Text>
           </View>
 
           <View style={styles.form}>
-            {/* Title Input */}
             <Controller
               control={control}
               name="title"
@@ -181,7 +178,6 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
               )}
             />
 
-            {/* Reason Input */}
             <Controller
               control={control}
               name="reason"
@@ -202,7 +198,6 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
               )}
             />
 
-            {/* New Deadline Picker */}
             <Controller
               control={control}
               name="newDeadline"
@@ -222,7 +217,6 @@ const ExtensionRequestModal: React.FC<ExtensionRequestModalProps> = ({
             />
           </View>
 
-          {/* Action Buttons */}
           <View style={styles.buttonContainer}>
             <FormSubmitButton
               text="Cancel"

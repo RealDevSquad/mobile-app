@@ -1,4 +1,3 @@
-// Common API response types
 export interface TApiResponse<T> {
   data: T;
   message: string;

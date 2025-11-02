@@ -1,7 +1,6 @@
 import { TApiResponse } from '../common/common.types';
 import { ExtensionRequestDTO } from './extension-request.dto';
 
-// Request DTOs
 export type TGetExtensionRequestsDto = {
   status?: string;
   next?: string;
@@ -25,7 +24,6 @@ export type TCreateExtensionRequestDto = {
   title: string;
 };
 
-// Response DTOs
 export type TGetExtensionRequestsResponse = {
   allExtensionRequests: ExtensionRequestDTO[];
   next?: string;

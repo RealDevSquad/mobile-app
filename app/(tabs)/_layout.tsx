@@ -34,7 +34,6 @@ export default function TabLayout() {
         },
       })}
     >
-      {/* index screen */}
       <Tabs.Screen
         name="index"
         options={{
@@ -43,7 +42,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Home tab */}
       <Tabs.Screen
         name="home"
         options={{
@@ -54,7 +52,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Tasks tab */}
       <Tabs.Screen
         name="tasks"
         options={{
@@ -65,7 +62,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Extension Requests tab */}
       <Tabs.Screen
         name="extension-requests"
         options={{
@@ -77,7 +73,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Task Requests tab */}
       <Tabs.Screen
         name="task-requests"
         options={{
@@ -89,7 +84,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* New Task tab */}
       <Tabs.Screen
         name="create-task"
         options={{
@@ -101,7 +95,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Profile tab - hidden from tab bar, accessible via navigation */}
       <Tabs.Screen
         name="profile"
         options={{
@@ -109,8 +102,6 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
-
-      {/* Manage tab - hidden from tab bar, accessible via navigation */}
       <Tabs.Screen
         name="manage"
         options={{

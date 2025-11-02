@@ -129,7 +129,6 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
           </View>
 
           <View style={styles.content}>
-            {/* Status Selection */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Status</Text>
               <Controller
@@ -194,7 +193,6 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
               )}
             </View>
 
-            {/* Progress Slider */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>
                 Progress: {Math.round(watchedProgress || 0)}%
@@ -227,7 +225,6 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
               )}
             </View>
 
-            {/* Current Values Display */}
             <View style={styles.currentValues}>
               <Text style={styles.currentValuesTitle}>Current Values:</Text>
               <Text style={styles.currentValuesText}>
@@ -236,7 +233,6 @@ const UpdateTaskStatusModal: React.FC<UpdateTaskStatusModalProps> = ({
             </View>
           </View>
 
-          {/* Action Buttons */}
           <View style={styles.actions}>
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}

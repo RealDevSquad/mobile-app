@@ -94,7 +94,6 @@ export default function ProfileScreen() {
         }
       >
         <ExpandedUserInfo userData={userData} />
-        {/* Logout Button at Bottom */}
         <View style={styles.logoutContainer}>
           <TouchableOpacity
             style={styles.logoutButton}

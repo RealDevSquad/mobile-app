@@ -16,7 +16,6 @@ const Header: React.FC<ProfileHeaderProps> = (props) => {
 
   return (
     <View style={styles.container}>
-      {/* Main Content */}
       <View style={styles.contentContainer}>
         {props.picture?.url && (
           <View style={styles.avatarContainer}>

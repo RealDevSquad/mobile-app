@@ -210,7 +210,6 @@ export default function TaskRequestDetailsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>{taskRequest.taskTitle}</Text>
             <View
@@ -223,7 +222,6 @@ export default function TaskRequestDetailsScreen() {
             </View>
           </View>
 
-          {/* Request Info */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Request Details</Text>
             <View style={styles.infoRow}>
@@ -250,7 +248,6 @@ export default function TaskRequestDetailsScreen() {
             </View>
           </View>
 
-          {/* Timeline */}
           {taskRequest.users[0]?.proposedStartDate &&
             taskRequest.users[0]?.proposedDeadline && (
               <View style={styles.section}>
@@ -274,7 +271,6 @@ export default function TaskRequestDetailsScreen() {
               </View>
             )}
 
-          {/* External Links */}
           {taskRequest.externalIssueUrl && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>External Links</Text>
@@ -298,12 +294,9 @@ export default function TaskRequestDetailsScreen() {
               )}
             </View>
           )}
-
-          {/* Additional Users */}
         </View>
       </ScrollView>
 
-      {/* Action Buttons */}
       {taskRequest.status === 'PENDING' && (
         <View style={styles.actionContainer}>
           <TouchableOpacity

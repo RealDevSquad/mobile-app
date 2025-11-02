@@ -163,7 +163,6 @@ export default function HomeScreen() {
           />
         }
       >
-        {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerTextContainer}>
             <Text style={styles.usernameText}>
@@ -181,7 +180,6 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* User Status Card */}
         <View style={styles.userStatusContainer}>
           <UserStatusCard
             userStatus={userStatus || null}
@@ -198,7 +196,6 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      {/* OOO Modal */}
       <OOOModal
         isVisible={isOOOModalVisible}
         onSubmit={handleOOOSubmit}

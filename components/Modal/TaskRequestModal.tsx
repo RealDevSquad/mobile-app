@@ -54,7 +54,6 @@ const TaskRequestModal: React.FC<TaskRequestModalProps> = ({
   return (
     <View style={styles.overlay}>
       <View style={styles.modalContainer}>
-        {/* Close Icon */}
         <TouchableOpacity
           style={styles.closeIcon}
           onPress={handleClose}
@@ -66,7 +65,6 @@ const TaskRequestModal: React.FC<TaskRequestModalProps> = ({
         <Text style={styles.title}>Request Task Creation</Text>
 
         <View style={styles.form}>
-          {/* Start Date Picker */}
           <Controller
             control={control}
             name="proposedStartDate"
@@ -85,7 +83,6 @@ const TaskRequestModal: React.FC<TaskRequestModalProps> = ({
             )}
           />
 
-          {/* Deadline Picker */}
           <Controller
             control={control}
             name="proposedDeadline"
@@ -104,7 +101,6 @@ const TaskRequestModal: React.FC<TaskRequestModalProps> = ({
             )}
           />
 
-          {/* Timeline Overview Input */}
           <Controller
             control={control}
             name="description"
@@ -125,7 +121,6 @@ const TaskRequestModal: React.FC<TaskRequestModalProps> = ({
             )}
           />
 
-          {/* Submit Button */}
           <FormSubmitButton
             text="Create Request"
             onPress={handleSubmit(handleFormSubmit)}
