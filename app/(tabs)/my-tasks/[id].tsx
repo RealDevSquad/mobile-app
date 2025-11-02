@@ -525,6 +525,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
     paddingBottom: theme.spacing.md,
     borderBottomWidth: 1,
+    marginTop: 8,
     borderBottomColor: theme.colors.border.primary,
   },
   title: {

@@ -27,9 +27,12 @@ const InfoCard: React.FC<InfoCardProps> = ({
       activeOpacity={0.7}
     >
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
-          {title}
-        </Text>
+        <View>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            {title}
+          </Text>
+          <View style={styles.underline} />
+        </View>
         <Text style={styles.description} numberOfLines={4} ellipsizeMode="tail">
           {description}
         </Text>
@@ -59,8 +62,14 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.lg,
     fontFamily: theme.typography.fontFamily.bold,
     color: theme.colors.text.inverted,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
     width: '100%',
+  },
+  underline: {
+    height: 2,
+    backgroundColor: theme.colors.primary[200],
+    width: '100%',
+    marginBottom: theme.spacing.sm,
   },
   description: {
     fontSize: theme.typography.fontSize.sm,

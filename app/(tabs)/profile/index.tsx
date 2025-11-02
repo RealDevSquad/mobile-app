@@ -1,8 +1,13 @@
 import { UsersApi } from '@/api/users/users.api';
+import { removeLocalStorageItem } from '@/common/utils/common';
 import ExpandedUserInfo from '@/components/ExpandedUserInfo';
 import Header from '@/components/ProfileHeader';
+import { TOKEN_KEY } from '@/constants/constants';
 import { theme } from '@/constants/theme';
+import { useAuthStore } from '@/store/authStore';
 import { useQuery } from '@tanstack/react-query';
+import { reloadAppAsync } from 'expo';
+import { router } from 'expo-router';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -11,6 +16,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -27,6 +33,17 @@ export default function ProfileScreen() {
 
   const handleRefresh = async () => {
     await refetchUserData();
+  };
+
+  const handleLogout = async () => {
+    try {
+      useAuthStore.getState().logout();
+      await removeLocalStorageItem(TOKEN_KEY);
+      router.replace('/');
+      reloadAppAsync();
+    } catch (error) {
+      console.error('Error logging out', error);
+    }
   };
 
   if (loadingUserData) {
@@ -77,6 +94,18 @@ export default function ProfileScreen() {
         }
       >
         <ExpandedUserInfo userData={userData} />
+        {/* Logout Button at Bottom */}
+        <View style={styles.logoutContainer}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogout}
+            accessibilityRole="button"
+            accessibilityLabel="Logout"
+            testID="logout-button"
+          >
+            <Text style={styles.logoutButtonText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -95,6 +124,23 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: theme.spacing.xl,
+  },
+  logoutContainer: {
+    paddingHorizontal: theme.spacing.lg,
+  },
+  logoutButton: {
+    width: '100%',
+    backgroundColor: theme.colors.error[500],
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...theme.shadow.md,
+  },
+  logoutButtonText: {
+    color: theme.colors.text.inverted,
+    fontSize: theme.typography.fontSize.base,
+    fontFamily: theme.typography.fontFamily.bold,
   },
   loadingText: {
     marginTop: theme.spacing.md,

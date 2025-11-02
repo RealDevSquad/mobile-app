@@ -18,7 +18,7 @@ export default function TabLayout() {
                 backgroundColor: theme.colors.primary[500],
                 borderTopWidth: 0,
                 paddingTop: theme.spacing.sm,
-                height: Platform.OS === 'ios' ? 72 : 60,
+                height: Platform.OS === 'ios' ? 76 : 64,
                 elevation: 16,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: -4 },
@@ -65,38 +65,54 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Manage tab */}
-      <Tabs.Screen
-        name="manage"
-        options={{
-          tabBarLabel: 'Manage',
-          tabBarIcon: ({ color }: { color: string }) => (
-            <FontAwesome name="cog" size={20} color={color} />
-          ),
-        }}
-      />
-
-      {/* Profile tab */}
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }: { color: string }) => (
-            <FontAwesome name="user" size={20} color={color} />
-          ),
-        }}
-      />
-
-      {/* Hidden screens - accessible via home screen navigation */}
+      {/* Extension Requests tab */}
       <Tabs.Screen
         name="extension-requests"
+        options={{
+          title: 'ER',
+          tabBarLabel: 'ER',
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome name="file-text-o" size={20} color={color} />
+          ),
+        }}
+      />
+
+      {/* Task Requests tab */}
+      <Tabs.Screen
+        name="task-requests"
+        options={{
+          title: 'TCR',
+          tabBarLabel: 'TCR',
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome name="list-alt" size={20} color={color} />
+          ),
+        }}
+      />
+
+      {/* New Task tab */}
+      <Tabs.Screen
+        name="create-task"
+        options={{
+          title: 'New Task',
+          tabBarLabel: 'New Task',
+          tabBarIcon: ({ color }: { color: string }) => (
+            <FontAwesome name="plus-circle" size={20} color={color} />
+          ),
+        }}
+      />
+
+      {/* Profile tab - hidden from tab bar, accessible via navigation */}
+      <Tabs.Screen
+        name="profile"
         options={{
           href: null,
           headerShown: false,
         }}
       />
+
+      {/* Manage tab - hidden from tab bar, accessible via navigation */}
       <Tabs.Screen
-        name="task-requests"
+        name="manage"
         options={{
           href: null,
           headerShown: false,
@@ -112,13 +128,6 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="my-tasks"
-        options={{
-          href: null,
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen
-        name="create-task"
         options={{
           href: null,
           headerShown: false,

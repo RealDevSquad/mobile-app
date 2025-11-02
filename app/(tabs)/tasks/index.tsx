@@ -351,6 +351,7 @@ const styles = StyleSheet.create({
   },
   skeletonContainer: {
     padding: theme.spacing.sm,
+    marginTop: theme.spacing['2xl'],
   },
   footerLoader: {
     flexDirection: 'row',

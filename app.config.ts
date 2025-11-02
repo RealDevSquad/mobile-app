@@ -86,7 +86,7 @@ export default {
       favicon: './assets/images/favicon.png',
     },
     orientation: 'portrait',
-    icon: './assets/images/rdsLogo.png',
+    icon: './assets/images/rdsLogoApk.png',
     userInterfaceStyle: 'automatic',
     newArchEnabled: false,
     assetBundlePatterns: [

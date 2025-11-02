@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.regular,
     color: theme.colors.text.secondary || theme.colors.text.primary,
     textAlign: 'center',
-    marginBottom: theme.spacing['2xl'],
+    marginBottom: 160,
     paddingHorizontal: theme.spacing.lg,
   },
   button: {
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
     borderRadius: theme.radius.sm,
     marginBottom: theme.spacing.md,
-    width: 320,
+    width: 280,
     ...theme.shadow.lg,
   },
   githubButton: {

@@ -7,6 +7,7 @@ import UserStatusCard from '@/components/UserStatusCard';
 import { theme } from '@/constants/theme';
 import { useOOOModal } from '@/store/uiStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   Alert,
@@ -15,6 +16,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -40,6 +42,7 @@ const infoCards = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const {
     isOpen: isOOOModalVisible,
@@ -169,7 +172,12 @@ export default function HomeScreen() {
             <Text style={styles.welcomeText}>Welcome to RDS</Text>
           </View>
           {userData?.picture?.url && (
-            <Avatar uri={userData.picture.url} size={40} />
+            <TouchableOpacity
+              onPress={() => router.push('/profile')}
+              activeOpacity={0.7}
+            >
+              <Avatar uri={userData.picture.url} size={40} />
+            </TouchableOpacity>
           )}
         </View>
 

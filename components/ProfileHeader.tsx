@@ -1,18 +1,7 @@
-import { removeLocalStorageItem } from '@/common/utils/common';
 import Avatar from '@/components/Avatar';
-import { TOKEN_KEY } from '@/constants/constants';
 import { theme } from '@/constants/theme';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { reloadAppAsync } from 'expo';
-import { router } from 'expo-router';
 import React from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 interface ProfileHeaderProps {
   first_name?: string;
@@ -23,35 +12,10 @@ interface ProfileHeaderProps {
 }
 
 const Header: React.FC<ProfileHeaderProps> = (props) => {
-  const handleLogout = async () => {
-    try {
-      await removeLocalStorageItem(TOKEN_KEY);
-      router.navigate('/');
-      reloadAppAsync();
-    } catch (error) {
-      console.error('Error logging out', error);
-    }
-  };
-
   const fullName = `${props.first_name || ''} ${props.last_name || ''}`.trim();
 
   return (
     <View style={styles.container}>
-      {/* Logout Button */}
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={handleLogout}
-        accessibilityRole="button"
-        accessibilityLabel="Logout"
-        testID="logout-button"
-      >
-        <FontAwesome
-          name="sign-out"
-          size={18}
-          color={theme.colors.text.primary}
-        />
-      </TouchableOpacity>
-
       {/* Main Content */}
       <View style={styles.contentContainer}>
         {props.picture?.url && (
@@ -83,13 +47,6 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: theme.spacing.lg,
     paddingHorizontal: theme.spacing.lg,
-  },
-  logoutButton: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 40,
-    right: theme.spacing.lg,
-    padding: theme.spacing.sm,
-    zIndex: 10,
   },
   contentContainer: {
     flexDirection: 'row',
