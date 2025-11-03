@@ -14,6 +14,7 @@ type TaskRequestActionsProps = {
   isPending: boolean;
   onApprove: () => void;
   onReject: () => void;
+  isSuperUser?: boolean;
 };
 
 export const TaskRequestActions: React.FC<TaskRequestActionsProps> = ({
@@ -22,8 +23,9 @@ export const TaskRequestActions: React.FC<TaskRequestActionsProps> = ({
   isPending,
   onApprove,
   onReject,
+  isSuperUser = false,
 }) => {
-  if (status !== 'PENDING') {
+  if (status !== 'PENDING' || !isSuperUser) {
     return null;
   }
 

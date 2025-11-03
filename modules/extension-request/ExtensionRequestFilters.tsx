@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
   filterScrollContent: {
     paddingHorizontal: theme.spacing.lg,
     gap: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
   },
   filterChip: {
     paddingHorizontal: theme.spacing.md,

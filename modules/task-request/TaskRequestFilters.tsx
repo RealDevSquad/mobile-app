@@ -79,10 +79,10 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.primary,
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: theme.spacing.md,
   },
   filterScrollContent: {
-    paddingHorizontal: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
     gap: theme.spacing.sm,
   },
   filterChip: {

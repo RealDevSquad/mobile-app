@@ -2,8 +2,13 @@ import ExtensionRequestCard from '@/components/ExtensionRequestCard';
 import { TaskCardSkeleton } from '@/components/SkeletonLoader';
 import { theme } from '@/constants/theme';
 import React from 'react';
-import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
-import { Tabs } from 'react-native-collapsible-tab-view';
+import {
+  FlatList,
+  Platform,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 type ExtensionRequestListProps = {
   data: any[];
@@ -17,6 +22,7 @@ type ExtensionRequestListProps = {
   renderEmpty: () => React.ReactElement;
   renderLoadMore: () => React.ReactElement | null;
   renderFilter?: () => React.ReactElement | null;
+  isSuperUser?: boolean;
 };
 
 export const ExtensionRequestList: React.FC<ExtensionRequestListProps> = ({
@@ -31,12 +37,14 @@ export const ExtensionRequestList: React.FC<ExtensionRequestListProps> = ({
   renderEmpty,
   renderLoadMore,
   renderFilter,
+  isSuperUser = false,
 }) => {
   const renderExtensionRequest = ({ item }: { item: any }) => (
     <ExtensionRequestCard
       request={item}
       onApprove={onApprove}
       onReject={onReject}
+      isSuperUser={isSuperUser}
     />
   );
 
@@ -51,7 +59,7 @@ export const ExtensionRequestList: React.FC<ExtensionRequestListProps> = ({
   }
 
   return (
-    <Tabs.FlatList
+    <FlatList
       data={data}
       renderItem={renderExtensionRequest}
       keyExtractor={(item) => item.id}
@@ -80,11 +88,13 @@ export const ExtensionRequestList: React.FC<ExtensionRequestListProps> = ({
 const styles = StyleSheet.create({
   skeletonContainer: {
     padding: theme.spacing.sm,
+    paddingTop: theme.spacing.md,
   },
   listContent: {
+    paddingTop: theme.spacing.md,
     paddingBottom: theme.spacing.md,
   },
   listContentAndroid: {
-    paddingTop: theme.spacing.sm,
+    paddingTop: theme.spacing.md,
   },
 });

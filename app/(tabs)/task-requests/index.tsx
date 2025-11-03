@@ -1,7 +1,6 @@
 import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
-import { theme } from '@/constants/theme';
 import { TaskRequestFilters } from '@/modules/task-request/TaskRequestFilters';
 import { TaskRequestList } from '@/modules/task-request/TaskRequestList';
 import { TaskRequestLoadMore } from '@/modules/task-request/TaskRequestLoadMore';
@@ -9,7 +8,6 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 const FILTER_OPTIONS = [
   { label: 'All', value: 'ALL' },
@@ -131,17 +129,6 @@ export default function TaskRequestsScreen() {
     );
   };
 
-  const renderTabBar = (props: any) => (
-    <MaterialTabBar
-      {...props}
-      indicatorStyle={styles.tabIndicator}
-      style={styles.tabBar}
-      labelStyle={styles.tabLabel}
-      activeColor={theme.colors.primary[600]}
-      inactiveColor={theme.colors.text.secondary}
-    />
-  );
-
   if (isError) {
     return (
       <ErrorState
@@ -155,28 +142,24 @@ export default function TaskRequestsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
-        <Tabs.Tab name="Task Requests">
-          <TaskRequestList
-            data={allTaskRequests}
-            isLoading={loading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            onLoadMore={handleLoadMore}
-            onCardPress={handleCardPress}
-            isEmpty={!loading && allTaskRequests.length === 0}
-            renderEmpty={renderEmpty}
-            renderLoadMore={renderLoadMore}
-            renderFilter={() => (
-              <TaskRequestFilters
-                selectedFilter={taskRequestsFilter}
-                onFilterChange={handleFilterChange}
-                filterOptions={FILTER_OPTIONS}
-              />
-            )}
+      <TaskRequestList
+        data={allTaskRequests}
+        isLoading={loading}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        onLoadMore={handleLoadMore}
+        onCardPress={handleCardPress}
+        isEmpty={!loading && allTaskRequests.length === 0}
+        renderEmpty={renderEmpty}
+        renderLoadMore={renderLoadMore}
+        renderFilter={() => (
+          <TaskRequestFilters
+            selectedFilter={taskRequestsFilter}
+            onFilterChange={handleFilterChange}
+            filterOptions={FILTER_OPTIONS}
           />
-        </Tabs.Tab>
-      </Tabs.Container>
+        )}
+      />
     </SafeAreaView>
   );
 }
@@ -185,24 +168,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  tabBar: {
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.primary,
-    paddingHorizontal: theme.spacing.md,
-    elevation: 0,
-    shadowOpacity: 0,
-  },
-  tabLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
-    textTransform: 'none',
-    marginHorizontal: theme.spacing.xs,
-  },
-  tabIndicator: {
-    backgroundColor: theme.colors.primary[600],
-    height: 3,
-    borderRadius: 2,
   },
 });

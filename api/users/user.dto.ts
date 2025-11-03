@@ -27,7 +27,7 @@ export type UserStatus = {
 export type UserRolesExtended = {
   archived: boolean;
   in_discord: boolean;
-  designer: boolean;
+  super_user: boolean;
 };
 
 export type UserDetails = {

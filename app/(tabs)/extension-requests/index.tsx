@@ -1,7 +1,7 @@
 import { ExtensionRequestsApi } from '@/api/extension-requests/extension-requests.api';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
-import { theme } from '@/constants/theme';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { ExtensionRequestFilters } from '@/modules/extension-request/ExtensionRequestFilters';
 import { ExtensionRequestList } from '@/modules/extension-request/ExtensionRequestList';
 import { ExtensionRequestLoadMore } from '@/modules/extension-request/ExtensionRequestLoadMore';
@@ -12,14 +12,16 @@ import {
 } from '@tanstack/react-query';
 import React, { useCallback, useState } from 'react';
 import { Alert, SafeAreaView, StyleSheet } from 'react-native';
-import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 
 const ExtensionRequestsScreen: React.FC = () => {
   const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
   const [refreshing, setRefreshing] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [extensionRequestsFilter, setExtensionRequestsFilter] =
     useState('PENDING');
+
+  const isSuperUser = user?.roles?.super_user === true;
 
   const {
     data,
@@ -159,17 +161,6 @@ const ExtensionRequestsScreen: React.FC = () => {
     );
   };
 
-  const renderTabBar = (props: any) => (
-    <MaterialTabBar
-      {...props}
-      indicatorStyle={styles.tabIndicator}
-      style={styles.tabBar}
-      labelStyle={styles.tabLabel}
-      activeColor={theme.colors.primary[600]}
-      inactiveColor={theme.colors.text.secondary}
-    />
-  );
-
   if (isError) {
     return (
       <ErrorState
@@ -183,28 +174,25 @@ const ExtensionRequestsScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Tabs.Container renderTabBar={renderTabBar} tabBarHeight={50}>
-        <Tabs.Tab name="Extension Requests">
-          <ExtensionRequestList
-            data={allExtensionRequests}
-            isLoading={loading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            onLoadMore={handleLoadMore}
-            onApprove={handleApprove}
-            onReject={handleReject}
-            isEmpty={!loading && allExtensionRequests.length === 0}
-            renderEmpty={renderEmpty}
-            renderLoadMore={renderLoadMoreButton}
-            renderFilter={() => (
-              <ExtensionRequestFilters
-                selectedFilter={extensionRequestsFilter}
-                onFilterChange={handleFilterChange}
-              />
-            )}
+      <ExtensionRequestList
+        data={allExtensionRequests}
+        isLoading={loading}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        onLoadMore={handleLoadMore}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        isEmpty={!loading && allExtensionRequests.length === 0}
+        renderEmpty={renderEmpty}
+        renderLoadMore={renderLoadMoreButton}
+        isSuperUser={isSuperUser}
+        renderFilter={() => (
+          <ExtensionRequestFilters
+            selectedFilter={extensionRequestsFilter}
+            onFilterChange={handleFilterChange}
           />
-        </Tabs.Tab>
-      </Tabs.Container>
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -213,25 +201,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  tabBar: {
-    backgroundColor: theme.colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.primary,
-    paddingHorizontal: theme.spacing.md,
-    elevation: 0,
-    shadowOpacity: 0,
-  },
-  tabLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
-    textTransform: 'none',
-    marginHorizontal: theme.spacing.xs,
-  },
-  tabIndicator: {
-    backgroundColor: theme.colors.primary[600],
-    height: 3,
-    borderRadius: 2,
   },
 });
 

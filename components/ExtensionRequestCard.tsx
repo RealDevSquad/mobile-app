@@ -20,6 +20,7 @@ type ExtensionRequestCardProps = {
   request: ExtensionRequestDTO;
   onApprove: (id: string) => Promise<void>;
   onReject: (id: string) => Promise<void>;
+  isSuperUser?: boolean;
 };
 
 function getStatusColor(status: string): string {
@@ -40,6 +41,7 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = ({
   request,
   onApprove,
   onReject,
+  isSuperUser = false,
 }) => {
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
@@ -214,7 +216,7 @@ const ExtensionRequestCard: React.FC<ExtensionRequestCardProps> = ({
           <Text style={styles.reasonLabel}>Reason:</Text>
           <Text style={styles.reasonText}>{request.reason}</Text>
 
-          {request.status === 'PENDING' && (
+          {request.status === 'PENDING' && isSuperUser && (
             <View style={styles.actionButtons}>
               <TouchableOpacity
                 style={[

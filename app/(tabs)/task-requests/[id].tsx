@@ -2,6 +2,7 @@ import { TaskRequestsApi } from '@/api/task-requests/task-requests.api';
 import { UsersApi } from '@/api/users/users.api';
 import { ErrorState } from '@/components/ErrorState';
 import { theme } from '@/constants/theme';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { TaskRequestActions } from '@/modules/task-request-details/TaskRequestActions';
 import { TaskRequestDetailsContent } from '@/modules/task-request-details/TaskRequestDetailsContent';
 import { TaskRequestLoadingState } from '@/modules/task-request-details/TaskRequestLoadingState';
@@ -15,9 +16,12 @@ export default function TaskRequestDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { user } = useCurrentUser();
   const [pendingAction, setPendingAction] = React.useState<
     'approve' | 'reject' | null
   >(null);
+
+  const isSuperUser = user?.roles?.super_user === true;
 
   const {
     data: taskRequest,
@@ -181,6 +185,7 @@ export default function TaskRequestDetailsScreen() {
         isPending={updateTaskRequestMutation.isPending}
         onApprove={handleApprove}
         onReject={handleReject}
+        isSuperUser={isSuperUser}
       />
     </SafeAreaView>
   );

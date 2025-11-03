@@ -1,9 +1,14 @@
-import TaskRequestCard from '@/components/TaskRequestCard';
 import { TaskRequestCardSkeleton } from '@/components/SkeletonLoader';
+import TaskRequestCard from '@/components/TaskRequestCard';
 import { theme } from '@/constants/theme';
 import React from 'react';
-import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
-import { Tabs } from 'react-native-collapsible-tab-view';
+import {
+  FlatList,
+  Platform,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 type TaskRequestListProps = {
   data: any[];
@@ -45,7 +50,7 @@ export const TaskRequestList: React.FC<TaskRequestListProps> = ({
   }
 
   return (
-    <Tabs.FlatList
+    <FlatList
       data={data}
       renderItem={renderTaskRequest}
       keyExtractor={(item) => item.id}
@@ -74,11 +79,13 @@ export const TaskRequestList: React.FC<TaskRequestListProps> = ({
 const styles = StyleSheet.create({
   skeletonContainer: {
     padding: theme.spacing.sm,
+    paddingTop: theme.spacing.md,
   },
   listContent: {
     paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
   },
   listContentAndroid: {
-    paddingTop: theme.spacing.sm,
+    paddingTop: theme.spacing.md,
   },
 });

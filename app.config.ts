@@ -36,7 +36,7 @@ export const ENV = validatedEnv.APP_ENV;
 
 export default {
   expo: {
-    name: 'RDSApp',
+    name: 'RDS',
     slug: 'rds-app',
     scheme: 'rdsapp',
     version: '1.0.0',

@@ -47,13 +47,14 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response && error.response.status === 401) {
-      // Use Zustand auth store logout instead of router.replace
-      useAuthStore.getState().logout();
-      router.replace('/');
-    }
-
     if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        useAuthStore.getState().logout();
+        router.replace('/');
+        throw error instanceof Error ? error : new Error(String(error));
+      }
+
       const errorMessage = error.response.data?.message || 'An error occurred';
       showError(errorMessage);
     } else if (error.request) {
