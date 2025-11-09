@@ -1,0 +1,13 @@
+node_modules
+dist
+.expo
+.expo-shared
+*.log
+*.lock
+coverage
+build
+.next
+out
+.vercel
+.turbo
+

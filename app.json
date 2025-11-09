@@ -4,7 +4,7 @@
     "slug": "mobile-app-2.0",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/adaptive-icon.png",
     "scheme": "mobileapp20",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
