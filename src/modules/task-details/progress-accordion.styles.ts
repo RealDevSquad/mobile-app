@@ -5,11 +5,11 @@ export default StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "600",
     color: "#111827",
     marginBottom: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 4,
   },
   accordionContainer: {
     backgroundColor: "#FFFFFF",

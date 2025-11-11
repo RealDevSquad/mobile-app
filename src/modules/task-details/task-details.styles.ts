@@ -10,7 +10,6 @@ export default StyleSheet.create({
   },
   headerSection: {
     paddingHorizontal: 20,
-    paddingTop: 20,
   },
   headerContent: {
     flexDirection: "row",
@@ -46,8 +45,8 @@ export default StyleSheet.create({
   },
   detailsCard: {
     borderRadius: 12,
-    paddingVertical: 20,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
     marginBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
@@ -56,7 +55,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderBottomColor: "#F3F4F6",
   },
   detailLabelContainer: {
@@ -66,13 +65,13 @@ export default StyleSheet.create({
     flex: 1,
   },
   detailLabel: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "500",
     color: "#374151",
   },
   detailValue: {
-    fontSize: 15,
-    fontWeight: "500",
+    fontSize: 14,
+    fontWeight: "400",
     color: "#111827",
     flex: 1,
     textAlign: "right",
@@ -85,9 +84,9 @@ export default StyleSheet.create({
     justifyContent: "flex-end",
   },
   assigneeAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: "#E30464",
     justifyContent: "center",
     alignItems: "center",
@@ -98,8 +97,8 @@ export default StyleSheet.create({
     color: "#FFFFFF",
   },
   assigneeName: {
-    fontSize: 15,
-    fontWeight: "500",
+    fontSize: 14,
+    fontWeight: "400",
     color: "#111827",
   },
   priorityTag: {
@@ -132,13 +131,10 @@ export default StyleSheet.create({
     color: "#374151",
   },
   progressCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    paddingVertical: 20,
+    paddingVertical: 12,
     paddingHorizontal: 12,
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    marginBottom: 10,
   },
   progressHeader: {
     flexDirection: "row",
@@ -168,13 +164,9 @@ export default StyleSheet.create({
     borderRadius: 4,
   },
   githubSection: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     paddingVertical: 20,
     paddingHorizontal: 12,
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
   },
   githubButton: {
     flexDirection: "row",
@@ -194,13 +186,10 @@ export default StyleSheet.create({
     color: "#FFFFFF",
   },
   dependenciesSection: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     paddingVertical: 20,
     paddingHorizontal: 12,
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    marginBottom: 10,
   },
   dependenciesTitle: {
     fontSize: 15,

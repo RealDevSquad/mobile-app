@@ -2,12 +2,12 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
-    marginTop: 48,
-    paddingHorizontal: 20,
+    marginTop: 42,
+    paddingHorizontal: 10,
     alignItems: "center",
     display: "flex",
     flexDirection: "column",
-    gap: 42,
+    gap: 16,
     justifyContent: "space-between",
   },
   heading: {
