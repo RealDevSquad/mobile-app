@@ -42,12 +42,13 @@ export default StyleSheet.create({
   },
   contentSection: {
     paddingHorizontal: 20,
+    marginTop: 2,
   },
   detailsCard: {
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 8,
-    marginBottom: 20,
+    marginBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
   },
@@ -134,7 +135,8 @@ export default StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 12,
-    marginBottom: 10,
+    marginTop: 16,
+    marginHorizontal: 20,
   },
   progressHeader: {
     flexDirection: "row",
@@ -165,8 +167,8 @@ export default StyleSheet.create({
   },
   githubSection: {
     borderRadius: 12,
-    paddingVertical: 20,
-    paddingHorizontal: 12,
+    paddingVertical: 12,
+    marginBottom: 16,
   },
   githubButton: {
     flexDirection: "row",
@@ -189,7 +191,6 @@ export default StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 20,
     paddingHorizontal: 12,
-    marginBottom: 10,
   },
   dependenciesTitle: {
     fontSize: 15,

@@ -36,7 +36,7 @@ function ProgressAccordionItem({ progress, isLast }: ProgressAccordionItemProps)
             )}
           </View>
           <View style={styles.accordionHeaderInfo}>
-            <Text style={styles.userName}>{userName}</Text>
+            <Text style={styles.userName}>{progress.completed}</Text>
             <Text style={styles.updateDate}>{updateDate}</Text>
           </View>
         </View>

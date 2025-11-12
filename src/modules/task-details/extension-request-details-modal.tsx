@@ -23,27 +23,27 @@ export function ExtensionRequestDetailsModal({
 }: ExtensionRequestDetailsModalProps) {
   const [editModalVisible, setEditModalVisible] = useState(false);
 
-  const handleCopyLink = async () => {
-    try {
-      const queryParam = `taskId:${taskId},status:PENDING`;
-      const encodedQuery = encodeURIComponent(queryParam);
-      const link = `https://dashboard.realdevsquad.com/extension-requests?order=desc&q=${encodedQuery}`;
+  // const handleCopyLink = async () => {
+  //   try {
+  //     const queryParam = `taskId:${taskId},status:PENDING`;
+  //     const encodedQuery = encodeURIComponent(queryParam);
+  //     const link = `https://dashboard.realdevsquad.com/extension-requests?order=desc&q=${encodedQuery}`;
 
-      await Clipboard.setStringAsync(link);
-      Alert.alert("Success", "Link copied to clipboard!");
-    } catch {
-      Alert.alert("Error", "Failed to copy link");
-    }
-  };
+  //     await Clipboard.setStringAsync(link);
+  //     Alert.alert("Success", "Link copied to clipboard!");
+  //   } catch {
+  //     Alert.alert("Error", "Failed to copy link");
+  //   }
+  // };
 
   const actionButtons: ActionButton[] = [
     ...(extensionRequest.status === "PENDING"
       ? [
-          {
-            label: "Copy Link",
-            onPress: handleCopyLink,
-            variant: "primary" as const,
-          },
+          // {
+          //   label: "Copy Link",
+          //   onPress: handleCopyLink,
+          //   variant: "primary" as const,
+          // },
           {
             label: "Edit",
             onPress: () => setEditModalVisible(true),

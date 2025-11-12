@@ -7,8 +7,8 @@ import { TaskDetailsDTO } from "../../api/tasks/task.dto";
 import { AddProgressModal } from "./add-progress-modal";
 import { ExtensionRequestDetailsModal } from "./extension-request-details-modal";
 import { ExtensionRequestModal } from "./extension-request-modal";
-import styles from "./task-actions.styles";
 import { UpdateTaskModal } from "./update-task-modal";
+import styles from "./task-actions.styles";
 
 type TaskActionsProps = {
   taskId: string;
@@ -49,59 +49,59 @@ export function TaskActions({ taskId, task }: TaskActionsProps) {
     return "Raise ER";
   };
 
-  const getExtensionRequestButtonIcon = () => {
-    if (isLoadingExtensionRequests) {
-      return <ActivityIndicator size="small" color="#E30464" />;
-    }
-    return (
-      <FontAwesome5
-        name={pendingExtensionRequest ? "clock" : "calendar-plus"}
-        size={14}
-        color="#E30464"
-      />
-    );
-  };
-
-  const handleUpdateTask = () => {
-    setUpdateTaskModalVisible(true);
-  };
-
-  const handleAddProgress = () => {
-    setAddProgressModalVisible(true);
-  };
+  const handleUpdateTask = () => setUpdateTaskModalVisible(true);
+  const handleAddProgress = () => setAddProgressModalVisible(true);
 
   return (
     <>
       <View style={styles.actionsContainer}>
+        {/* Update Task */}
         <Pressable
-          style={({ pressed }) => [styles.actionButton, pressed && styles.actionButtonPressed]}
+          style={({ pressed }) => [
+            styles.actionButtonSecondary,
+            pressed && styles.actionButtonPressed,
+          ]}
           onPress={handleUpdateTask}
         >
-          <FontAwesome5 name="edit" size={14} color="#E30464" />
-          <Text style={styles.actionButtonText}>Update Task</Text>
+          <FontAwesome5 name="edit" size={13} color="#E30464" style={{ marginRight: 6 }} />
+          <Text style={styles.actionButtonTextSecondary}>Update</Text>
         </Pressable>
 
         <Pressable
-          style={({ pressed }) => [styles.actionButton, pressed && styles.actionButtonPressed]}
+          style={({ pressed }) => [
+            styles.actionButtonPrimary,
+            pressed && styles.actionButtonPressed,
+          ]}
           onPress={handleAddProgress}
         >
-          <FontAwesome5 name="plus-circle" size={14} color="#E30464" />
-          <Text style={styles.actionButtonText}>Add Progress</Text>
+          <FontAwesome5 name="plus-circle" size={13} color="#fff" style={{ marginRight: 6 }} />
+          <Text style={styles.actionButtonTextPrimary}>Progress</Text>
         </Pressable>
+
         <Pressable
           style={({ pressed }) => [
-            styles.actionButton,
+            styles.actionButtonTertiary,
             (pressed || isLoadingExtensionRequests) && styles.actionButtonPressed,
             isLoadingExtensionRequests && styles.actionButtonDisabled,
           ]}
           onPress={handleRaiseExtensionRequest}
           disabled={isLoadingExtensionRequests}
         >
-          {getExtensionRequestButtonIcon()}
-          <Text style={styles.actionButtonText}>{getExtensionRequestButtonText()}</Text>
+          {isLoadingExtensionRequests ? (
+            <ActivityIndicator size="small" color="#E30464" style={{ marginRight: 6 }} />
+          ) : (
+            <FontAwesome5
+              name={pendingExtensionRequest ? "clock" : "calendar-plus"}
+              size={13}
+              color="#A91C56"
+              style={{ marginRight: 6 }}
+            />
+          )}
+          <Text style={styles.actionButtonTextTertiary}>{getExtensionRequestButtonText()}</Text>
         </Pressable>
       </View>
 
+      {/* Modals */}
       <ExtensionRequestModal
         visible={extensionModalVisible}
         onClose={() => setExtensionModalVisible(false)}

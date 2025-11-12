@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   section: {
-    marginBottom: 20,
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 16,

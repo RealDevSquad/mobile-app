@@ -93,7 +93,7 @@ export function TaskDetailsModule({ taskId }: TaskDetailsModuleProps) {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, flex: 1 }]}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
@@ -117,7 +117,15 @@ export function TaskDetailsModule({ taskId }: TaskDetailsModuleProps) {
           </View>
         </View>
 
-        {isAssignee && <TaskActions taskId={taskId} task={task} />}
+        <View style={styles.progressCard}>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressLabel}>Progress</Text>
+            <Text style={styles.progressPercentage}>{task.percentCompleted}%</Text>
+          </View>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${task.percentCompleted}%` }]} />
+          </View>
+        </View>
 
         <View style={styles.contentSection}>
           <View style={styles.detailsCard}>
@@ -202,16 +210,6 @@ export function TaskDetailsModule({ taskId }: TaskDetailsModuleProps) {
             )}
           </View>
 
-          <View style={styles.progressCard}>
-            <View style={styles.progressHeader}>
-              <Text style={styles.progressLabel}>Progress</Text>
-              <Text style={styles.progressPercentage}>{task.percentCompleted}%</Text>
-            </View>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${task.percentCompleted}%` }]} />
-            </View>
-          </View>
-
           {hasGithubLink ? (
             <View style={styles.githubSection}>
               <Pressable
@@ -223,6 +221,8 @@ export function TaskDetailsModule({ taskId }: TaskDetailsModuleProps) {
               </Pressable>
             </View>
           ) : null}
+
+          <ProgressAccordion progressUpdates={progressData?.data || []} />
 
           {hasDependencies && (
             <View style={styles.dependenciesSection}>
@@ -241,10 +241,9 @@ export function TaskDetailsModule({ taskId }: TaskDetailsModuleProps) {
               <Text style={styles.emptyDependencies}>No dependencies</Text>
             </View>
           )}
-
-          <ProgressAccordion progressUpdates={progressData?.data || []} />
         </View>
       </ScrollView>
+      {isAssignee && <TaskActions taskId={taskId} task={task} />}
     </View>
   );
 }
