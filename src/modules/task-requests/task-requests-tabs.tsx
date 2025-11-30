@@ -1,5 +1,6 @@
 import React from "react";
-import { AnimatedTabs, TabItem } from "../../components/AnimatedTabs";
+import { Pressable, Text, View } from "react-native";
+import styles from "./task-requests.styles";
 
 type TaskRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -8,14 +9,27 @@ type TaskRequestsTabsProps = {
   onTabChange: (tab: TaskRequestStatus) => void;
 };
 
-const TASK_REQUEST_TABS: TabItem<TaskRequestStatus>[] = [
-  { key: "PENDING", label: "Pending" },
-  { key: "APPROVED", label: "Approved" },
-  { key: "REJECTED", label: "Rejected" },
-];
-
 export function TaskRequestsTabs({ activeTab, onTabChange }: TaskRequestsTabsProps) {
   return (
-    <AnimatedTabs tabs={TASK_REQUEST_TABS} activeTab={activeTab} onTabChange={onTabChange} />
+    <View style={styles.tabsContainer}>
+      <Pressable style={styles.tab} onPress={() => onTabChange("PENDING")}>
+        <Text style={[styles.tabText, activeTab === "PENDING" && styles.activeTabText]}>
+          Pending
+        </Text>
+        {activeTab === "PENDING" && <View style={styles.activeIndicator} />}
+      </Pressable>
+      <Pressable style={styles.tab} onPress={() => onTabChange("APPROVED")}>
+        <Text style={[styles.tabText, activeTab === "APPROVED" && styles.activeTabText]}>
+          Approved
+        </Text>
+        {activeTab === "APPROVED" && <View style={styles.activeIndicator} />}
+      </Pressable>
+      <Pressable style={styles.tab} onPress={() => onTabChange("REJECTED")}>
+        <Text style={[styles.tabText, activeTab === "REJECTED" && styles.activeTabText]}>
+          Rejected
+        </Text>
+        {activeTab === "REJECTED" && <View style={styles.activeIndicator} />}
+      </Pressable>
+    </View>
   );
 }

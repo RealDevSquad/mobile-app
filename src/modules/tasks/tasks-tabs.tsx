@@ -1,18 +1,25 @@
 import React from "react";
-import { AnimatedTabs, TabItem } from "../../components/AnimatedTabs";
-
-type TasksTabType = "tasks" | "my-tasks";
+import { Pressable, Text, View } from "react-native";
+import styles from "./tasks.styles";
 
 type TasksTabsProps = {
-  activeTab: TasksTabType;
-  onTabChange: (tab: TasksTabType) => void;
+  activeTab: "tasks" | "my-tasks";
+  onTabChange: (tab: "tasks" | "my-tasks") => void;
 };
 
-const TASKS_TABS: TabItem<TasksTabType>[] = [
-  { key: "tasks", label: "Tasks" },
-  { key: "my-tasks", label: "My Tasks" },
-];
-
 export function TasksTabs({ activeTab, onTabChange }: TasksTabsProps) {
-  return <AnimatedTabs tabs={TASKS_TABS} activeTab={activeTab} onTabChange={onTabChange} />;
+  return (
+    <View style={styles.tabsContainer}>
+      <Pressable style={styles.tab} onPress={() => onTabChange("tasks")}>
+        <Text style={[styles.tabText, activeTab === "tasks" && styles.activeTabText]}>Tasks</Text>
+        {activeTab === "tasks" && <View style={styles.activeIndicator} />}
+      </Pressable>
+      <Pressable style={styles.tab} onPress={() => onTabChange("my-tasks")}>
+        <Text style={[styles.tabText, activeTab === "my-tasks" && styles.activeTabText]}>
+          My Tasks
+        </Text>
+        {activeTab === "my-tasks" && <View style={styles.activeIndicator} />}
+      </Pressable>
+    </View>
+  );
 }

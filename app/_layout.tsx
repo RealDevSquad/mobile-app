@@ -17,21 +17,30 @@ export default function RootLayout() {
       {
         title: "Create New Task",
         subtitle: "Request a new task",
-        icon: Platform.select({ ios: "symbol:plus.circle", android: "add" }),
+        icon: Platform.select({
+          ios: "symbol:plus.circle",
+          android: "shortcut_compose",
+        }),
         id: "create-task",
         params: { href: "/(tabs)/explore?action=create-task" },
       },
       {
         title: "View your tasks",
         subtitle: "Check your assigned tasks",
-        icon: Platform.select({ ios: "symbol:checklist", android: "task" }),
+        icon: Platform.select({
+          ios: "symbol:checklist",
+          android: "shortcut_bookmark",
+        }),
         id: "tasks",
         params: { href: "/(tabs)/tasks" },
       },
       {
         title: "View Extension requests",
         subtitle: "Check extension requests",
-        icon: Platform.select({ ios: "symbol:puzzlepiece", android: "extension" }),
+        icon: Platform.select({
+          ios: "symbol:puzzlepiece.extension",
+          android: "shortcut_time",
+        }),
         id: "extension-requests",
         params: { href: "/(tabs)/extension-requests" },
       },

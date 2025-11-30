@@ -6,7 +6,7 @@ import { PromotionCard } from "./promotion-card";
 import styles from "./promotion.styles";
 
 const AUTO_SCROLL_INTERVAL = 4000;
-const CARD_HEIGHT = 180;
+const CARD_HEIGHT = 200;
 const HORIZONTAL_PADDING = 20;
 
 export function PromotionCarousel() {
