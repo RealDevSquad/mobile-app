@@ -1,16 +1,21 @@
 {
-  "name": "mobile-app-2.0",
+  "name": "real-dev-squad",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prebuild:android": "expo prebuild --platform android",
+    "build:android:debug": "cd android && ./gradlew assembleDebug",
+    "build:android:release": "cd android && ./gradlew assembleRelease",
+    "build:android": "pnpm prebuild:android && pnpm build:android:release",
+    "build:apk": "pnpm build:android:release"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -30,6 +35,7 @@
     "expo-haptics": "~15.0.7",
     "expo-linear-gradient": "^15.0.7",
     "expo-linking": "~8.0.8",
+    "expo-quick-actions": "^6.0.0",
     "expo-router": "~6.0.14",
     "expo-splash-screen": "~31.0.10",
     "expo-status-bar": "~3.0.8",

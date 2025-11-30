@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useLocalSearchParams } from "expo-router";
 import { CreateTaskRequestModal } from "../../tasks/create-task-request-modal";
 import styles from "./create-task.styles";
 
 export function CreateTaskSection() {
   const [createTaskRequestModalVisible, setCreateTaskRequestModalVisible] = useState(false);
+  const { action } = useLocalSearchParams<{ action: string }>();
+
+  useEffect(() => {
+    if (action === "create-task") {
+      setCreateTaskRequestModalVisible(true);
+    }
+  }, [action]);
 
   return (
     <>

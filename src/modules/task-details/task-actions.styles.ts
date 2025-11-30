@@ -15,7 +15,7 @@ export default StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 14,
     borderRadius: 24,
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     ...(Platform.OS === "android"
       ? { elevation: 10 }
       : {

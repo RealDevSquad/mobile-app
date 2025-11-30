@@ -9,7 +9,15 @@ export function HomeScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <ScrollView style={[styles.container, { paddingTop: insets.top }]}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "#ffffff" }}
+      contentContainerStyle={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom + 20 },
+      ]}
+      showsVerticalScrollIndicator={true}
+      bounces={true}
+    >
       <HomeHeader />
       <PromotionCarousel />
       <FeatureSection />

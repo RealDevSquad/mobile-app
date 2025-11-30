@@ -31,13 +31,15 @@ export function AdminDashboard() {
             ]}
             onPress={() => router.push("/(tabs)/task-requests")}
           >
-            <View style={styles.actionIconContainer}>
-              <FontAwesome5 name="file-alt" size={24} color="#E30464" />
+            <View>
+              <View style={[styles.actionIconContainer, { backgroundColor: "#FCE7F3" }]}>
+                <FontAwesome5 name="file-alt" size={20} color="#E30464" />
+              </View>
+              <Text style={styles.actionTitle}>Task Requests</Text>
+              <Text style={styles.actionDescription}>Manage requests</Text>
             </View>
-            <Text style={styles.actionTitle}>Task Requests</Text>
-            <Text style={styles.actionDescription}>View and manage all task requests</Text>
             <View style={styles.actionArrow}>
-              <FontAwesome5 name="chevron-right" size={14} color="#E30464" />
+              <FontAwesome5 name="arrow-right" size={12} color="#E30464" />
             </View>
           </Pressable>
 
@@ -49,13 +51,15 @@ export function AdminDashboard() {
             ]}
             onPress={() => router.push("/(tabs)/extension-requests")}
           >
-            <View style={styles.actionIconContainer}>
-              <FontAwesome5 name="calendar-plus" size={24} color="#3B82F6" />
+            <View>
+              <View style={[styles.actionIconContainer, { backgroundColor: "#DBEAFE" }]}>
+                <FontAwesome5 name="calendar-plus" size={20} color="#3B82F6" />
+              </View>
+              <Text style={styles.actionTitle}>Extension Requests</Text>
+              <Text style={styles.actionDescription}>Manage extensions</Text>
             </View>
-            <Text style={styles.actionTitle}>Extension Requests</Text>
-            <Text style={styles.actionDescription}>View and manage extension requests</Text>
             <View style={styles.actionArrow}>
-              <FontAwesome5 name="chevron-right" size={14} color="#3B82F6" />
+              <FontAwesome5 name="arrow-right" size={12} color="#3B82F6" />
             </View>
           </Pressable>
         </View>

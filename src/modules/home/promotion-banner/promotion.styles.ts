@@ -17,15 +17,7 @@ export default StyleSheet.create({
     height: 180,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#F5F3FF",
-    shadowColor: "#E30464",
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 8,
+    borderColor: "#F2F2F2",
     overflow: "hidden",
   },
   cardContent: {
