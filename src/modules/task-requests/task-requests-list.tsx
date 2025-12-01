@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, Text, View } from "react-native";
 import { TaskRequestsApi } from "../../api/task-requests/task-requests.api";
@@ -27,6 +28,7 @@ const getStatusLabel = (status: TaskRequestStatus): string => {
 };
 
 export function TaskRequestsList({ status }: TaskRequestsListProps) {
+  const router = useRouter();
   const apiStatus = status === "REJECTED" ? "DENIED" : status;
 
   const { data, isLoading, error } = useQuery({
@@ -69,7 +71,12 @@ export function TaskRequestsList({ status }: TaskRequestsListProps) {
   return (
     <FlatList
       data={taskRequests}
-      renderItem={({ item }) => <TaskRequestCard taskRequest={item} />}
+      renderItem={({ item }) => (
+        <TaskRequestCard
+          taskRequest={item}
+          onPress={() => router.push(`/task-request/${item.id}`)}
+        />
+      )}
       keyExtractor={(item) => item.id}
       style={{ flex: 1, backgroundColor: "#FFFFFF" }}
       contentContainerStyle={styles.listContainer}

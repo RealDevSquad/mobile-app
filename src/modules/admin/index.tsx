@@ -16,11 +16,7 @@ export function AdminDashboard() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <FontAwesome5 name="user-shield" size={32} color="#E30464" />
-          <Text style={styles.title}>Admin Dashboard</Text>
-          <Text style={styles.subtitle}>Super User Panel</Text>
-        </View>
+        <Text style={styles.title}>Dashboard</Text>
 
         <View style={styles.actionsContainer}>
           <Pressable

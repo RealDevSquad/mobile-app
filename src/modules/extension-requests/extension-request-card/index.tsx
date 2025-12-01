@@ -2,7 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  Layout,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { ExtensionRequestDTO } from "../../../api/extension-requests/extension-request.dto";
 import { ExtensionRequestsApi } from "../../../api/extension-requests/extension-requests.api";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
@@ -128,7 +135,7 @@ export function ExtensionRequestCard({ extensionRequest }: ExtensionRequestCardP
   };
 
   return (
-    <View style={styles.card}>
+    <Animated.View style={styles.card} layout={Layout.duration(200)}>
       <View style={styles.cardHeader}>
         <View style={styles.titleContainer}>
           <Text style={styles.title} numberOfLines={2}>
@@ -173,13 +180,13 @@ export function ExtensionRequestCard({ extensionRequest }: ExtensionRequestCardP
           </Pressable>
 
           {isExpanded && (
-            <View style={styles.collapsibleContent}>
+            <Animated.View style={styles.collapsibleContent} entering={FadeIn} exiting={FadeOut}>
               <View style={styles.reasonContainer}>
                 <Text style={styles.reasonLabel}>Reason:</Text>
                 <Text style={styles.reasonText}>{extensionRequest.reason}</Text>
               </View>
               {renderActionButtons()}
-            </View>
+            </Animated.View>
           )}
         </>
       )}
@@ -215,6 +222,6 @@ export function ExtensionRequestCard({ extensionRequest }: ExtensionRequestCardP
         confirmVariant="reject"
         isLoading={updateStatusMutation.isPending && pendingAction === "DENIED"}
       />
-    </View>
+    </Animated.View>
   );
 }

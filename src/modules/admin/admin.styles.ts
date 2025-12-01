@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
+    paddingHorizontal: 20,
     paddingBottom: 40,
   },
   loadingContainer: {
@@ -48,16 +48,10 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "700",
     color: "#1F2937",
-    marginTop: 16,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#6B7280",
-    marginTop: 8,
+    paddingVertical: 20,
     textAlign: "center",
   },
   section: {

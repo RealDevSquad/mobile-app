@@ -1,0 +1,144 @@
+import { StyleSheet } from "react-native";
+
+export default StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  headerSection: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#E5E7EB",
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  titleLine: {
+    height: 24,
+    width: "85%",
+    marginBottom: 8,
+    borderRadius: 4,
+    backgroundColor: "#E5E7EB",
+  },
+  titleLineShort: {
+    height: 24,
+    width: "60%",
+    borderRadius: 4,
+    backgroundColor: "#E5E7EB",
+  },
+  shareButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#E5E7EB",
+  },
+  contentSection: {
+    paddingHorizontal: 20,
+  },
+  detailsCard: {
+    borderRadius: 12,
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    backgroundColor: "#FFFFFF",
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 8,
+    borderBottomColor: "#F3F4F6",
+    borderBottomWidth: 1,
+    marginBottom: 8,
+  },
+  detailLabelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  iconPlaceholder: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#E5E7EB",
+  },
+  labelLine: {
+    height: 16,
+    width: 70,
+    borderRadius: 4,
+    backgroundColor: "#E5E7EB",
+  },
+  valueLine: {
+    height: 16,
+    width: 120,
+    borderRadius: 4,
+    backgroundColor: "#E5E7EB",
+  },
+  statusBadge: {
+    width: 80,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#E5E7EB",
+  },
+  githubSection: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  githubButton: {
+    height: 44,
+    width: "100%",
+    borderRadius: 8,
+    backgroundColor: "#E5E7EB",
+  },
+  usersSection: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  usersTitleLine: {
+    height: 18,
+    width: 120,
+    borderRadius: 4,
+    backgroundColor: "#E5E7EB",
+    marginBottom: 16,
+  },
+  userCard: {
+    height: 120,
+    borderRadius: 8,
+    backgroundColor: "#F9FAFB",
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  skeletonLine: {
+    borderRadius: 4,
+    backgroundColor: "#E5E7EB",
+  },
+});
+

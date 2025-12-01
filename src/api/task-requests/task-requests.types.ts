@@ -38,3 +38,27 @@ export type TCreateTaskRequestDto = {
 };
 
 export type TCreateTaskRequestResponse = TApiResponse<TaskRequestDTO>;
+
+export type GitHubIssueResponse = {
+  id: number;
+  number: number;
+  title: string;
+  body: string;
+  state: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    login: string;
+    avatar_url: string;
+  };
+  assignee: {
+    login: string;
+    avatar_url: string;
+  } | null;
+  labels: {
+    name: string;
+    color: string;
+  }[];
+  comments: number;
+  html_url: string;
+};
