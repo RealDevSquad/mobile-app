@@ -25,7 +25,6 @@ export function ExtensionRequestCard({ extensionRequest }: ExtensionRequestCardP
   const isPending = extensionRequest.status === "PENDING";
   const showActions = isSuperUser && isPending;
 
-  // Simple rotation animation for chevron
   const rotation = useSharedValue(0);
 
   const updateStatusMutation = useMutation({

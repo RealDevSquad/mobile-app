@@ -55,7 +55,6 @@ export function TaskActions({ taskId, task }: TaskActionsProps) {
   return (
     <>
       <View style={styles.actionsContainer}>
-        {/* Update Task */}
         <Pressable
           style={({ pressed }) => [
             styles.actionButtonSecondary,
@@ -101,7 +100,6 @@ export function TaskActions({ taskId, task }: TaskActionsProps) {
         </Pressable>
       </View>
 
-      {/* Modals */}
       <ExtensionRequestModal
         visible={extensionModalVisible}
         onClose={() => setExtensionModalVisible(false)}

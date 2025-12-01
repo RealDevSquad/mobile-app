@@ -112,12 +112,8 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     transform: [{ scale: 0.98 }],
   },
-  taskRequestCard: {
-    // borderLeftWidth: 0, // Removing the border left style
-  },
-  extensionRequestCard: {
-    // borderLeftWidth: 0,
-  },
+  taskRequestCard: {},
+  extensionRequestCard: {},
   actionIconContainer: {
     width: 48,
     height: 48,

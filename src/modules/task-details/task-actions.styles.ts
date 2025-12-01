@@ -28,7 +28,6 @@ export default StyleSheet.create({
     zIndex: 999,
   },
 
-  // 🔹 Primary pink button
   actionButtonPrimary: {
     flex: 1,
     minWidth: 100,
@@ -45,7 +44,6 @@ export default StyleSheet.create({
     elevation: 3,
   },
 
-  // 🔸 Secondary button (white border)
   actionButtonSecondary: {
     flex: 1,
     minWidth: 100,
@@ -60,7 +58,6 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
   },
 
-  // 🩶 Tertiary subtle pink button
   actionButtonTertiary: {
     flex: 1,
     minWidth: 100,
@@ -82,7 +79,6 @@ export default StyleSheet.create({
     opacity: 0.5,
   },
 
-  // 🩷 Text styles
   actionButtonTextPrimary: {
     fontSize: 13,
     fontWeight: "600",

@@ -191,7 +191,6 @@ export default StyleSheet.create({
     backgroundColor: "#FEF2F2",
     marginHorizontal: 20,
     marginTop: 32,
-    marginBottom: 40,
     paddingVertical: 18,
     borderRadius: 16,
     alignItems: "center",

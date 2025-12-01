@@ -3,11 +3,17 @@ import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { SwipeableTabs } from "../../components/SwipeableTabs";
 import { TaskRequestsList } from "./task-requests-list";
-import { TaskRequestsTabs } from "./task-requests-tabs";
 import styles from "./task-requests.styles";
 
 type TaskRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+const TASK_REQUEST_TABS = [
+  { key: "PENDING" as const, label: "Pending" },
+  { key: "APPROVED" as const, label: "Approved" },
+  { key: "REJECTED" as const, label: "Rejected" },
+];
 
 export function TaskRequestsModule() {
   const router = useRouter();
@@ -27,11 +33,15 @@ export function TaskRequestsModule() {
         <View style={styles.placeholder} />
       </View>
 
-      <TaskRequestsTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
-      <View style={styles.contentContainer}>
-        <TaskRequestsList status={activeTab} />
-      </View>
+      <SwipeableTabs<TaskRequestStatus>
+        tabs={TASK_REQUEST_TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      >
+        <TaskRequestsList status="PENDING" />
+        <TaskRequestsList status="APPROVED" />
+        <TaskRequestsList status="REJECTED" />
+      </SwipeableTabs>
     </View>
   );
 }

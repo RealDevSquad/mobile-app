@@ -3,11 +3,17 @@ import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { SwipeableTabs } from "../../components/SwipeableTabs";
 import { ExtensionRequestsList } from "./extension-requests-list";
-import { ExtensionRequestsTabs } from "./extension-requests-tabs";
 import styles from "./extension-requests.styles";
 
 type ExtensionRequestStatus = "PENDING" | "APPROVED" | "DENIED";
+
+const EXTENSION_TABS = [
+  { key: "PENDING" as const, label: "Pending" },
+  { key: "APPROVED" as const, label: "Approved" },
+  { key: "DENIED" as const, label: "Rejected" },
+];
 
 export function ExtensionRequestsModule() {
   const router = useRouter();
@@ -27,11 +33,15 @@ export function ExtensionRequestsModule() {
         <View style={styles.placeholder} />
       </View>
 
-      <ExtensionRequestsTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
-      <View style={styles.contentContainer}>
-        <ExtensionRequestsList status={activeTab} />
-      </View>
+      <SwipeableTabs<ExtensionRequestStatus>
+        tabs={EXTENSION_TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      >
+        <ExtensionRequestsList status="PENDING" />
+        <ExtensionRequestsList status="APPROVED" />
+        <ExtensionRequestsList status="DENIED" />
+      </SwipeableTabs>
     </View>
   );
 }

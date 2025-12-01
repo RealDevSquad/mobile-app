@@ -1,7 +1,6 @@
 import { PaginatedResponse, TApiResponse } from "../common/common.types";
 import { TaskRequestDTO } from "./task-request.dto";
 
-// Request DTOs
 export type TGetTaskRequestsDto = {
   status?: string;
   next?: string;
@@ -15,7 +14,6 @@ export type TTaskRequestActionDto = {
   action: "approve" | "reject";
 };
 
-// Response DTOs
 export type TGetTaskRequestsResponse = PaginatedResponse<TaskRequestDTO> & {
   taskRequests: TaskRequestDTO[];
 };

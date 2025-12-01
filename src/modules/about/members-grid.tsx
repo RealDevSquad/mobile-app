@@ -104,7 +104,6 @@ export function MembersGrid() {
     );
   }
 
-  // Group members into rows
   const rows: MemberUser[][] = [];
   for (let i = 0; i < members.length; i += MEMBERS_PER_ROW) {
     rows.push(members.slice(i, i + MEMBERS_PER_ROW));
@@ -118,7 +117,6 @@ export function MembersGrid() {
             {row.map((member) => (
               <MemberCard key={member.id} member={member} />
             ))}
-            {/* Fill empty spaces in the last row */}
             {row.length < MEMBERS_PER_ROW &&
               Array.from({ length: MEMBERS_PER_ROW - row.length }, (_, idx) => (
                 <View

@@ -1,7 +1,6 @@
 import { TApiResponse } from "../common/common.types";
 import { UserData, UserStatus } from "./user.dto";
 
-// Request DTOs
 export type TGetUserDetailsDto = Record<string, never>;
 
 export type TGetUserStatusDto = Record<string, never>;

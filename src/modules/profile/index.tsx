@@ -62,7 +62,6 @@ export function ProfileModule() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header Section */}
         <View style={styles.headerSection}>
           <View style={styles.avatarContainer}>
             {user.picture?.url ? (
@@ -110,7 +109,6 @@ export function ProfileModule() {
           </View>
         </View>
 
-        {/* Professional Information */}
         {(!!user.company || !!user.designation) && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Professional Information</Text>
@@ -137,7 +135,6 @@ export function ProfileModule() {
           </View>
         )}
 
-        {/* Social Links */}
         {(!!user.github_id || !!user.linkedin_id || !!user.twitter_id || !!user.discordId) && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Social Links</Text>
@@ -172,7 +169,6 @@ export function ProfileModule() {
           </View>
         )}
 
-        {/* Account Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Account Information</Text>
           <View style={styles.card}>
@@ -206,7 +202,6 @@ export function ProfileModule() {
           </View>
         </View>
 
-        {/* Roles */}
         {!!user.roles && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Roles</Text>
@@ -237,7 +232,6 @@ export function ProfileModule() {
           </View>
         )}
 
-        {/* Logout Button */}
         <Pressable
           style={({ pressed }) => [
             styles.logoutButton,
@@ -250,7 +244,6 @@ export function ProfileModule() {
         </Pressable>
       </ScrollView>
 
-      {/* Logout Modal */}
       <LogoutModal
         visible={logoutModalVisible}
         onClose={() => setLogoutModalVisible(false)}

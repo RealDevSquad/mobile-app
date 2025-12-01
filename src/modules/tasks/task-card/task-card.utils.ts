@@ -50,7 +50,6 @@ export const getPriorityLabel = (priority: string): string => {
   }
 };
 
-// Re-export common utilities for backward compatibility
 export {
   formatDateRelative as formatDate,
   getDaysUntilDue,
