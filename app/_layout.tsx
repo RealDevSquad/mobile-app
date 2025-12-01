@@ -15,21 +15,21 @@ export default function RootLayout() {
   useEffect(() => {
     QuickActions.setItems([
       {
-        title: "Made with 💜 by RDS Team",
+        title: "Made by RDS Team",
         subtitle: "Open source community",
         icon: Platform.select({
           ios: "heart",
-          android: null,
+          android: "ic_quick_action_heart",
         }),
         id: "made-with-love",
         params: { href: "https://www.realdevsquad.com" },
       },
       {
-        title: "Create New Task",
+        title: "New Task?",
         subtitle: "Request a new task",
         icon: Platform.select({
           ios: "plus.circle",
-          android: null,
+          android: "ic_quick_action_add",
         }),
         id: "create-task",
         params: { href: "/(tabs)/explore?action=create-task" },
@@ -39,17 +39,17 @@ export default function RootLayout() {
         subtitle: "Check your assigned tasks",
         icon: Platform.select({
           ios: "checklist",
-          android: null,
+          android: "ic_quick_action_checklist",
         }),
         id: "tasks",
         params: { href: "/(tabs)/tasks" },
       },
       {
-        title: "View Extension requests",
+        title: "View ERs",
         subtitle: "Check extension requests",
         icon: Platform.select({
           ios: "puzzlepiece.extension",
-          android: null,
+          android: "ic_quick_action_extension",
         }),
         id: "extension-requests",
         params: { href: "/(tabs)/extension-requests" },
