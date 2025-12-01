@@ -1,7 +1,6 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import * as Clipboard from "expo-clipboard";
 import React, { useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { ExtensionRequestDTO } from "../../api/extension-requests/extension-request.dto";
 import { ActionButton, Sheet } from "../../components/Sheet";
 import { formatDateWithTime } from "../../utils/common.utils";

@@ -89,9 +89,7 @@ export function TaskRequestDetailsSkeleton() {
           </View>
 
           <View style={styles.usersSection}>
-            <Animated.View
-              style={[styles.skeletonLine, styles.usersTitleLine, { opacity }]}
-            />
+            <Animated.View style={[styles.skeletonLine, styles.usersTitleLine, { opacity }]} />
             <Animated.View style={[styles.userCard, { opacity }]} />
             <Animated.View style={[styles.userCard, { opacity }]} />
             <Animated.View style={[styles.userCard, { opacity }]} />
@@ -101,4 +99,3 @@ export function TaskRequestDetailsSkeleton() {
     </View>
   );
 }
-
