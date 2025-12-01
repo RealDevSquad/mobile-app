@@ -14,7 +14,7 @@ export default StyleSheet.create({
   card: {
     borderRadius: 16,
     padding: 20,
-    height: 200,
+    height: 180,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#F2F2F2",
@@ -37,7 +37,7 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: "400",
     color: "#1F2937",
-    lineHeight: 20,
+    lineHeight: 18,
     flex: 1,
     width: "100%",
     marginBottom: 12,

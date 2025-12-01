@@ -1,5 +1,5 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Platform, Pressable, Text, View } from "react-native";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { getInitials } from "../../utils/common.utils";
 import styles from "./home.styles";
@@ -7,12 +7,13 @@ import styles from "./home.styles";
 export function HomeHeader() {
   const { data: user } = useCurrentUser();
 
+  const isAndroid = Platform.OS === "android";
   const displayName = user?.first_name || user?.username || "User";
   const capitalizedName = displayName.charAt(0).toUpperCase() + displayName.slice(1).toLowerCase();
 
   const initials = getInitials(user?.first_name, user?.last_name, user?.username);
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: isAndroid ? 20 : 0 }]}>
       <View style={styles.headerLeft}>
         <Text style={styles.username}>{`Welcome ${capitalizedName}`}</Text>
       </View>

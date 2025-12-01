@@ -9,13 +9,6 @@ export default StyleSheet.create({
     marginHorizontal: 20,
     borderWidth: 1,
     borderColor: "#F5F3FF",
-    shadowColor: "#E30464",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
     elevation: 3,
   },
   cardHeader: {
