@@ -1,23 +1,3 @@
-export const getStatusColor = (status: string): string => {
-  const statusUpper = status.toUpperCase();
-  switch (statusUpper) {
-    case "COMPLETED":
-    case "DONE":
-      return "#10B981";
-    case "IN_PROGRESS":
-    case "IN PROGRESS":
-      return "#F59E0B";
-    case "BLOCKED":
-      return "#EF4444";
-    case "ASSIGNED":
-      return "#3B82F6";
-    case "AVAILABLE":
-      return "#8B5CF6";
-    default:
-      return "#6B7280";
-  }
-};
-
 export const getPriorityColor = (priority: string): string => {
   const priorityUpper = priority.toUpperCase();
   switch (priorityUpper) {
@@ -55,11 +35,6 @@ export {
   getDaysUntilDue,
   isOverdue,
   getInitialsFromName as getAssigneeInitials,
+  getStatusColor,
+  formatStatus,
 } from "../../../utils/common.utils";
-
-export const formatStatus = (status: string): string => {
-  return status
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-};

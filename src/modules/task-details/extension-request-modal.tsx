@@ -12,6 +12,7 @@ import {
 } from "../../api/extension-requests/extension-requests.schema";
 import { TaskDetailsDTO } from "../../api/tasks/task.dto";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { formatDateFromDateObject } from "../../utils/common.utils";
 import { Sheet, ActionButton } from "../../components/Sheet";
 import styles from "./extension-request-modal.styles";
 
@@ -111,16 +112,6 @@ export function ExtensionRequestModal({
     }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   const actionButtons: ActionButton[] = [
     {
       label: "Cancel",
@@ -195,7 +186,7 @@ export function ExtensionRequestModal({
         <View style={styles.formGroup}>
           <Text style={styles.label}>Current End Date</Text>
           <View style={styles.displayValue}>
-            <Text style={styles.displayValueText}>{formatDate(oldEndsOn)}</Text>
+            <Text style={styles.displayValueText}>{formatDateFromDateObject(oldEndsOn)}</Text>
           </View>
         </View>
       )}
@@ -212,7 +203,7 @@ export function ExtensionRequestModal({
                 onPress={() => setShowDatePicker(true)}
               >
                 <FontAwesome5 name="calendar-alt" size={16} color="#6B7280" />
-                <Text style={styles.datePickerText}>{formatDate(value)}</Text>
+                <Text style={styles.datePickerText}>{formatDateFromDateObject(value)}</Text>
               </Pressable>
               {showDatePicker && (
                 <DateTimePicker

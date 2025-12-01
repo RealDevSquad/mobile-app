@@ -130,3 +130,83 @@ export const getDaysUntilDue = (timestamp: number): number => {
 export const isOverdue = (timestamp: number): boolean => {
   return getDaysUntilDue(timestamp) < 0;
 };
+
+/**
+ * Format a Date object to string with time (e.g., "January 15, 2024, 10:30 AM")
+ * Used for date pickers and Date objects
+ * @param date - Date object
+ * @returns Formatted date string with time
+ */
+export const formatDateFromDateObject = (date: Date): string => {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+/**
+ * Format timestamp that can be in seconds or milliseconds
+ * Handles both formats and converts to formatted date string
+ * @param timestamp - Unix timestamp in seconds or milliseconds
+ * @returns Formatted date string
+ */
+export const formatTimestamp = (timestamp: number): string => {
+  const timestampInSeconds = timestamp >= 1e12 ? Math.floor(timestamp / 1000) : timestamp;
+  return formatDateFull(timestampInSeconds);
+};
+
+/**
+ * Get status color based on status string
+ * Works for task statuses, task request statuses, and extension request statuses
+ * @param status - Status string
+ * @returns Hex color code
+ */
+export const getStatusColor = (status: string): string => {
+  const statusUpper = status.toUpperCase();
+  switch (statusUpper) {
+    // Task statuses
+    case "COMPLETED":
+    case "DONE":
+      return "#10B981";
+    case "IN_PROGRESS":
+    case "IN PROGRESS":
+      return "#F59E0B";
+    case "BLOCKED":
+      return "#EF4444";
+    case "ASSIGNED":
+      return "#3B82F6";
+    case "AVAILABLE":
+      return "#8B5CF6";
+    // Task request and extension request statuses
+    case "APPROVED":
+      return "#10B981";
+    case "REJECTED":
+    case "DENIED":
+      return "#EF4444";
+    case "PENDING":
+      return "#F59E0B";
+    default:
+      return "#6B7280";
+  }
+};
+
+/**
+ * Format status string to readable format (e.g., "IN_PROGRESS" -> "In Progress")
+ * Works for task statuses, task request statuses, and extension request statuses
+ * @param status - Status string
+ * @returns Formatted status string
+ */
+export const formatStatus = (status: string): string => {
+  const statusUpper = status.toUpperCase();
+  // Special case for DENIED -> Rejected
+  if (statusUpper === "DENIED") {
+    return "Rejected";
+  }
+  return status
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};

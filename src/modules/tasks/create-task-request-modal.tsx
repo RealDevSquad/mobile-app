@@ -15,7 +15,7 @@ import {
   TTaskRequestFormData,
 } from "../../api/tasks/tasks.schema";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
-import { formatDateWithTime } from "../../utils/common.utils";
+import { formatDateFromDateObject } from "../../utils/common.utils";
 import { Sheet, ActionButton } from "../../components/Sheet";
 import styles from "./create-task-request-modal.styles";
 
@@ -160,11 +160,6 @@ export function CreateTaskRequestModal({ visible, onClose }: CreateTaskRequestMo
     }
   };
 
-  const formatDate = (date: Date) => {
-    const timestamp = Math.floor(date.getTime() / 1000);
-    return formatDateWithTime(timestamp);
-  };
-
   const getActionButtons = (): ActionButton[] => {
     if (step === "url-input") {
       return [
@@ -305,7 +300,7 @@ export function CreateTaskRequestModal({ visible, onClose }: CreateTaskRequestMo
                   onPress={() => setShowStartDatePicker(true)}
                 >
                   <FontAwesome5 name="calendar-alt" size={16} color="#6B7280" />
-                  <Text style={styles.datePickerText}>{formatDate(value)}</Text>
+                  <Text style={styles.datePickerText}>{formatDateFromDateObject(value)}</Text>
                 </Pressable>
                 {showStartDatePicker && (
                   <DateTimePicker
@@ -343,7 +338,7 @@ export function CreateTaskRequestModal({ visible, onClose }: CreateTaskRequestMo
                   onPress={() => setShowEndDatePicker(true)}
                 >
                   <FontAwesome5 name="calendar-alt" size={16} color="#6B7280" />
-                  <Text style={styles.datePickerText}>{formatDate(value)}</Text>
+                  <Text style={styles.datePickerText}>{formatDateFromDateObject(value)}</Text>
                 </Pressable>
                 {showEndDatePicker && (
                   <DateTimePicker

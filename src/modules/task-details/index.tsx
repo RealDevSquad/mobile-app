@@ -7,7 +7,7 @@ import { Pressable, ScrollView, Share, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TasksApi } from "../../api/tasks/tasks.api";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
-import { getInitialsFromName } from "../../utils/common.utils";
+import { formatDateFull, getInitialsFromName } from "../../utils/common.utils";
 import {
   getDaysUntilDue,
   getPriorityColor,
@@ -150,11 +150,7 @@ export function TaskDetailsModule({ taskId }: TaskDetailsModuleProps) {
                     daysUntilDue <= 3 && !overdue && { color: "#F59E0B" },
                   ]}
                 >
-                  {new Date(task.endsOn * 1000).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {formatDateFull(task.endsOn)}
                 </Text>
               </View>
             ) : null}

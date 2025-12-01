@@ -2,7 +2,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React, { useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProgressUpdateDTO } from "../../api/tasks/task.dto";
-import { getInitialsFromName } from "../../utils/common.utils";
+import { formatDateShort, getInitialsFromName } from "../../utils/common.utils";
 import styles from "./progress-accordion.styles";
 
 type ProgressAccordionItemProps = {
@@ -15,11 +15,7 @@ function ProgressAccordionItem({ progress, isLast }: ProgressAccordionItemProps)
   const user = progress.userData;
   const userName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username;
   const initials = getInitialsFromName(userName);
-  const updateDate = new Date(progress.date * 1000).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  const updateDate = formatDateShort(progress.date);
 
   return (
     <View style={[styles.accordionItem, isLast && styles.accordionItemLast]}>

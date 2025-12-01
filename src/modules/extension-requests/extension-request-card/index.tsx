@@ -13,6 +13,7 @@ import Animated, {
 import { ExtensionRequestDTO } from "../../../api/extension-requests/extension-request.dto";
 import { ExtensionRequestsApi } from "../../../api/extension-requests/extension-requests.api";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
+import { formatDateShort } from "../../../utils/common.utils";
 import { StatusBadge } from "../status-badge";
 import { ConfirmationModal } from "./confirmation-modal";
 import styles from "./extension-request-card.styles";
@@ -146,22 +147,17 @@ export function ExtensionRequestCard({ extensionRequest }: ExtensionRequestCardP
       </View>
 
       <Text style={styles.meta}>
-        Request #{extensionRequest.requestNumber} •{" "}
-        {new Date(extensionRequest.timestamp * 1000).toLocaleDateString()}
+        Request #{extensionRequest.requestNumber} • {formatDateShort(extensionRequest.timestamp)}
       </Text>
 
       <View style={styles.datesContainer}>
         <View style={styles.dateItem}>
           <Text style={styles.dateLabel}>Old Deadline:</Text>
-          <Text style={styles.dateValue}>
-            {new Date(extensionRequest.oldEndsOn * 1000).toLocaleDateString()}
-          </Text>
+          <Text style={styles.dateValue}>{formatDateShort(extensionRequest.oldEndsOn)}</Text>
         </View>
         <View style={styles.dateItem}>
           <Text style={styles.dateLabel}>New Deadline:</Text>
-          <Text style={styles.dateValue}>
-            {new Date(extensionRequest.newEndsOn * 1000).toLocaleDateString()}
-          </Text>
+          <Text style={styles.dateValue}>{formatDateShort(extensionRequest.newEndsOn)}</Text>
         </View>
       </View>
 

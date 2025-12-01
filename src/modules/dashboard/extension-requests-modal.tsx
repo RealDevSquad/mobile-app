@@ -3,6 +3,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { ExtensionRequestsApi } from "../../api/extension-requests/extension-requests.api";
+import { formatDateShort } from "../../utils/common.utils";
 import { Sheet } from "../../components/Sheet";
 import styles from "./extension-requests-modal.styles";
 
@@ -71,20 +72,16 @@ export function ExtensionRequestsModal({ visible, onClose }: ExtensionRequestsMo
               </View>
             </View>
             <Text style={styles.requestMeta}>
-              Request #{item.requestNumber} • {new Date(item.timestamp * 1000).toLocaleDateString()}
+              Request #{item.requestNumber} • {formatDateShort(item.timestamp)}
             </Text>
             <View style={styles.datesContainer}>
               <View style={styles.dateItem}>
                 <Text style={styles.dateLabel}>Old Deadline:</Text>
-                <Text style={styles.dateValue}>
-                  {new Date(item.oldEndsOn * 1000).toLocaleDateString()}
-                </Text>
+                <Text style={styles.dateValue}>{formatDateShort(item.oldEndsOn)}</Text>
               </View>
               <View style={styles.dateItem}>
                 <Text style={styles.dateLabel}>New Deadline:</Text>
-                <Text style={styles.dateValue}>
-                  {new Date(item.newEndsOn * 1000).toLocaleDateString()}
-                </Text>
+                <Text style={styles.dateValue}>{formatDateShort(item.newEndsOn)}</Text>
               </View>
             </View>
             {!!item.reason && (

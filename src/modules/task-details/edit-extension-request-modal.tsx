@@ -11,6 +11,7 @@ import {
   updateExtensionRequestFormSchema,
   TUpdateExtensionRequestFormFormData,
 } from "../../api/extension-requests/extension-requests.schema";
+import { formatDateFromDateObject } from "../../utils/common.utils";
 import { Sheet, ActionButton } from "../../components/Sheet";
 import styles from "./extension-request-modal.styles";
 
@@ -93,16 +94,6 @@ export function EditExtensionRequestModal({
     }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   const actionButtons: ActionButton[] = [
     {
       label: "Cancel",
@@ -176,7 +167,7 @@ export function EditExtensionRequestModal({
       <View style={styles.formGroup}>
         <Text style={styles.label}>Current End Date</Text>
         <View style={styles.displayValue}>
-          <Text style={styles.displayValueText}>{formatDate(oldEndsOn)}</Text>
+          <Text style={styles.displayValueText}>{formatDateFromDateObject(oldEndsOn)}</Text>
         </View>
       </View>
 
@@ -192,7 +183,7 @@ export function EditExtensionRequestModal({
                 onPress={() => setShowDatePicker(true)}
               >
                 <FontAwesome5 name="calendar-alt" size={16} color="#6B7280" />
-                <Text style={styles.datePickerText}>{formatDate(value)}</Text>
+                <Text style={styles.datePickerText}>{formatDateFromDateObject(value)}</Text>
               </Pressable>
               {showDatePicker && (
                 <DateTimePicker

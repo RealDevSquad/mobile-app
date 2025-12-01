@@ -3,6 +3,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React from "react";
 import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
 import { TaskRequestsApi } from "../../api/task-requests/task-requests.api";
+import { formatDateShort } from "../../utils/common.utils";
 import { Sheet } from "../../components/Sheet";
 import styles from "./task-requests-modal.styles";
 
@@ -70,7 +71,7 @@ export function TaskRequestsModal({ visible, onClose }: TaskRequestsModalProps) 
             </View>
             <Text style={styles.requestMeta}>
               {item.usersCount} {item.usersCount === 1 ? "user" : "users"} •{" "}
-              {new Date(item.createdAt * 1000).toLocaleDateString()}
+              {formatDateShort(item.createdAt)}
             </Text>
             {!!item.externalIssueHtmlUrl && (
               <Pressable

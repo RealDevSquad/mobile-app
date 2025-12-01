@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TaskRequestsApi } from "../../api/task-requests/task-requests.api";
 import { GitHubIssueResponse } from "../../api/task-requests/task-requests.types";
 import { UsersApi } from "../../api/users/users.api";
-import { formatDateFull, getInitialsFromName } from "../../utils/common.utils";
+import { formatTimestamp, getInitialsFromName } from "../../utils/common.utils";
 import { StatusBadge } from "../task-requests/task-request-card/status-badge";
 import { TaskRequestActions } from "./task-request-actions";
 import { TaskRequestDetailsSkeleton } from "./task-request-details-skeleton";
@@ -16,11 +16,6 @@ import styles from "./task-request-details.styles";
 
 type TaskRequestDetailsModuleProps = {
   taskRequestId: string;
-};
-
-const formatTimestamp = (timestamp: number): string => {
-  const timestampInSeconds = timestamp >= 1e12 ? Math.floor(timestamp / 1000) : timestamp;
-  return formatDateFull(timestampInSeconds);
 };
 
 const fetchGitHubIssue = async (url: string): Promise<GitHubIssueResponse> => {

@@ -11,6 +11,7 @@ import {
   updateTaskStatusFormSchema,
   TUpdateTaskStatusFormData,
 } from "../../api/tasks/tasks.schema";
+import { formatStatus } from "../../utils/common.utils";
 import { Sheet, ActionButton } from "../../components/Sheet";
 import styles from "./update-task-modal.styles";
 
@@ -88,13 +89,6 @@ export function UpdateTaskModal({ visible, onClose, taskId, task }: UpdateTaskMo
   const handleStatusSelect = (selectedStatus: string, onChange: (value: string) => void) => {
     onChange(selectedStatus);
     setShowStatusDropdown(false);
-  };
-
-  const formatStatus = (status: string) => {
-    return status
-      .split("_")
-      .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-      .join(" ");
   };
 
   const actionButtons: ActionButton[] = [

@@ -62,9 +62,7 @@ export function TaskRequestCard({ taskRequest, onPress }: TaskRequestCardProps) 
         <View style={styles.footerLeft}>
           <View style={styles.dateContainer}>
             <FontAwesome5 name="calendar-alt" size={12} color="#6B7280" />
-            <Text style={styles.dateText}>
-              {new Date(taskRequest.createdAt * 1000).toLocaleDateString()}
-            </Text>
+            <Text style={styles.dateText}>{formatDateShort(taskRequest.createdAt)}</Text>
           </View>
         </View>
         {!!hasGithubLink && (
