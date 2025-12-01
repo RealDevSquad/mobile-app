@@ -1,10 +1,8 @@
 import { StyleSheet } from "react-native";
+import { ContainerStyles, HeaderStyles, Colors } from "../../styles/common.styles";
 
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
+  container: ContainerStyles.base,
   scrollContent: {
     paddingTop: 20,
     paddingBottom: 100,
@@ -18,28 +16,15 @@ export default StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F3F4F6",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
-    lineHeight: 28,
-    flex: 1,
-  },
+  backButton: HeaderStyles.backButton,
+  title: HeaderStyles.title,
   shareButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.backgroundGray,
   },
   contentSection: {
     paddingHorizontal: 20,
@@ -51,14 +36,14 @@ export default StyleSheet.create({
     paddingHorizontal: 8,
     marginBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: Colors.borderGray,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 6,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: Colors.backgroundGray,
   },
   detailLabelContainer: {
     flexDirection: "row",
@@ -69,25 +54,25 @@ export default StyleSheet.create({
   detailLabel: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#374151",
+    color: Colors.textTertiary,
   },
   detailValue: {
     fontSize: 14,
     fontWeight: "400",
-    color: "#111827",
+    color: Colors.textSecondary,
     flex: 1,
     textAlign: "right",
   },
   typeTag: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.backgroundGray,
     borderRadius: 6,
   },
   typeText: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#374151",
+    color: Colors.textTertiary,
   },
   githubSection: {
     borderRadius: 12,
@@ -101,14 +86,14 @@ export default StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     width: "100%",
-    backgroundColor: "#111827",
+    backgroundColor: Colors.dark,
     borderRadius: 8,
     alignSelf: "flex-start",
   },
   githubButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: Colors.textWhite,
   },
   usersSection: {
     borderRadius: 12,
@@ -119,16 +104,16 @@ export default StyleSheet.create({
   usersTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#111827",
+    color: Colors.textSecondary,
     marginBottom: 16,
   },
   userCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.backgroundWhite,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.borderGray,
   },
   userHeader: {
     flexDirection: "row",
@@ -140,14 +125,14 @@ export default StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#E30464",
+    backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   userAvatarText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: Colors.textWhite,
   },
   userInfo: {
     flex: 1,
@@ -155,13 +140,13 @@ export default StyleSheet.create({
   userName: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#111827",
+    color: Colors.textSecondary,
     marginBottom: 2,
   },
   userUsername: {
     fontSize: 13,
     fontWeight: "400",
-    color: "#6B7280",
+    color: Colors.textGray,
   },
   userDetails: {
     gap: 8,
@@ -174,53 +159,43 @@ export default StyleSheet.create({
   userDetailLabel: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#6B7280",
+    color: Colors.textGray,
   },
   userDetailValue: {
     fontSize: 13,
     fontWeight: "400",
-    color: "#111827",
+    color: Colors.textSecondary,
   },
   userDescription: {
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
+    borderTopColor: Colors.backgroundGray,
   },
   userDescriptionText: {
     fontSize: 13,
     fontWeight: "400",
-    color: "#374151",
+    color: Colors.textTertiary,
     lineHeight: 18,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
+  loadingContainer: ContainerStyles.loading,
+  errorContainer: ContainerStyles.error,
   errorText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#EF4444",
+    color: Colors.error,
     textAlign: "center",
     marginBottom: 8,
   },
   errorSubtext: {
     fontSize: 14,
-    color: "#6B7280",
+    color: Colors.textGray,
     textAlign: "center",
   },
   sectionTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#111827",
+    color: Colors.textSecondary,
     marginBottom: 16,
   },
   githubIssueSection: {
@@ -228,22 +203,22 @@ export default StyleSheet.create({
     paddingVertical: 20,
   },
   githubIssueCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.backgroundWhite,
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.borderGray,
   },
   githubIssueBody: {
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
+    borderTopColor: Colors.backgroundGray,
   },
   githubIssueBodyText: {
     fontSize: 13,
     fontWeight: "400",
-    color: "#374151",
+    color: Colors.textTertiary,
     lineHeight: 18,
   },
   labelsContainer: {
@@ -265,7 +240,7 @@ export default StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: Colors.textGray,
     textAlign: "center",
     paddingVertical: 12,
   },

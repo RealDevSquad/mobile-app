@@ -1,81 +1,19 @@
 import { StyleSheet } from "react-native";
+import { CardStyles, BadgeStyles, InfoRowStyles, Colors } from "../../../styles/common.styles";
 
 export default StyleSheet.create({
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    marginHorizontal: 20,
-    borderWidth: 1,
-    borderColor: "#F5F3FF",
-    elevation: 3,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 12,
-  },
-  titleContainer: {
-    flex: 1,
-    marginRight: 12,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1F2937",
-    lineHeight: 22,
-    marginBottom: 8,
-  },
-  statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignSelf: "flex-start",
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  cardBody: {
-    marginBottom: 12,
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  infoLabel: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#6B7280",
-    marginRight: 8,
-    minWidth: 70,
-  },
-  infoValue: {
-    fontSize: 12,
-    fontWeight: "400",
-    color: "#1F2937",
-    flex: 1,
-  },
-  cardFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#F5F3FF",
-  },
+  card: CardStyles.base,
+  cardHeader: CardStyles.header,
+  titleContainer: CardStyles.titleContainer,
+  title: CardStyles.title,
+  statusBadge: BadgeStyles.base,
+  statusDot: BadgeStyles.statusDot,
+  statusText: BadgeStyles.text,
+  cardBody: CardStyles.body,
+  infoRow: InfoRowStyles.container,
+  infoLabel: InfoRowStyles.label,
+  infoValue: InfoRowStyles.value,
+  cardFooter: CardStyles.footer,
   footerLeft: {
     flexDirection: "row",
     alignItems: "center",
@@ -88,7 +26,7 @@ export default StyleSheet.create({
   dateText: {
     fontSize: 11,
     fontWeight: "400",
-    color: "#6B7280",
+    color: Colors.textGray,
     marginLeft: 4,
   },
   githubIcon: {

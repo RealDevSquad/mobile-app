@@ -1,4 +1,5 @@
 import { StyleSheet, Platform } from "react-native";
+import { ButtonStyles, Colors } from "../../../styles/common.styles";
 
 export default StyleSheet.create({
   actionsContainer: {
@@ -24,80 +25,51 @@ export default StyleSheet.create({
           shadowOpacity: 0.12,
           shadowRadius: 8,
         }),
-
     zIndex: 999,
   },
-
   actionButtonPrimary: {
     flex: 1,
     minWidth: 100,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E30464",
+    ...ButtonStyles.base,
     borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    shadowColor: "#E30464",
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    ...ButtonStyles.primary,
+    ...(Platform.OS === "ios" && {
+      shadowColor: Colors.primary,
+      shadowOpacity: 0.25,
+      shadowRadius: 6,
+    }),
   },
-
   actionButtonSecondary: {
     flex: 1,
     minWidth: 100,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
+    ...ButtonStyles.base,
     borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: "#E30464",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    ...ButtonStyles.secondary,
   },
-
   actionButtonTertiary: {
     flex: 1,
     minWidth: 100,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(227, 4, 100, 0.08)",
+    ...ButtonStyles.base,
     borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    ...ButtonStyles.tertiary,
   },
-
-  actionButtonPressed: {
-    opacity: 0.8,
-    transform: [{ scale: 0.98 }],
-  },
-
+  actionButtonPressed: ButtonStyles.pressed,
   actionButtonDisabled: {
     opacity: 0.5,
   },
-
   actionButtonTextPrimary: {
+    ...ButtonStyles.text,
     fontSize: 13,
-    fontWeight: "600",
-    color: "#fff",
     textAlign: "center",
-    letterSpacing: 0.3,
   },
   actionButtonTextSecondary: {
+    ...ButtonStyles.textSecondary,
     fontSize: 13,
-    fontWeight: "600",
-    color: "#E30464",
     textAlign: "center",
-    letterSpacing: 0.3,
   },
   actionButtonTextTertiary: {
+    ...ButtonStyles.textTertiary,
     fontSize: 13,
-    fontWeight: "600",
-    color: "#A91C56",
     textAlign: "center",
-    letterSpacing: 0.3,
   },
 });

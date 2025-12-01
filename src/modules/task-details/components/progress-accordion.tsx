@@ -1,8 +1,8 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React, { useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { ProgressUpdateDTO } from "../../api/tasks/task.dto";
-import { formatDateShort, getInitialsFromName } from "../../utils/common.utils";
+import { ProgressUpdateDTO } from "../../../api/tasks/task.dto";
+import { formatDateShort, getInitialsFromName } from "../../../utils/common.utils";
 import styles from "./progress-accordion.styles";
 
 type ProgressAccordionItemProps = {

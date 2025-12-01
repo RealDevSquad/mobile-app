@@ -1,9 +1,9 @@
 import { StyleSheet } from "react-native";
+import { ModalStyles, ButtonStyles, Colors } from "../styles/common.styles";
 
 export default StyleSheet.create({
   backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    ...ModalStyles.overlay,
     justifyContent: "flex-end",
   },
   container: {
@@ -28,7 +28,7 @@ export default StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#111827",
+    color: Colors.textSecondary,
     letterSpacing: -0.5,
   },
   closeButton: {
@@ -37,10 +37,10 @@ export default StyleSheet.create({
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.backgroundGray,
   },
   closeButtonPressed: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: Colors.borderGray,
     transform: [{ scale: 0.95 }],
   },
   content: {
@@ -57,40 +57,23 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: Colors.borderGray,
   },
   button: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
+    ...ButtonStyles.base,
   },
-  secondaryButton: {
-    backgroundColor: "#F3F4F6",
-  },
-  primaryButton: {
-    backgroundColor: "#E30464",
-  },
+  secondaryButton: ButtonStyles.cancel,
+  primaryButton: ButtonStyles.primary,
   dangerButton: {
-    backgroundColor: "#DC2626",
+    backgroundColor: Colors.errorDark,
   },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
+  buttonDisabled: ButtonStyles.disabled,
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: Colors.textTertiary,
   },
-  primaryButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  dangerButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
+  primaryButtonText: ButtonStyles.text,
+  dangerButtonText: ButtonStyles.text,
 });

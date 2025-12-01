@@ -1,4 +1,5 @@
 import { StyleSheet, Platform } from "react-native";
+import { ButtonStyles, Colors } from "../../styles/common.styles";
 
 export default StyleSheet.create({
   actionsContainer: {
@@ -24,53 +25,25 @@ export default StyleSheet.create({
         }),
     zIndex: 999,
   },
-
   actionButton: {
     flex: 1,
     minWidth: 100,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    ...ButtonStyles.base,
     borderRadius: 14,
-    gap: 8,
   },
-
   approveButton: {
-    backgroundColor: "#E30464",
-    shadowColor: "#E30464",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    ...ButtonStyles.primary,
+    ...(Platform.OS === "ios" && {
+      shadowColor: Colors.primary,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 6,
+    }),
   },
-
-  rejectButton: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1.5,
-    borderColor: "#E30464",
-  },
-
-  approveButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FFFFFF",
-    letterSpacing: 0.3,
-  },
-
-  rejectButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#E30464",
-    letterSpacing: 0.3,
-  },
-
-  actionButtonPressed: {
-    opacity: 0.8,
-    transform: [{ scale: 0.98 }],
-  },
-
+  rejectButton: ButtonStyles.secondary,
+  approveButtonText: ButtonStyles.text,
+  rejectButtonText: ButtonStyles.textSecondary,
+  actionButtonPressed: ButtonStyles.pressed,
   actionButtonDisabled: {
     opacity: 0.5,
   },

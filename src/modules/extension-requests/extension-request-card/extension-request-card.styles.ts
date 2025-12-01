@@ -1,35 +1,24 @@
 import { StyleSheet } from "react-native";
+import { ButtonStyles, CardStyles, Colors } from "../../../styles/common.styles";
 
 export default StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
+    ...CardStyles.base,
     paddingBottom: 0,
-    marginBottom: 12,
-    marginHorizontal: 20,
-    borderWidth: 1,
-    borderColor: "#F5F3FF",
-    elevation: 3,
   },
   cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    ...CardStyles.header,
     marginBottom: 4,
   },
-  titleContainer: {
-    flex: 1,
-    marginRight: 12,
-  },
+  titleContainer: CardStyles.titleContainer,
   title: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: Colors.textPrimary,
   },
   meta: {
     fontSize: 14,
-    color: "#6B7280",
+    color: Colors.textGray,
     marginBottom: 12,
   },
   datesContainer: {
@@ -42,19 +31,19 @@ export default StyleSheet.create({
   },
   dateLabel: {
     fontSize: 12,
-    color: "#6B7280",
+    color: Colors.textGray,
     marginBottom: 4,
   },
   dateValue: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1F2937",
+    color: Colors.textPrimary,
   },
   reasonToggle: {
     paddingVertical: 12,
     marginTop: 8,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: Colors.borderGray,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -70,13 +59,13 @@ export default StyleSheet.create({
   },
   reasonLabel: {
     fontSize: 12,
-    color: "#6B7280",
+    color: Colors.textGray,
     marginBottom: 4,
     fontWeight: "600",
   },
   reasonText: {
     fontSize: 14,
-    color: "#1F2937",
+    color: Colors.textPrimary,
     lineHeight: 20,
   },
   actionsContainer: {
@@ -85,33 +74,12 @@ export default StyleSheet.create({
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: Colors.borderGray,
   },
-  actionButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    gap: 8,
-  },
-  approveButton: {
-    backgroundColor: "#10B981",
-  },
-  rejectButton: {
-    backgroundColor: "#EF4444",
-  },
-  actionButtonPressed: {
-    opacity: 0.8,
-  },
-  actionButtonDisabled: {
-    opacity: 0.6,
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
+  actionButton: ButtonStyles.base,
+  approveButton: ButtonStyles.success,
+  rejectButton: ButtonStyles.danger,
+  actionButtonPressed: ButtonStyles.pressed,
+  actionButtonDisabled: ButtonStyles.disabled,
+  actionButtonText: ButtonStyles.text,
 });

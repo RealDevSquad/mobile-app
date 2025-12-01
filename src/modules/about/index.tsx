@@ -5,6 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MembersGrid } from "./members-grid";
 import styles from "./about.styles";
+import { appConfig } from "../../config/app.config";
 
 const RDS_DESCRIPTION =
   "Real Dev Squad is an online non-profit open source free fun community for people in tech, mainly developers, designers, college students, or product managers, to come, learn and contribute towards building a platform for our community, that helps upskill everyone.\n\nWe are an inclusive, respectful, warm, motivated and committed squad of people who constantly grow together and tackle bigger and harder challenges to ensure we become some of the best problem solvers, engineers, designers and more out there.";
@@ -73,7 +74,7 @@ export function AboutModule() {
           <View style={styles.logoContainer}>
             <Image source={logoSource} style={styles.logo} />
           </View>
-          <Text style={styles.title}>Real Dev Squad</Text>
+          <Text style={styles.title}>{appConfig.appName}</Text>
           <SocialLinks />
         </View>
 

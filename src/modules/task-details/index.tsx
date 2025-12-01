@@ -15,9 +15,9 @@ import {
   isOverdue,
 } from "../tasks/task-card/task-card.utils";
 import { StatusBadge } from "../tasks/task-card/status-badge";
-import { ProgressAccordion } from "./progress-accordion";
-import { TaskActions } from "./task-actions";
-import { TaskDetailsSkeleton } from "./task-details-skeleton";
+import { ProgressAccordion } from "./components/progress-accordion";
+import { TaskActions } from "./components/task-actions";
+import { TaskDetailsSkeleton } from "./components/task-details-skeleton";
 import styles from "./task-details.styles";
 
 type TaskDetailsModuleProps = {

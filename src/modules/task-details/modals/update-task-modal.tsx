@@ -5,14 +5,14 @@ import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import Slider from "@react-native-community/slider";
-import { TasksApi } from "../../api/tasks/tasks.api";
-import { TaskDetailsDTO } from "../../api/tasks/task.dto";
+import { TasksApi } from "../../../api/tasks/tasks.api";
+import { TaskDetailsDTO } from "../../../api/tasks/task.dto";
 import {
   updateTaskStatusFormSchema,
   TUpdateTaskStatusFormData,
-} from "../../api/tasks/tasks.schema";
-import { formatStatus } from "../../utils/common.utils";
-import { Sheet, ActionButton } from "../../components/Sheet";
+} from "../../../api/tasks/tasks.schema";
+import { formatStatus } from "../../../utils/common.utils";
+import { Sheet, ActionButton } from "../../../components/Sheet";
 import styles from "./update-task-modal.styles";
 
 const STATUS_OPTIONS = [

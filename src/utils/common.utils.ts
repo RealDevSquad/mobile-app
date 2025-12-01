@@ -1,14 +1,3 @@
-/**
- * Common utility functions used across modules
- */
-
-/**
- * Get user initials from first name, last name, or username
- * @param firstName - User's first name
- * @param lastName - User's last name
- * @param username - User's username
- * @returns Initials string (e.g., "JD" for John Doe)
- */
 export const getInitials = (firstName?: string, lastName?: string, username?: string): string => {
   if (firstName && lastName) {
     return (firstName[0] + lastName[0]).toUpperCase();
@@ -22,11 +11,6 @@ export const getInitials = (firstName?: string, lastName?: string, username?: st
   return "U";
 };
 
-/**
- * Get initials from a full name string (e.g., "John Doe" -> "JD")
- * @param fullName - Full name string
- * @returns Initials string
- */
 export const getInitialsFromName = (fullName: string): string => {
   if (!fullName) return "?";
   const parts = fullName.split(" ");
@@ -36,12 +20,6 @@ export const getInitialsFromName = (fullName: string): string => {
   return fullName.substring(0, 2).toUpperCase();
 };
 
-/**
- * Format date to full readable format (e.g., "January 15, 2024")
- * API returns timestamps in seconds, so we convert to milliseconds
- * @param timestamp - Unix timestamp in seconds
- * @returns Formatted date string
- */
 export const formatDateFull = (timestamp: number): string => {
   const date = new Date(timestamp * 1000);
   return date.toLocaleDateString("en-US", {
@@ -51,12 +29,6 @@ export const formatDateFull = (timestamp: number): string => {
   });
 };
 
-/**
- * Format date with time (e.g., "January 15, 2024, 10:30 AM")
- * API returns timestamps in seconds, so we convert to milliseconds
- * @param timestamp - Unix timestamp in seconds
- * @returns Formatted date string with time
- */
 export const formatDateWithTime = (timestamp: number): string => {
   const date = new Date(timestamp * 1000);
   return date.toLocaleDateString("en-US", {
@@ -68,12 +40,6 @@ export const formatDateWithTime = (timestamp: number): string => {
   });
 };
 
-/**
- * Format date to short format (e.g., "Jan 15, 2024")
- * API returns timestamps in seconds, so we convert to milliseconds
- * @param timestamp - Unix timestamp in seconds
- * @returns Formatted date string
- */
 export const formatDateShort = (timestamp: number): string => {
   const date = new Date(timestamp * 1000);
   return date.toLocaleDateString("en-US", {
@@ -83,12 +49,6 @@ export const formatDateShort = (timestamp: number): string => {
   });
 };
 
-/**
- * Format date with relative time for tasks (e.g., "Due in 3 days", "2 days overdue")
- * API returns timestamps in seconds, so we convert to milliseconds
- * @param timestamp - Unix timestamp in seconds
- * @returns Formatted relative date string
- */
 export const formatDateRelative = (timestamp: number): string => {
   const date = new Date(timestamp * 1000);
   const now = new Date();
@@ -109,12 +69,6 @@ export const formatDateRelative = (timestamp: number): string => {
   }
 };
 
-/**
- * Calculate days until a due date
- * API returns timestamps in seconds, so we convert to milliseconds
- * @param timestamp - Unix timestamp in seconds
- * @returns Number of days until due (negative if overdue)
- */
 export const getDaysUntilDue = (timestamp: number): number => {
   const date = new Date(timestamp * 1000);
   const now = new Date();
@@ -122,21 +76,10 @@ export const getDaysUntilDue = (timestamp: number): number => {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-/**
- * Check if a date is overdue
- * @param timestamp - Unix timestamp in seconds
- * @returns True if the date is in the past
- */
 export const isOverdue = (timestamp: number): boolean => {
   return getDaysUntilDue(timestamp) < 0;
 };
 
-/**
- * Format a Date object to string with time (e.g., "January 15, 2024, 10:30 AM")
- * Used for date pickers and Date objects
- * @param date - Date object
- * @returns Formatted date string with time
- */
 export const formatDateFromDateObject = (date: Date): string => {
   return date.toLocaleDateString("en-US", {
     year: "numeric",
@@ -147,27 +90,14 @@ export const formatDateFromDateObject = (date: Date): string => {
   });
 };
 
-/**
- * Format timestamp that can be in seconds or milliseconds
- * Handles both formats and converts to formatted date string
- * @param timestamp - Unix timestamp in seconds or milliseconds
- * @returns Formatted date string
- */
 export const formatTimestamp = (timestamp: number): string => {
   const timestampInSeconds = timestamp >= 1e12 ? Math.floor(timestamp / 1000) : timestamp;
   return formatDateFull(timestampInSeconds);
 };
 
-/**
- * Get status color based on status string
- * Works for task statuses, task request statuses, and extension request statuses
- * @param status - Status string
- * @returns Hex color code
- */
 export const getStatusColor = (status: string): string => {
   const statusUpper = status.toUpperCase();
   switch (statusUpper) {
-    // Task statuses
     case "COMPLETED":
     case "DONE":
       return "#10B981";
@@ -180,7 +110,6 @@ export const getStatusColor = (status: string): string => {
       return "#3B82F6";
     case "AVAILABLE":
       return "#8B5CF6";
-    // Task request and extension request statuses
     case "APPROVED":
       return "#10B981";
     case "REJECTED":
@@ -193,15 +122,8 @@ export const getStatusColor = (status: string): string => {
   }
 };
 
-/**
- * Format status string to readable format (e.g., "IN_PROGRESS" -> "In Progress")
- * Works for task statuses, task request statuses, and extension request statuses
- * @param status - Status string
- * @returns Formatted status string
- */
 export const formatStatus = (status: string): string => {
   const statusUpper = status.toUpperCase();
-  // Special case for DENIED -> Rejected
   if (statusUpper === "DENIED") {
     return "Rejected";
   }

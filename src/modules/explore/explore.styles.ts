@@ -1,10 +1,8 @@
 import { StyleSheet } from "react-native";
+import { ContainerStyles, Colors } from "../../styles/common.styles";
 
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
+  container: ContainerStyles.white,
   scrollView: {
     flex: 1,
   },
@@ -43,6 +41,6 @@ export default StyleSheet.create({
   },
   placeholderText: {
     fontSize: 14,
-    color: "#9CA3AF",
+    color: Colors.textLight,
   },
 });

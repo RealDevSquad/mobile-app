@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native";
+import { AvatarStyles, Colors } from "../../styles/common.styles";
 
 export default StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors.backgroundWhite,
   },
   header: {
     flexDirection: "row",
@@ -17,7 +18,7 @@ export default StyleSheet.create({
   username: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1F2937",
+    color: Colors.textPrimary,
   },
   headerRight: {
     flexDirection: "row",
@@ -31,7 +32,7 @@ export default StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F5F3FF",
+    backgroundColor: Colors.borderLight,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -39,7 +40,7 @@ export default StyleSheet.create({
     position: "absolute",
     top: -4,
     right: -2,
-    backgroundColor: "#EF4444",
+    backgroundColor: Colors.error,
     borderRadius: 9999,
     minWidth: 16,
     height: 16,
@@ -48,26 +49,17 @@ export default StyleSheet.create({
     paddingHorizontal: 4,
   },
   notificationBadgeText: {
-    color: "#FFFFFF",
+    color: Colors.textWhite,
     fontSize: 12,
     fontWeight: "600",
   },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E5E7EB",
-  },
+  profileImage: AvatarStyles.medium,
   profileImagePlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E5E7EB",
-    justifyContent: "center",
-    alignItems: "center",
+    ...AvatarStyles.medium,
+    backgroundColor: Colors.borderGray,
   },
   profileImagePlaceholderText: {
-    color: "#6B7280",
+    color: Colors.textGray,
     fontSize: 16,
     fontWeight: "600",
   },

@@ -4,9 +4,9 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, Text, TextInput, View } from "react-native";
-import { TasksApi } from "../../api/tasks/tasks.api";
-import { addProgressFormSchema, TAddProgressFormFormData } from "../../api/tasks/tasks.schema";
-import { Sheet, ActionButton } from "../../components/Sheet";
+import { TasksApi } from "../../../api/tasks/tasks.api";
+import { addProgressFormSchema, TAddProgressFormFormData } from "../../../api/tasks/tasks.schema";
+import { Sheet, ActionButton } from "../../../components/Sheet";
 import styles from "./add-progress-modal.styles";
 
 type AddProgressModalProps = {

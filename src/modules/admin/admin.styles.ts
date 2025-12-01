@@ -1,10 +1,8 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
+import { ContainerStyles, CardStyles, Colors } from "../../styles/common.styles";
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
+  container: ContainerStyles.base,
   scrollView: {
     flex: 1,
   },
@@ -13,32 +11,27 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    ...ContainerStyles.loading,
     gap: 16,
   },
   loadingText: {
     fontSize: 16,
-    color: "#6B7280",
+    color: Colors.textGray,
     fontWeight: "500",
   },
   errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    ...ContainerStyles.error,
     gap: 16,
-    padding: 20,
   },
   errorText: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     textAlign: "center",
   },
   errorSubtext: {
     fontSize: 16,
-    color: "#6B7280",
+    color: Colors.textGray,
     textAlign: "center",
     marginTop: 8,
   },
@@ -50,33 +43,31 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     paddingVertical: 20,
     textAlign: "center",
   },
   section: {
-    backgroundColor: "#FFFFFF",
+    ...CardStyles.base,
     borderRadius: 12,
-    padding: 20,
     marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    marginHorizontal: 20,
+    ...(Platform.OS === "ios" && {
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+    }),
     elevation: 1,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     marginBottom: 12,
   },
   sectionText: {
     fontSize: 16,
-    color: "#6B7280",
+    color: Colors.textGray,
     lineHeight: 24,
   },
   actionsContainer: {
@@ -119,13 +110,13 @@ const styles = StyleSheet.create({
   actionTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1F2937",
+    color: Colors.textPrimary,
     marginBottom: 4,
     lineHeight: 22,
   },
   actionDescription: {
     fontSize: 12,
-    color: "#6B7280",
+    color: Colors.textGray,
     lineHeight: 16,
   },
   actionArrow: {

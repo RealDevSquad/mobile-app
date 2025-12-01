@@ -1,13 +1,9 @@
 import { StyleSheet } from "react-native";
+import { ContainerStyles, HeaderStyles, ProgressStyles, Colors } from "../../styles/common.styles";
 
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  scrollContent: {
-    paddingBottom: 20,
-  },
+  container: ContainerStyles.base,
+  scrollContent: ContainerStyles.scrollContent,
   headerSection: {
     paddingHorizontal: 20,
   },
@@ -17,28 +13,15 @@ export default StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F3F4F6",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
-    lineHeight: 28,
-    flex: 1,
-  },
+  backButton: HeaderStyles.backButton,
+  title: HeaderStyles.title,
   shareButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.backgroundGray,
   },
   contentSection: {
     paddingHorizontal: 20,
@@ -50,14 +33,14 @@ export default StyleSheet.create({
     paddingHorizontal: 8,
     marginBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: Colors.borderGray,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 6,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: Colors.backgroundGray,
   },
   detailLabelContainer: {
     flexDirection: "row",
@@ -68,12 +51,12 @@ export default StyleSheet.create({
   detailLabel: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#374151",
+    color: Colors.textTertiary,
   },
   detailValue: {
     fontSize: 14,
     fontWeight: "400",
-    color: "#111827",
+    color: Colors.textSecondary,
     flex: 1,
     textAlign: "right",
   },
@@ -88,19 +71,19 @@ export default StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#E30464",
+    backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   assigneeAvatarText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: Colors.textWhite,
   },
   assigneeName: {
     fontSize: 14,
     fontWeight: "400",
-    color: "#111827",
+    color: Colors.textSecondary,
   },
   priorityTag: {
     flexDirection: "row",
@@ -123,13 +106,13 @@ export default StyleSheet.create({
   typeTag: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Colors.backgroundGray,
     borderRadius: 6,
   },
   typeText: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#374151",
+    color: Colors.textTertiary,
   },
   progressCard: {
     borderRadius: 12,
@@ -139,30 +122,25 @@ export default StyleSheet.create({
     marginHorizontal: 20,
   },
   progressHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    ...ProgressStyles.header,
     marginBottom: 12,
   },
   progressLabel: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#111827",
+    color: Colors.textSecondary,
   },
   progressPercentage: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#E30464",
+    color: Colors.primary,
   },
   progressBar: {
-    height: 6,
-    backgroundColor: "#F3F4F6",
-    borderRadius: 3,
-    overflow: "hidden",
+    ...ProgressStyles.bar,
+    backgroundColor: Colors.backgroundGray,
   },
   progressFill: {
-    height: "100%",
-    backgroundColor: "#E30464",
+    ...ProgressStyles.fill,
     borderRadius: 4,
   },
   githubSection: {
@@ -178,14 +156,14 @@ export default StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     width: "100%",
-    backgroundColor: "#111827",
+    backgroundColor: Colors.dark,
     borderRadius: 8,
     alignSelf: "flex-start",
   },
   githubButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: Colors.textWhite,
   },
   dependenciesSection: {
     borderRadius: 12,
@@ -195,50 +173,40 @@ export default StyleSheet.create({
   dependenciesTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#111827",
+    color: Colors.textSecondary,
     marginBottom: 12,
   },
   dependencyItem: {
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: Colors.background,
     borderRadius: 6,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: Colors.borderGray,
   },
   dependencyText: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#6B7280",
+    color: Colors.textGray,
   },
   emptyDependencies: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: Colors.textLight,
     fontStyle: "italic",
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
+  loadingContainer: ContainerStyles.loading,
+  errorContainer: ContainerStyles.error,
   errorText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#EF4444",
+    color: Colors.error,
     textAlign: "center",
     marginBottom: 8,
   },
   errorSubtext: {
     fontSize: 14,
-    color: "#6B7280",
+    color: Colors.textGray,
     textAlign: "center",
   },
 });

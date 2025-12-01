@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React, { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { ExtensionRequestsApi } from "../../api/extension-requests/extension-requests.api";
-import { TaskDetailsDTO } from "../../api/tasks/task.dto";
-import { AddProgressModal } from "./add-progress-modal";
-import { ExtensionRequestDetailsModal } from "./extension-request-details-modal";
-import { ExtensionRequestModal } from "./extension-request-modal";
-import { UpdateTaskModal } from "./update-task-modal";
+import { ExtensionRequestsApi } from "../../../api/extension-requests/extension-requests.api";
+import { TaskDetailsDTO } from "../../../api/tasks/task.dto";
+import { AddProgressModal } from "../modals/add-progress-modal";
+import { ExtensionRequestDetailsModal } from "../modals/extension-request-details-modal";
+import { ExtensionRequestModal } from "../modals/extension-request-modal";
+import { UpdateTaskModal } from "../modals/update-task-modal";
 import styles from "./task-actions.styles";
 
 type TaskActionsProps = {

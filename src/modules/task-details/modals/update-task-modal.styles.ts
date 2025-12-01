@@ -1,29 +1,20 @@
 import { StyleSheet } from "react-native";
+import { InputStyles, Colors } from "../../../styles/common.styles";
 
 export default StyleSheet.create({
   formGroup: {
     marginTop: 20,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: 8,
-  },
+  label: InputStyles.label,
   dropdownButton: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
+    ...InputStyles.base,
   },
   dropdownButtonText: {
     fontSize: 15,
-    color: "#111827",
+    color: Colors.textSecondary,
     flex: 1,
   },
   dropdownList: {

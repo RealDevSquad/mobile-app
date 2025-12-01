@@ -1,9 +1,9 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
-import { ExtensionRequestDTO } from "../../api/extension-requests/extension-request.dto";
-import { ActionButton, Sheet } from "../../components/Sheet";
-import { formatDateWithTime } from "../../utils/common.utils";
+import { ExtensionRequestDTO } from "../../../api/extension-requests/extension-request.dto";
+import { ActionButton, Sheet } from "../../../components/Sheet";
+import { formatDateWithTime } from "../../../utils/common.utils";
 import { EditExtensionRequestModal } from "./edit-extension-request-modal";
 import styles from "./extension-request-modal.styles";
 
