@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ActivityIndicator, Modal, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Modal, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { WebView } from "react-native-webview";
 import { appConfig } from "../config/app.config";
 
@@ -15,6 +15,8 @@ export function GithubLoginModal({
   onNavigationStateChange,
 }: GithubLoginModalProps) {
   const [loading, setLoading] = useState(true);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const githubOAuthUrl = `${appConfig.backendBaseUrl}/auth/github/login?sourceUtm=rds-mobile-app&redirectURL=mobileapp20://auth`;
 
@@ -23,17 +25,28 @@ export function GithubLoginModal({
     onNavigationStateChange(url);
   };
 
+  const dynamicStyles = {
+    modalContent: [styles.modalContent, isDark && { backgroundColor: "#1F2937" }],
+    header: [styles.header, isDark && { backgroundColor: "#1F2937", borderBottomColor: "#374151" }],
+    dragHandle: [styles.dragHandle, isDark && { backgroundColor: "#6B7280" }],
+    headerTitle: [styles.headerTitle, isDark && { color: "#FFFFFF" }],
+    loadingContainer: [
+      styles.loadingContainer,
+      isDark && { backgroundColor: "rgba(31, 41, 55, 0.9)" },
+    ],
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.header}>
-            <View style={styles.dragHandle} />
-            <Text style={styles.headerTitle}>Sign in with GitHub</Text>
+        <View style={dynamicStyles.modalContent}>
+          <View style={dynamicStyles.header}>
+            <View style={dynamicStyles.dragHandle} />
+            <Text style={dynamicStyles.headerTitle}>Sign in with GitHub</Text>
           </View>
 
           {loading && (
-            <View style={styles.loadingContainer}>
+            <View style={dynamicStyles.loadingContainer}>
               <ActivityIndicator size="large" color="#E30464" />
             </View>
           )}
