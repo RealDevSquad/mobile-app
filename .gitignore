@@ -37,6 +37,10 @@ yarn.lock
 # local env files
 .env*.local
 
+# Firebase credentials (sensitive)
+firebase-service-account.json
+google-services.json
+
 # typescript
 *.tsbuildinfo
 

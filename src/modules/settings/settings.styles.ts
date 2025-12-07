@@ -38,6 +38,31 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
+  tabContainer: {
+    flexDirection: "row",
+    backgroundColor: Colors.backgroundWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  tabActive: {
+    borderBottomColor: Colors.primary,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: Colors.textGray,
+  },
+  tabTextActive: {
+    color: Colors.primary,
+    fontWeight: "600",
+  },
   scrollView: {
     flex: 1,
   },
@@ -122,12 +147,22 @@ export default StyleSheet.create({
   section: {
     gap: 6,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   sectionTitle: {
     fontSize: 12,
     fontWeight: "600",
     color: Colors.textGray,
     textTransform: "uppercase",
     letterSpacing: 0.5,
+  },
+  copyButton: {
+    padding: 6,
+    borderRadius: 4,
+    backgroundColor: "#F3F4F6",
   },
   errorTitle: {
     color: Colors.error,
@@ -147,5 +182,52 @@ export default StyleSheet.create({
     fontFamily: "monospace",
     color: "#E5E7EB",
     lineHeight: 16,
+  },
+  // All Logs tab styles
+  logCard: {
+    backgroundColor: Colors.backgroundWhite,
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  logCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 6,
+  },
+  levelBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  levelText: {
+    fontSize: 9,
+    fontWeight: "700",
+    color: Colors.textWhite,
+  },
+  sourceText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: Colors.textGray,
+    flex: 1,
+  },
+  logMessage: {
+    fontSize: 13,
+    color: Colors.textPrimary,
+    fontWeight: "500",
+  },
+  logDataBlock: {
+    marginTop: 8,
+    backgroundColor: "#F3F4F6",
+    borderRadius: 6,
+    padding: 8,
+  },
+  logDataText: {
+    fontSize: 10,
+    fontFamily: "monospace",
+    color: Colors.textGray,
+    lineHeight: 14,
   },
 });

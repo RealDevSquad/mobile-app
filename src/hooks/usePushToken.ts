@@ -15,7 +15,7 @@ Notifications.setNotificationHandler({
     shouldShowList: true,
   }),
 });
-
+// TODO: Change to the actual URL
 const EXPO_TOKEN_URL = "https://b2bbbec12978.ngrok-free.app/api/expo-tokens/";
 
 export default function usePushToken(userId: string | null) {
@@ -23,28 +23,36 @@ export default function usePushToken(userId: string | null) {
 
   useEffect(() => {
     async function register() {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== "granted") return;
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
 
-      const projectId = Constants.expoConfig?.extra?.eas?.projectId;
-      if (!projectId) {
-        logger.warn("Push notifications require a projectId", null, "PushToken");
-        return;
-      }
-      const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-      logger.info("Expo Push Token obtained", { token }, "PushToken");
-      setExpoPushToken(token);
+        if (status !== "granted") {
+          return;
+        }
 
-      if (Platform.OS === "android") {
-        Notifications.setNotificationChannelAsync("default", {
-          name: "default",
-          importance: Notifications.AndroidImportance.MAX,
-        });
+        const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+
+        if (!projectId) {
+          return;
+        }
+
+        const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
+        const token = tokenData.data;
+        setExpoPushToken(token);
+
+        if (Platform.OS === "android") {
+          await Notifications.setNotificationChannelAsync("default", {
+            name: "default",
+            importance: Notifications.AndroidImportance.MAX,
+          });
+        }
+      } catch (error) {
+        logger.error("Error registering push token", error);
       }
     }
 
     register();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!expoPushToken || !userId) return;
@@ -54,20 +62,13 @@ export default function usePushToken(userId: string | null) {
       expo_token: expoPushToken,
     };
 
-    logger.apiRequest("POST", "/api/expo-tokens/", requestBody);
-
     fetch(EXPO_TOKEN_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
-    })
-      .then(async (response) => {
-        const data = await response.json().catch(() => null);
-        logger.apiResponse("POST", "/api/expo-tokens/", response.status, data);
-      })
-      .catch((error) => {
-        logger.apiError("POST", "/api/expo-tokens/", error?.message || error);
-      });
+    }).catch(() => {
+      logger.error("Failed to send token to backend");
+    });
   }, [expoPushToken, userId]);
 
   return expoPushToken;

@@ -1,6 +1,6 @@
-# Welcome to your Expo app 👋
+# Real Dev Squad Mobile App 📱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile app built with [Expo](https://expo.dev) for the Real Dev Squad community.
 
 ## Get started
 
@@ -34,6 +34,10 @@ pnpm run reset-project
 ```
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+
+## Documentation
+
+- [Push Notifications Setup](./docs/PUSH_NOTIFICATIONS_SETUP.md) - Complete guide for setting up Firebase and push notifications
 
 ## Learn more
 

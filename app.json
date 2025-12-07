@@ -20,6 +20,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.mobileapp2.x0",
+      "googleServicesFile": "./google-services.json",
       "statusBar": {
         "barStyle": "dark-content",
         "backgroundColor": "#ffffff"
