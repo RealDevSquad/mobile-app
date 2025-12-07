@@ -1,0 +1,151 @@
+import { StyleSheet } from "react-native";
+import { Colors } from "../../styles/common.styles";
+
+export default StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F3F4F6",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: Colors.backgroundWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: Colors.textPrimary,
+  },
+  headerRight: {
+    marginLeft: "auto",
+  },
+  clearButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: Colors.error,
+    borderRadius: 6,
+  },
+  clearButtonText: {
+    color: Colors.textWhite,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    padding: 12,
+    gap: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 80,
+    gap: 12,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: Colors.textGray,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: Colors.textGray,
+  },
+  apiCard: {
+    backgroundColor: Colors.backgroundWhite,
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  apiCardError: {
+    borderColor: "#FCA5A5",
+    borderWidth: 1,
+  },
+  apiCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 12,
+  },
+  apiCardHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+  },
+  apiCardHeaderRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  methodBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  methodText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: Colors.textWhite,
+  },
+  pathText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: Colors.textPrimary,
+    flex: 1,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  timestampText: {
+    fontSize: 11,
+    color: Colors.textGray,
+  },
+  apiCardContent: {
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
+    padding: 12,
+    gap: 16,
+  },
+  section: {
+    gap: 6,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: Colors.textGray,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  errorTitle: {
+    color: Colors.error,
+  },
+  codeBlock: {
+    backgroundColor: "#1F2937",
+    borderRadius: 8,
+    padding: 12,
+  },
+  codeBlockError: {
+    backgroundColor: "#7F1D1D",
+    borderRadius: 8,
+    padding: 12,
+  },
+  codeText: {
+    fontSize: 11,
+    fontFamily: "monospace",
+    color: "#E5E7EB",
+    lineHeight: 16,
+  },
+});
